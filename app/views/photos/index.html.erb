@@ -1,0 +1,14 @@
+<h1>Photos#index</h1>
+<form id="form">
+  <input type="file" name="files[]" id="files" multiple />
+  <button id="abort">Cancelar</button>
+</form>
+
+<div id="list"></div>
+
+<script type="text/x-jqote-template" id="image-template">
+  <![CDATA[
+	   <img class="thumb" src="<*= this.src *>" title="<*= this.name *>" />
+  ]]>
+</script>
+

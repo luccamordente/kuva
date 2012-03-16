@@ -11,3 +11,4 @@ public/uploads/*
 dump.rdb
 **/*~
 *~
+.rvmrc

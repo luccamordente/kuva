@@ -11,7 +11,7 @@ gem 'json'
 
 gem "mongoid", "~> 2.2"
 gem "bson_ext", "~> 1.5"
-gem 'carrierwave-mongoid'
+gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 
 # Gems used only for assets and not required
 # in production environments by default.

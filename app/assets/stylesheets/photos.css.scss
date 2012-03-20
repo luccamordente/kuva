@@ -1,3 +1,20 @@
 // Place all the styles related to the photos controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+#photos {
+    border-spacing: 1em;
+
+    .photo {
+	display: table-cell;
+	width: 8em;
+	height: 8em;
+	padding: 1em;
+
+	border: .1em solid gray;
+	border-radius: .2em;
+	text-align: center;
+	vertical-align: middle;
+    }
+}

@@ -8,7 +8,7 @@ class PhotosController < ApplicationController
     u = User.first
     o = u.orders.create
     p = o.photos.new
-    p.image = params[:Filedata]
+    p.image = params[:image]
     p.save
     render :text => 1
   end                        

@@ -4,11 +4,13 @@
   <button id="abort">Cancelar</button>
 </form>
 
-<div id="list"></div>
+<div id="photos"></div>
 
 <script type="text/x-jqote-template" id="image-template">
-  <![CDATA[
-	   <img class="thumb" src="<*= this.src *>" title="<*= this.name *>" />
-  ]]>
+<![CDATA[
+<div class="photo">
+  <img class="image" src="<*= this.src *>" title="<*= this.name *>" />
+</div>
+]]>
 </script>
 

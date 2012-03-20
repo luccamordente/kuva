@@ -1,61 +1,76 @@
 var photos = (function declare_photos () {
     var that = function initialize_photo(options) {
-	
-    }, reader = lib.reader();
-    
-    reader.onprogress = function() {
-	console.log(".");
+
+    }, reader = null;
+
+    // Display outputs of this page
+    var view = {
+	reader: {
+	    progress: function() {
+		console.log(".");
+	    },
+	    abort: function(event) {
+		console.log(event);
+		// console.log(reader.file.name + " cancelado!");
+	    },
+	    loadstart: function(e) {
+		console.log("start");
+	    },
+	    load: function (event) {
+		var file = event.target.file;
+		if(file.type.match("image.*"))
+		    view.photo({
+			src: event.target.result,
+			name: file.name
+		    });
+
+		console.log(file.name + " loaded!!");
+	    },
+	    loadend: function() {
+		    setTimeout(function () {
+			reader.next();
+		    }, 500);
+	    }
+	},
+	uploader: {},
+	photo: function (options) {
+	    $("#photos").jqoteapp("#image-template",{
+		src: options.src,
+		name: options.name
+	    }, '*');
+	}
     };
 
-    reader.onabort = function(event) {
-	console.log(event);
-	// console.log(reader.file.name + " cancelado!");
+    // Receives user input
+    var control = {
+	initialize: function () {
+	    reader = lib.reader();
+
+	    for (handler in view.reader) {
+		reader['on' + handler] = view.reader[handler];
+	    }
+
+	    $('#files').bind('change', control.changed);
+	    $('#abort').bind('click', control.aborted);
+
+	    uploader('#files', {uploader: '/photos'});
+	},
+	changed: function () {
+	    reader.read(this.files);
+	    uploader().upload();
+	},
+	aborted: function () {
+	    reader.abort();
+	}
     };
 
-    reader.onloadstart = function(e) {
-	console.log("start")
-    };
 
-    reader.onload = function (event) {
-	var file = event.target.file;
-	if(file.type.match("image.*"))
-	    show({
-		src: event.target.result,
-		name: file.name
-	    });		   
-	
-	console.log(file.name + " loaded!!");
-    };
-
-    reader.onloadend = function() {
-	setTimeout(function () {
-	    reader.next();
-	}, 500);
-    };		   
-
-    function change (event) {
-	reader.read(this.files);
-    }	    		    
-    
-    function abort () {
-	reader.abort();
-    }	
-
-    function show (options) {
-	$("#list").jqoteapp("#image-template",{
-	    src: options.src,
-	    name: options.name
-	}, '*');
-    };
-    
     function initialize() {
-	$('#files').bind('change', change);
-	$('#abort').bind('click', abort);
+	control.initialize();
 	$.jqotetag('*');
-	uploader('#files', {thumbnailer: reader});
-    }		     			 
+    }
 
     $(initialize);
-      
+
     return that;
 })();

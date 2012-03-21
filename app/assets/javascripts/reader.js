@@ -1,16 +1,16 @@
 lib = {};
 var reader = (function() {
     var that = function () {
-
-    };
+	
+    }
 
     if (Modernizr.filereader) {
 	var reader = (function () {
 	    var that = function () {
 		return instance;
-	    },
+	    },	       
 	    instance = new FileReader(),
-	    index = 0;
+	    index = -1;	      
 
 	    instance.files = [];
 
@@ -19,38 +19,36 @@ var reader = (function() {
 		    this.files.push(files[i]);
 		}
 		return this;
-	    };
-
-	    instance.next = function () {
-		this.file = this.files[index++];
-		return this.readAsDataURL(this.file);
-	    };
-
+	    }		   
+	    	       
 	    instance.read = function (files) {
-		if (files) {
-		    instance.add(files);
-		    if (!runned() || ended()) instance.next();
-		}
-	    };
+		if (files) instance.add(files);
+		if (!ended()) next.call(instance);
+	    }
+	    instance.next = instance.read;
+
+	    function next () { 
+		this.file = this.files[++index];
+		return this.readAsDataURL(this.file);
+	    }
 
 	    function ended () {
-		return instance.files.length == index;
-	    }
-
-	    function runned() {
-		return index != 0;
-	    }
-
-
+		return (instance.files.length - 1) == index;
+	    }					 
+	    
+	    instance.index = function () {
+		return index;
+	    };
+	    
 	    return that;
-	})();
-
+	})();	     		  
+	
     } else {
 	// var file = inherit({
-
+	    
 	// });
     }
-
+    
     this.reader = reader;
     return reader;
 }).call(lib);

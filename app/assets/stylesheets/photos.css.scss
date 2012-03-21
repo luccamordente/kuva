@@ -1,20 +1,35 @@
-// Place all the styles related to the photos controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import "compass/css3";
 
-
-#photos {
+#gadgets {
     border-spacing: 1em;
 
-    .photo {
-	display: table-cell;
-	width: 8em;
-	height: 8em;
-	padding: 1em;
-
-	border: .1em solid gray;
-	border-radius: .2em;
-	text-align: center;
+    .gadget {
+	margin: 1em;
+	/* display: table-cell; */
+	float: left;
 	vertical-align: middle;
+	text-align: center;
+    }
+
+    .gadget.loading {
+	width: 10em;
+	height: 10em;
+	background-color: #eee;
+    }
+
+    .gadget.thumbnailing {
+	width: 10em;
+	height: 10em;
+	border: 1px solid #eee;
+	background-color: #bbb;
+    }
+
+
+
+    .gadget.loaded { 
+	img {
+	    border: .5em solid white;
+	    @include box-shadow(2px 2px 2px #666)
+	}
     }
 }

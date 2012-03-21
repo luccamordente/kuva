@@ -1,76 +1,57 @@
+var kuva = {
+    service: {
+	url: document.location.host
+    }
+}
+
 var photos = (function declare_photos () {
     var that = function initialize_photo(options) {
-
-    }, reader = null;
-
-    // Display outputs of this page
-    var view = {
-	reader: {
-	    progress: function() {
-		console.log(".");
-	    },
-	    abort: function(event) {
-		console.log(event);
-		// console.log(reader.file.name + " cancelado!");
-	    },
-	    loadstart: function(e) {
-		console.log("start");
-	    },
-	    load: function (event) {
-		var file = event.target.file;
-		if(file.type.match("image.*"))
-		    view.photo({
-			src: event.target.result,
-			name: file.name
-		    });
-
-		console.log(file.name + " loaded!!");
-	    },
-	    loadend: function() {
-		    setTimeout(function () {
-			reader.next();
-		    }, 500);
-	    }
-	},
-	uploader: {},
-	photo: function (options) {
-	    $("#photos").jqoteapp("#image-template",{
-		src: options.src,
-		name: options.name
-	    }, '*');
-	}
+	
+    }, reader = lib.reader(), gadgets = [];
+    
+    // Setup listeners
+    reader.onprogress = function(event) {
+	gadgets[this.index()].dispatch('progress', event);
     };
 
-    // Receives user input
-    var control = {
-	initialize: function () {
-	    reader = lib.reader();
-
-	    for (handler in view.reader) {
-		reader['on' + handler] = view.reader[handler];
-	    }
-
-	    $('#files').bind('change', control.changed);
-	    $('#abort').bind('click', control.aborted);
-
-	    uploader('#files', {uploader: '/photos'});
-	},
-	changed: function () {
-	    reader.read(this.files);
-	    uploader().upload();
-	},
-	aborted: function () {
-	    reader.abort();
-	}
+    reader.onabort = function(event) {
+	gadgets[this.index()].dispatch('abort', event);
     };
 
+    reader.onloadstart = function(event) {
+	gadgets[this.index()].dispatch('loadstart', event);
+    };
 
-    function initialize() {
-	control.initialize();
-	$.jqotetag('*');
+    reader.onloadend = function(event) {
+	gadgets[this.index()].dispatch('loadend', event);
+	setTimeout(function () {
+	    reader.next();
+	}, 500);
+    };
+
+    function change (event) {
+	var i = this.files.length, instance = null;
+	while (i--) {
+	    instance = gadget();
+	    instance.show();
+	    gadgets.push(instance);   
+	}
+	reader.read(this.files);
+    }    
+
+    // Setup commands
+    function abort () {
+	reader.abort();
     }
+    
+    function initialize() {
+	$('#files').bind('change', change);
+	$('#abort').bind('click', abort);
+	$.jqotetag('*');
+	uploader('#files', {thumbnailer: reader});
+    }		     			 
 
     $(initialize);
-
+      
     return that;
 })();

@@ -1,4 +1,9 @@
 Kuva::Application.routes.draw do
+  
+  devise_for :users
+
+  root :to => "home#index"
+
   resources :photos, :only => [:index, :create] do
     post :check, :on => :collection     
   end     

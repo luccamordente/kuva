@@ -1,21 +1,22 @@
 class PhotosController < ApplicationController
+  
+  before_filter :authenticate_user!
+  
   def index
-    u = User.first
-    o = u.orders.first
-    @photos = o
+    @order = current_user.orders.first
   end
 
   def create
     puts 'received' + params.inspect
-    u = User.first
-    o = u.orders.first || u.orders.create
-    p = o.photos.new               
+    o = current_user.orders.first || current_user.orders.create
+    p = o.photos.new
     p.image = params[:Filedata]
     p.save
     render :text => 1
-  end                        
+  end
 
   def check
     render :text => 0
-  end       
-end   
+  end
+  
+end

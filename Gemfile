@@ -13,12 +13,14 @@ gem 'json'
 
 gem "mongoid", "~> 2.2"
 gem "bson_ext", "~> 1.5"
-gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
+gem "carrierwave-mongoid", :require => "carrierwave/mongoid"
+gem "devise", "~> 2.0"
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-   gem 'sass-rails',   '~> 3.2.3'
+   gem 'sass-rails', '~> 3.2.3'
+   gem "haml-rails", '~> 0.3.4'
    gem 'compass-rails'
 
 #  gem 'coffee-rails', '~> 3.2.1'
@@ -30,6 +32,27 @@ group :assets do
 end
 
 gem 'jquery-rails'
+
+
+group :development do
+  gem 'foreman'
+end
+
+group :development, :test do
+  # gem 'capistrano'
+  gem 'cpf_faker'
+  gem 'rspec-rails'
+  gem 'capybara'
+  gem 'launchy'
+  gem 'database_cleaner'
+  gem 'factory_girl_rails'
+  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
+  gem 'guard-rspec'
+  gem 'guard-livereload'
+  gem 'mongoid-rspec'
+  # gem 'growl'
+end
+
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
@@ -45,6 +68,6 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'ruby-debug'
-
+ 
 # Colorful console
 # gem 'mutter'

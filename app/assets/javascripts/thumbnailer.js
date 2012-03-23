@@ -1,13 +1,47 @@
 var thumbnailer = (function () {
-    var that = function () {
-	return that;
-    }, canvas = document.createElement('canvas');
-    
+    var that = function (handlers) {
+	handlers && $.extend(instance, handlers);
+	return instance;
+    },
+    instance = function () {
+	queue.push(arguments);
+	queue.process();
+    };
+
+    $.extend(instance, {	      
+	canvas: document.createElement('canvas'),
+	sample: null,
+    });
+
     /** TODO implemente thumbnailing queue */
-    that.thumbnail = function (image, width, callback, quality) {
-	quality = quality || 5;
-	new thumbnailer(canvas, image.element || image, width, quality, callback);
-    };		    
+    function thumbnail (image, width, quality, context) {
+	quality = quality || instance.quality || 5;
+
+	instance.callback_context = context || instance;
+	instance.sample = 0;
+	instance.canvas.height = image.height;
+	instance.canvas.width = image.width;
+	initialize(image.element || image, width, quality);
+    };
+
+
+    var queue = {
+	processor: thumbnail,
+	processing: false,
+	process: function () {
+	    if (this.processing) return;
+	    else this.processing = true;
+
+	    var event = this.shift();
+	    this.processor.apply(event.callee, event); 
+	},
+	processed: function () {
+	    this.processing = false;
+	    this.length && this.process();
+	},	 		
+	shift: Array.prototype.shift,
+	push: Array.prototype.push
+    }	     	    
 
     /**
      * @author http://stackoverflow.com/users/219229/syockit   
@@ -19,105 +53,111 @@ var thumbnailer = (function () {
      * @param width: scaled width
      * @param lobes: kernel radius (quality)
      * @param callback: callback to call when finished processing image
-     */
-    function thumbnailer(canvas, image, width, lobes, callback) { 
-	this.canvas = canvas;
-	this.thumbnailed = callback;
-
-	canvas.style.display = 'none';
-	canvas.width = image.width;
-	canvas.height = image.height;
-
-	this.context = canvas.getContext("2d");
-	this.context.drawImage(image, 0, 0);
-	this.image = image;
-	this.src = this.context.getImageData(0, 0, image.width, image.height);
-	this.dest = {
-            width: width,
-            height: Math.round(image.height * width / image.width),
+     */	
+    function initialize(image, width, lobes) { 
+	instance.context = instance.canvas.getContext("2d");
+	instance.context.drawImage(image, 0, 0);
+	instance.image = image;
+	instance.src = instance.context.getImageData(0, 0, image.width, image.height);
+	instance.dest = {
+	    width: width,
+	    height: Math.round(image.height * width / image.width),
 	};
 
-	this.dest.data = new Array(this.dest.width * this.dest.height * 3);
-	this.lanczos = lanczos(lobes);
-	this.ratio = image.width / width;
-	this.rcp_ratio = 2 / this.ratio;
-	this.range = Math.ceil(this.ratio * lobes / 2);
-	this.cache = {};
-	this.center = {};
-	this.icenter = {};
+	instance.dest.data = new Array(instance.dest.width * instance.dest.height * 3);
+	instance.lanczos = lanczos(lobes);
+	instance.ratio = image.width / width;
+	instance.rcp_ratio = 2 / instance.ratio;
+	instance.range = Math.ceil(instance.ratio * lobes / 2);
+	instance.cache = {};
+ 	instance.center = {};
+	instance.icenter = {};
 	
-	setTimeout(this.process1, 0, this, 0);
-    }
+	// TODO
+	// var worker = new Worker('assets/process.js');
+	// worker.postMessage({context: domo});
+	// worker.onmessage = function (event) {
+	// 	var data = event.data;
+	// 	instance.finish(data.self);
+	// }
+	
+	setTimeout(process, 10);
+    };
 
-    thumbnailer.prototype.process1 = function(self, u){
+    function process(u) {
         var a, r, g, b, v, i, j, idx;
 
-	self.center.x = (u + 0.5) * self.ratio;
-	self.icenter.x = Math.floor(self.center.x);
+	u = u || 0;
 
-	for (v = 0; v < self.dest.height; v++) {
-            self.center.y = (v + 0.5) * self.ratio;
-            self.icenter.y = Math.floor(self.center.y);
-            a = r = g = b = 0;
+	instance.center.x = (u + 0.5) * instance.ratio;
+	instance.icenter.x = Math.floor(instance.center.x);
 
-            for (i = self.icenter.x - self.range; i <= self.icenter.x + self.range; i++) {
-		if (i < 0 || i >= self.src.width) 
-                    continue;
-		var f_x = Math.floor(1000 * Math.abs(i - self.center.x));
-		if (!self.cache[f_x]) 
-                    self.cache[f_x] = {};
-		for (j = self.icenter.y - self.range; j <= self.icenter.y + self.range; j++) {
-                    if (j < 0 || j >= self.src.height) 
+	for (v = 0; v < instance.dest.height; v++) {
+	    instance.center.y = (v + 0.5) * instance.ratio;
+	    instance.icenter.y = Math.floor(instance.center.y);
+	    a = r = g = b = 0;
+
+	    for (i = instance.icenter.x - instance.range; i <= instance.icenter.x + instance.range; i++) {
+		if (i < 0 || i >= instance.src.width) 
+		    continue;
+		var f_x = Math.floor(1000 * Math.abs(i - instance.center.x));
+		if (!instance.cache[f_x]) 
+		    instance.cache[f_x] = {};
+		for (j = instance.icenter.y - instance.range; j <= instance.icenter.y + instance.range; j++) {
+		    if (j < 0 || j >= instance.src.height) 
 			continue;
-                    var f_y = Math.floor(1000 * Math.abs(j - self.center.y));
-                    if (self.cache[f_x][f_y] == undefined) 
-			self.cache[f_x][f_y] = self.lanczos(Math.sqrt(Math.pow(f_x * self.rcp_ratio, 2) + Math.pow(f_y * self.rcp_ratio, 2)) / 1000);
-                    weight = self.cache[f_x][f_y];
-                    if (weight > 0) {
-			idx = (j * self.src.width + i) * 4;
+		    var f_y = Math.floor(1000 * Math.abs(j - instance.center.y));
+		    if (instance.cache[f_x][f_y] == undefined) 
+			instance.cache[f_x][f_y] = instance.lanczos(Math.sqrt(Math.pow(f_x * instance.rcp_ratio, 2) + Math.pow(f_y * instance.rcp_ratio, 2)) / 1000);
+		    weight = instance.cache[f_x][f_y];
+		    if (weight > 0) {
+			idx = (j * instance.src.width + i) * 4;
 			a += weight;
-			r += weight * self.src.data[idx];
-			g += weight * self.src.data[idx + 1];
-			b += weight * self.src.data[idx + 2];
-                    }
+			r += weight * instance.src.data[idx];
+			g += weight * instance.src.data[idx + 1];
+			b += weight * instance.src.data[idx + 2];
+		    }
 		}
-            }
+	    }
 
-            idx = (v * self.dest.width + u) * 3;
-            self.dest.data[idx] = r / a;
-            self.dest.data[idx + 1] = g / a;
-            self.dest.data[idx + 2] = b / a;
+	    idx = (v * instance.dest.width + u) * 3;
+	    instance.dest.data[idx] = r / a;
+	    instance.dest.data[idx + 1] = g / a;
+	    instance.dest.data[idx + 2] = b / a;
 	}
 
-	if (++u < self.dest.width) 
-            setTimeout(self.process1, 0, self, u);
+	if (!(instance.sample++ % Math.round((instance.dest.width / 20))))
+	    instance.thumbnailing && instance.thumbnailing.call(instance.callback_context, {target: instance.canvas, loaded: instance.sample, total: instance.dest.width});
+	
+	if (++u < instance.dest.width) 
+	    setTimeout(process, 10, u);
 	else 
-            setTimeout(self.process2, 0, self);
-    };
-    
+	    setTimeout(finish, 0);
+    }
 
-    thumbnailer.prototype.process2 = function(self) {
-	self.canvas.width = self.dest.width;
-	self.canvas.height = self.dest.height;
-	self.context.drawImage(self.image, 0, 0);
-	self.src = self.context.getImageData(0, 0, self.dest.width, self.dest.height);
+    function finish() {
+	instance.canvas.width = instance.dest.width;
+	instance.canvas.height = instance.dest.height;
+	instance.context.drawImage(instance.image, 0, 0);
+	instance.src = instance.context.getImageData(0, 0, instance.dest.width, instance.dest.height);
 	var idx, idx2;
-	for (var i = 0; i < self.dest.width; i++) {
-            for (var j = 0; j < self.dest.height; j++) {
-		idx = (j * self.dest.width + i) * 3;
-		idx2 = (j * self.dest.width + i) * 4;
-		self.src.data[idx2] = self.dest.data[idx];
-		self.src.data[idx2 + 1] = self.dest.data[idx + 1];
-		self.src.data[idx2 + 2] = self.dest.data[idx + 2];
-            }
+	for (var i = 0; i < instance.dest.width; i++) {
+	    for (var j = 0; j < instance.dest.height; j++) {
+		idx = (j * instance.dest.width + i) * 3;
+		idx2 = (j * instance.dest.width + i) * 4;
+		instance.src.data[idx2] = instance.dest.data[idx];
+		instance.src.data[idx2 + 1] = instance.dest.data[idx + 1];
+		instance.src.data[idx2 + 2] = instance.dest.data[idx + 2];
+	    }
 	}
-	self.context.putImageData(self.src, 0, 0);
-	self.thumbnailed(self.canvas.toDataURL());
-    }			      
+	instance.context.putImageData(instance.src, 0, 0);
+	instance.thumbnailed.call(instance.callback_context, instance.canvas.toDataURL());
+	queue.processed();
+    }	      
 
     // Returns a function that calculates lanczos weight
-    function lanczos(lobes){
-	return function(x){
+    function lanczos(lobes) {
+	return function(x) {
 	    if (x > lobes) 
 		return 0;
 	    x *= Math.PI;

@@ -23,11 +23,11 @@ var photos = (function declare_photos () {
     };
 
     reader.onloadend = function(event) {
-	gadgets[this.index()].dispatch('loadend', event);
-	setTimeout(function () {
-	    reader.next();
-	}, 500);
-    };
+	gadgets[this.index()].dispatch('loadend', event)
+	    .listen('loaded', function () {
+		reader.next();
+	    });
+    };				   
 
     function change (event) {
 	var i = this.files.length, instance = null;

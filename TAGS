@@ -3,10 +3,18 @@ app/assets/javascripts/application.js,0
 
 app/assets/javascripts/gadget.js,0
 
+app/assets/javascripts/home.js,0
+
 app/assets/javascripts/image.js,0
 
 app/assets/javascripts/photos.js,30
 var kuva = {kuva.service1,0
+
+app/assets/javascripts/process.js,180
+self.onmessage = function (event) {self.onmessage0,0
+function process(self, u) {   process6,95
+function finish(self) {finish53,1722
+function lanczos(lobes) {lanczos59,1826
 
 app/assets/javascripts/reader.js,0
 
@@ -19,14 +27,21 @@ app/assets/javascripts/uploader.js,0
 app/controllers/application_controller.rb,79
 class ApplicationController < ActionController::BaseApplicationController1,0
 
+app/controllers/home_controller.rb,87
+class HomeController < ApplicationControllerHomeController1,0
+  def indexindex2,45
+
 app/controllers/photos_controller.rb,142
 class PhotosController < ApplicationControllerPhotosController1,0
-  def indexindex2,47
-  def createcreate8,124
-  def checkcheck18,367
+  def indexindex5,89
+  def createcreate9,147
+  def checkcheck18,354
 
 app/helpers/application_helper.rb,47
 module ApplicationHelperApplicationHelper1,0
+
+app/helpers/home_helper.rb,33
+module HomeHelperHomeHelper1,0
 
 app/helpers/photos_helper.rb,37
 module PhotosHelperPhotosHelper1,0
@@ -62,6 +77,8 @@ config/environments/test.rb,0
 
 config/initializers/backtrace_silencers.rb,0
 
+config/initializers/devise.rb,0
+
 config/initializers/inflections.rb,0
 
 config/initializers/mime_types.rb,0
@@ -82,10 +99,22 @@ public/422.html,0
 
 public/500.html,0
 
-public/index.html,40
-      function about() {about175,3559
-
 script/rails,0
+
+spec/factories/users.rb,0
+
+spec/helpers/home_helper_spec.rb,0
+
+spec/requests/home_spec.rb,0
+
+spec/requests/photos_spec.rb,0
+
+spec/spec_helper.rb,0
+
+spec/support/login_macros.rb,105
+module LoginMacrosLoginMacros1,0
+  def login_adminlogin_admin2,19
+  def login_userlogin_user13,313
 
 test/functional/photos_controller_test.rb,82
 class PhotosControllerTest < ActionController::TestCasePhotosControllerTest3,23

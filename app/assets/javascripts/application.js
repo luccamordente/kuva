@@ -16,5 +16,6 @@
 //= require modernizr
 //= require jqote2
 //= require reader
+//= require thumbnailer
 //= require photos
 //= require_tree .

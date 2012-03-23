@@ -5,16 +5,31 @@
 
     .gadget {
 	margin: 1em;
-	/* display: table-cell; */
-	float: left;
+	display: table-cell;
 	vertical-align: middle;
 	text-align: center;
-    }
+	position: relative;
+
+	img {
+	    position: relative;
+	    z-index: 1;
+	}     
+
+	.bar {
+	    display: none;
+	    position: absolute;
+	    top: 0em;
+	    z-index: 0;
+
+	    @include single-transition(width, 200, linear, 0);
+	}     
+    }	
+
 
     .gadget.loading {
 	width: 10em;
 	height: 10em;
-	background-color: #eee;
+	background-color: #eee;	
     }
 
     .gadget.thumbnailing {
@@ -22,14 +37,23 @@
 	height: 10em;
 	border: 1px solid #eee;
 	background-color: #bbb;
+
+	.bar {
+	    display: block;
+	    height: 100%;
+	    background: white;
+	}
     }
 
 
 
     .gadget.loaded { 
 	img {
-	    border: .5em solid white;
-	    @include box-shadow(2px 2px 2px #666)
+	    @include box-shadow(1px 1px 3px #666)
+	}
+
+	.bar {
+	    display: none;
 	}
     }
 }

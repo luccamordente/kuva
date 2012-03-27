@@ -27,7 +27,7 @@ var reader = (function() {
 	    }
 	    instance.next = instance.read;
 
-	    function next () { 
+	    function next () {
 		this.file = this.files[++index];
 		return this.readAsDataURL(this.file);
 	    }

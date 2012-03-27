@@ -59,6 +59,7 @@ var thumbnailer = (function () {
 	instance.context.drawImage(image, 0, 0);
 	instance.image = image;
 	instance.src = instance.context.getImageData(0, 0, image.width, image.height);
+
 	instance.dest = {
 	    width: width,
 	    height: Math.round(image.height * width / image.width),

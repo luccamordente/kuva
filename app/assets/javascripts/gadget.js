@@ -24,6 +24,7 @@ var gadget = (function declare_photos () {
 		source: 'http://' + kuva.service.url + '/assets/jla.gif',
 		title: 'Sumonando'
 	    }, this.data);
+
 	    $(this.parent).jqoteapp('#gadget', this.data);
 	    this.element = $('#gadget-' + this.data.id);
 	    this.image = image(this.element.find('img'));
@@ -34,16 +35,15 @@ var gadget = (function declare_photos () {
 	loadstart: function reader_loadstart (event) {
 	    this.show();
 	    this.element.addClass('loading');
-	    console.log(this.element);
 	},
 	loadend: function reader_loadend (event) {
-	    console.log(event);
+	    // TODO better way of cheking if readfile has ended
 	    if (event.loaded == event.total) {
-		var loading = new Image();
+		var loading = image();
 
 		this.image.source('http://' + kuva.service.url + '/assets/la.gif');
-		loading.onload = $.proxy(handlers.loaded, this);
-		loading.src = event.target.result;
+		loading.on('load', $.proxy(handlers.loaded, this));
+		loading.source(event.target.result);
 	    } else {
 
 	    }
@@ -59,12 +59,16 @@ var gadget = (function declare_photos () {
 	    thumbnail(image, 250, 1, this);
 	    this.loaded && this.loaded();
 	},	   
-	thumbnailing: function (event) {
+	thumbnailing: function thumbnailer_thumbnailing (event) {
 	    this.bar.width(((event.loaded / event.total) * 100) + '%');
 	},
-	thumbnailed: function (data) {
+	thumbnailed: function thumbnailer_thumbnailed (data) {
+	    this.bar.width('100%');
+
+	    // this.image.unload();
 	    this.image.source(data);
 	    this.element.addClass('loaded').removeClass('thumbnailing');
+	    this.thumbnailed && this.thumbnailed();
 	}
     }, view = {	      
 	show: function () {

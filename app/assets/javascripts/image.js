@@ -1,25 +1,28 @@
 var image = (function () {
     var that = function (element) {
-	element.element = (element && element[0] || element) || new Image();
-	return $.extend(element, inherit(image), inherit(resizable));
+	instance = {
+	    element: (element && element[0] || element) || new Image()
+	};
+	return $.extend(instance, inherit(image), inherit(resizable));
     };
     
     var image = {
 	hide: function () {
-	    this[0].style.display = 'none'; 
+	    this.element.style.display = 'none'; 
 	    return this;
 	},
 	show: function () {
-	    this[0].style.display = 'block'; 
+	    this.element.style.display = 'block'; 
 	    return this;
 	},
 	source: function (source, callback) {
-	    this[0].setAttribute('src', source);
-	    callback && this.loaded(callback);
+	    if (!arguments.length) return this.element.getAttribute('src');
+	    this.element.setAttribute('src', source);
+	    return callback && this.loaded(callback);
 	},
-	loaded: function (callback) {
-	    // TODO More compatible onload callback
-	    this.onload = callback;
+	on: function (event, callback) {
+	    // TODO More compatible on + event callback
+	    this.element['on' + event] = callback;
 	}
     };
 

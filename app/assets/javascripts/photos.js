@@ -24,7 +24,7 @@ var photos = (function declare_photos () {
 
     reader.onloadend = function(event) {
 	gadgets[this.index()].dispatch('loadend', event)
-	    .listen('loaded', function () {
+	    .listen('thumbnailed', function () {
 		reader.next();
 	    });
     };				   

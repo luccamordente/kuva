@@ -18,4 +18,5 @@
 //= require reader
 //= require thumbnailer
 //= require photos
+//= require image
 //= require_tree .

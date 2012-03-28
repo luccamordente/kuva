@@ -8,7 +8,7 @@ var gadget = (function declare_photos () {
     gadget = {
 	show: function () {
 	    !this.element && control.create.call(this);
-	    this.element.fadeIn();
+	    this.element.css({width: 250, height: 250}).fadeIn();
 	},
 	dispatch: function (name, event) {
 	    handlers[name] && handlers[name].call(this, event);
@@ -21,7 +21,7 @@ var gadget = (function declare_photos () {
 	create: function () {
 	    this.data = $.extend({
 		id: id++,
-		source: 'http://' + kuva.service.url + '/assets/jla.gif',
+		source: 'http://' + kuva.service.url + '/assets/blank.gif',
 		title: 'Sumonando'
 	    }, this.data);
 
@@ -39,47 +39,54 @@ var gadget = (function declare_photos () {
 	loadend: function reader_loadend (event) {
 	    // TODO better way of cheking if readfile has ended
 	    if (event.loaded == event.total) {
-		var loading = image();
-
-		this.image.source('http://' + kuva.service.url + '/assets/la.gif');
-		loading.on('load', $.proxy(handlers.loaded, this));
-		loading.source(event.target.result);
-	    } else {
+		resizer.context = this;
+		resizer.on('load', $.proxy(handlers.loaded, this))
+			.source(event.target.result);
+	    } else {						 
 
 	    }
 	},
 	loaded: function image_loaded (event) {
-	    var image = event.target, 
-	    height = Math.round(image.height * 250 / image.width);
-	    
+	    var thumb = {width: 250, height: 250 / resizer.ratio()}
+
 	    this.element.addClass('thumbnailing')
 		.removeClass('loading')
-		.css({width: 250, height: height});
+		.css(thumb);
 	    
-	    thumbnail(image, 250, 1, this);
+	    resizer.resize(250, null, 1, this);
+
+	    this.bar.updated = (new Date()).getTime();
 	    this.loaded && this.loaded();
 	},	   
 	thumbnailing: function thumbnailer_thumbnailing (event) {
-	    this.bar.width(((event.loaded / event.total) * 100) + '%');
+	    var percentage = ((event.loaded / event.total) * 100), now = (new Date()).getTime();
+	    
+	    if (now - this.bar.updated > 200) {
+		this.bar.width(percentage + '%');
+		this.bar.updated = now;
+	    }
 	},
 	thumbnailed: function thumbnailer_thumbnailed (data) {
-	    this.bar.width('100%');
+	    var gadget = this;
+	    this.element.removeClass('thumbnailing').addClass('transitioning');
+	    gadget.image.hide('slow');
 
-	    // this.image.unload();
-	    this.image.source(data);
-	    this.element.addClass('loaded').removeClass('thumbnailing');
-	    this.thumbnailed && this.thumbnailed();
+	    this.bar.width('100%').delay(2000).fadeOut('slow', function () {
+	       gadget.element.addClass('loaded').removeClass('transitioning');
+	       gadget.image.source(data).show('slow');
+	       gadget.thumbnailed && gadget.thumbnailed();
+	    });
 	}
     }, view = {	      
 	show: function () {
 
 	}
     }, configuration = {
-	thumbnailer: {
+	resizer: {
 	    thumbnailing: handlers.thumbnailing, 
 	    thumbnailed: handlers.thumbnailed,
 	}
-    }, thumbnail = thumbnailer(configuration.thumbnailer);
+    }, resizer = image(null, configuration.resizer);
 
     return that;
 })();

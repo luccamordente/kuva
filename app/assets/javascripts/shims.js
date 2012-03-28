@@ -9,4 +9,4 @@ if (typeof Object.create !== "function") {
     })();
 }
 
-inherit = Object.create;
+inherit = Object.create;			      

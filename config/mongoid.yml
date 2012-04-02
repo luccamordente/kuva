@@ -21,3 +21,6 @@ production:
   #     port: 27018
   #   - host: slave2.local
   #     port: 27019
+
+
+identity_map_enabled: true

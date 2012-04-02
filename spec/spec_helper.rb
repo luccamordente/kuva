@@ -23,5 +23,14 @@ RSpec.configure do |config|
   end
   
   # Devise
+  config.include Devise::TestHelpers, :type => :controller
+  config.extend ControllerMacros    , :type => :controller
+  
   config.extend LoginMacros, :type => :request
+end
+
+def validate_timestamps
+  describe "attributes" do
+    it { should have_fields(:created_at, :updated_at) }
+  end
 end

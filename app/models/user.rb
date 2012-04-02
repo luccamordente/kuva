@@ -1,5 +1,7 @@
 class User
   include Mongoid::Document
+  include Mongoid::Timestamps
+  
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -43,7 +45,23 @@ class User
   field :name, :type => String
   field :password, :type => String
   field :email, :type => String
+  
+  field :anonymous, :type => Boolean, :default => false
    
-  embeds_many :orders
-                      
+  has_many :orders, :dependent => :destroy
+  
+  
+  def self.create_anonymous_user
+    temp_token = SecureRandom.base64(15).tr('+/=', 'xyz')
+    user = ::User.new(:email => "#{temp_token}@kuva.com", :password => temp_token, :password_confirmation => temp_token, :anonymous => true)
+    user.save!(:validate => false)
+    user
+  end
+  
+  def move_to another_user
+    raise "Registered users cannot be moved." unless self.anonymous?
+    another_user.orders = self.orders
+    another_user.save && self.reload.destroy
+  end
+  
 end

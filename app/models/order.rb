@@ -1,5 +1,9 @@
 class Order
-  include Mongoid::Document  
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  
   embeds_many :photos
-  embedded_in :user
+  belongs_to :user, :index => true
+  
+  
 end

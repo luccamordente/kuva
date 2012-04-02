@@ -62,19 +62,26 @@ var gadget = (function declare_photos () {
 	    var percentage = ((event.loaded / event.total) * 100), now = (new Date()).getTime();
 	    
 	    if (now - this.bar.updated > 200) {
-		this.bar.width(percentage + '%');
+		this.bar.clearQueue().animate({width: percentage + '%'}, 1000, 'linear');
 		this.bar.updated = now;
 	    }
 	},
 	thumbnailed: function thumbnailer_thumbnailed (data) {
 	    var gadget = this;
-	    this.element.removeClass('thumbnailing').addClass('transitioning');
-	    gadget.image.hide('slow');
 
-	    this.bar.width('100%').delay(2000).fadeOut('slow', function () {
-	       gadget.element.addClass('loaded').removeClass('transitioning');
-	       gadget.image.source(data).show('slow');
-	       gadget.thumbnailed && gadget.thumbnailed();
+
+	    this.bar.animate({width: '100%'}, 1000, 'linear', function () {
+		gadget.image.hide();
+
+		// TODO Fix in a better way the hide bug on webkit browsers
+		setTimeout(function () {		    	   
+		    gadget.element.addClass('loaded').removeClass('thumbnailing');
+		    gadget.image.source(data).show('slow', function () {
+			gadget.bar.hide();
+		    }, 1)
+		});
+
+		gadget.thumbnailed && gadget.thumbnailed();
 	    });
 	}
     }, view = {	      

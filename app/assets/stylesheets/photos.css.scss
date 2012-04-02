@@ -56,31 +56,12 @@
 	}
     }
 
-    .gadget.transitioning {
-	background-color: transparent;
-	.bar {
-	    display: block;
-	    height: 100%;
-	    width: 100%;
-	    background: white;
-	}
-
-	img {
-	    width: 100%;
-	    height: 100%;
-	    background: image_url('la.gif') center center no-repeat;
-	    @include single-transition(opacity .05s ease);
-	}
-    }
-
-
-
     .gadget.loaded {
 	background-color: transparent;
 
 	img {
 	    @include box-shadow(1px 1px 4px #777);
-	    @include single-transition(opacity .05s ease-in);
+	    @include single-transition(opacity 1s ease-in);
 	}
 
 	.bar {

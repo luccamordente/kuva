@@ -31,11 +31,18 @@ app/controllers/home_controller.rb,87
 class HomeController < ApplicationControllerHomeController1,0
   def indexindex2,45
 
-app/controllers/photos_controller.rb,142
+app/controllers/photos_controller.rb,227
 class PhotosController < ApplicationControllerPhotosController1,0
-  def indexindex5,89
-  def createcreate9,147
-  def checkcheck18,354
+  def indexindex6,176
+  def createcreate10,235
+  def checkcheck19,442
+    def create_and_sign_in_anonymous_usercreate_and_sign_in_anonymous_user25,498
+
+app/controllers/sessions_controller.rb,294
+class SessionsController < Devise::SessionsControllerSessionsController1,0
+    def determine_anonymous_user_with_valid_logindetermine_anonymous_user_with_valid_login11,404
+    def move_anonymous_usermove_anonymous_user20,710
+    def current_anonymous_user?current_anonymous_user?26,843
 
 app/helpers/application_helper.rb,47
 module ApplicationHelperApplicationHelper1,0
@@ -52,8 +59,16 @@ class OrderOrder1,0
 app/models/photo.rb,22
 class PhotoPhoto1,0
 
-app/models/user.rb,20
+app/models/product.rb,26
+class ProductProduct1,0
+
+app/models/spec.rb,20
+class SpecSpec1,0
+
+app/models/user.rb,126
 class UserUser1,0
+  def self.create_anonymous_usercreate_anonymous_user54,1795
+  def move_to another_usermove_to61,2080
 
 app/uploaders/photo_uploader.rb,102
 class PhotoUploader < CarrierWave::Uploader::BasePhotoUploader3,19
@@ -83,6 +98,9 @@ config/initializers/inflections.rb,0
 
 config/initializers/mime_types.rb,0
 
+config/initializers/quitet_assets.rb,62
+  def call_with_quiet_assets(env)call_with_quiet_assets3,92
+
 config/initializers/secret_token.rb,0
 
 config/initializers/session_store.rb,0
@@ -101,15 +119,43 @@ public/500.html,0
 
 script/rails,0
 
+spec/controllers/photos_controller_spec.rb,0
+
+spec/controllers/sessions_controller_spec.rb,0
+
+spec/factories/orders.rb,0
+
+spec/factories/photos.rb,0
+
+spec/factories/products.rb,0
+
+spec/factories/specs.rb,0
+
 spec/factories/users.rb,0
 
 spec/helpers/home_helper_spec.rb,0
+
+spec/models/order_spec.rb,0
+
+spec/models/photo_spec.rb,0
+
+spec/models/product_spec.rb,0
+
+spec/models/spec_spec.rb,0
+
+spec/models/user_spec.rb,0
 
 spec/requests/home_spec.rb,0
 
 spec/requests/photos_spec.rb,0
 
-spec/spec_helper.rb,0
+spec/spec_helper.rb,51
+def validate_timestampsvalidate_timestamps32,899
+
+spec/support/controller_macros.rb,123
+module ControllerMacrosControllerMacros1,0
+  def login_adminlogin_admin2,24
+  def login_user user=nillogin_user9,213
 
 spec/support/login_macros.rb,105
 module LoginMacrosLoginMacros1,0

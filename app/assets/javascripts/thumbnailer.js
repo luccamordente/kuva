@@ -21,7 +21,7 @@ var thumbnailer = (function () {
 	    engine.canvas.width = image.width;
 	    
 	    engine.warm(image.element || image, width, quality);
-	},
+	},	    
 	/**
 	 * @author http://stackoverflow.com/users/219229/syockit   
 	 * @author http://aggen.sourceforge.net/				  
@@ -65,7 +65,7 @@ var thumbnailer = (function () {
 	    setTimeout(engine.move, 10);
 	},
 	move: function process(u) {
-            var a, r, g, b, v, i, j, idx;
+            var a, r, g, b, v, i, j, idx, f_x = undefined, f_y = undefined;
 
 	    u = u || 0;
 
@@ -78,18 +78,22 @@ var thumbnailer = (function () {
 		a = r = g = b = 0;
 
 		for (i = engine.icenter.x - engine.range; i <= engine.icenter.x + engine.range; i++) {
-		    if (i < 0 || i >= engine.src.width) 
-			continue;
-		    var f_x = Math.floor(1000 * Math.abs(i - engine.center.x));
+		    if (i < 0 || i >= engine.src.width) continue;
+
+		    f_x = Math.floor(1000 * Math.abs(i - engine.center.x));
+
 		    if (!engine.cache[f_x]) 
 			engine.cache[f_x] = {};
+
 		    for (j = engine.icenter.y - engine.range; j <= engine.icenter.y + engine.range; j++) {
-			if (j < 0 || j >= engine.src.height) 
-			    continue;
-			var f_y = Math.floor(1000 * Math.abs(j - engine.center.y));
+			if (j < 0 || j >= engine.src.height) continue;
+
+			f_y = Math.floor(1000 * Math.abs(j - engine.center.y));
 			if (engine.cache[f_x][f_y] == undefined) 
 			    engine.cache[f_x][f_y] = engine.lanczos(Math.sqrt(Math.pow(f_x * engine.rcp_ratio, 2) + Math.pow(f_y * engine.rcp_ratio, 2)) / 1000);
+
 			weight = engine.cache[f_x][f_y];
+
 			if (weight > 0) {
 			    idx = (j * engine.src.width + i) * 4;
 			    a += weight;
@@ -113,17 +117,22 @@ var thumbnailer = (function () {
 	    else setTimeout(engine.stop, 0);
 	},
 	stop: function finish() {
-	    var canvas = engine.canvas, context = engine.context, source = null, resized = engine.dest;
-
+	    var canvas = engine.canvas, context = engine.context, 
+	    source = null, 
+	    resized = engine.dest,
+	    idx = undefined,
+	    idx2 = undefined,
+	    i = 0
+	    j = 0;
+		   
 	    canvas.width = resized.width;
 	    canvas.height = resized.height;
 
 	    context.drawImage(engine.image, 0, 0);
 	    source = context.getImageData(0, 0, resized.width, resized.height);
 
-	    var idx, idx2;
-	    for (var i = 0; i < resized.width; i++) {
-		for (var j = 0; j < resized.height; j++) {
+	    for (i = 0; i < resized.width; i++) {
+		for (j = 0; j < resized.height; j++) {
 		    idx = (j * resized.width + i) * 3;
 		    idx2 = (j * resized.width + i) * 4;
 		    source.data[idx2] = resized.data[idx];
@@ -135,18 +144,31 @@ var thumbnailer = (function () {
 	    context.putImageData(source, 0, 0);
 
 	    // TODO clear canvas data
+	    engine.clear();
 	    engine.thumbnailed.call(engine.instance.context || engine.instance, canvas.toDataURL());
 	    queue.processed();
-	}	      
-    }, queue = {
+	},
+	clear: function clear_memory() {
+	    delete engine.dest;
+	    delete engine.context;
+	    delete engine.ratio;
+	    delete engine.src;
+	    delete engine.cache;
+	}   		       
+    }, queue = {	
 	processor: engine.thumbnail,
 	processing: false,
 	process: function () {
+	    var event = undefined;
 	    if (this.processing) return;
 	    else this.processing = true;
 
-	    var event = this.shift();
+	    event = this.shift();
+	    console.profile("engine");
+	    console.log(console.memory);
 	    this.processor.apply(this.shift.apply(event), event); 
+	    console.log(console.memory);
+	    console.profileEnd();
 	},
 	processed: function () {
 	    this.processing = false;
@@ -165,12 +187,13 @@ var thumbnailer = (function () {
     // Returns a function that calculates lanczos weight
     function lanczos(lobes) {
 	return function(x) {
-	    if (x > lobes) 
-		return 0;
+	    var xx = undefined;
+
+	    if (x > lobes) return 0;
 	    x *= Math.PI;
-	    if (Math.abs(x) < 1e-16) 
-		return 1
-	    var xx = x / lobes;
+
+	    if (Math.abs(x) < 1e-16) return 1
+	    xx = x / lobes;
 	    return Math.sin(x) * Math.sin(xx) / x / xx;
 	}
     }

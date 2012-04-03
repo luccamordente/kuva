@@ -60,7 +60,7 @@ class User
   
   def move_to another_user
     raise "Registered users cannot be moved." unless self.anonymous?
-    another_user.orders = self.orders
+    self.orders.each { |order| another_user.orders << order }
     another_user.save && self.reload.destroy
   end
   

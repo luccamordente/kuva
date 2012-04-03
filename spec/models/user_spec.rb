@@ -21,19 +21,22 @@ describe User do
   describe "move to" do
     
     describe "anonymous user" do
-      let!(:user){ Factory.create :user, :anonymous => true }
-      let!(:another_user){ Factory.create :user }
-      let!(:order){ Factory.create :order, :user_id => user.id }
+      let!(:anonymous_user){ Factory.create :user, :anonymous => true }
+      let!(:anonymous_order){ Factory.create :order, :user_id => anonymous_user.id }
+      let!(:registered_user){ Factory.create :user }
+      let!(:registered_order){ Factory.create :order, :user_id => registered_user.id }
       before do
-        user.move_to another_user
+        anonymous_user.move_to registered_user
       end
       it "destroys the original user" do
-        expect { user.reload }.to raise_error
+        expect { anonymous_user.reload }.to raise_error
       end
       it "moves the orders to the other user" do
-        another_user.reload
-        another_user.orders.should_not be_empty
-        another_user.orders.should == [order]
+        registered_user.reload
+        registered_user.orders.should_not be_empty
+      end
+      it "should not override the user orders" do
+        registered_user.orders.sort.should == [registered_order, anonymous_order].sort
       end
     end
     

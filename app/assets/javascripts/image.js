@@ -32,10 +32,16 @@ var image = (function () {
 
 	    return this;
 	},
-	source: function (source) {
+	source: function (source, store) {
 	    if (!arguments.length) return this.element.getAttribute('src');
-	    this.element.setAttribute('src', source);
-	    return this;
+	    if (!store) this.element.setAttribute('src', source);
+	    else {
+		this.result = source;
+
+		// TODO Native onload dispatching
+		this.element.onload && this.element.onload({target: this});
+	    }	     	     	     	     
+	    return this;       
 	},
 	on: function (event, callback) {
 	    // TODO More compatible on + event callback
@@ -46,6 +52,7 @@ var image = (function () {
 	    this.source(null);
 	    $(this.element).remove();
 	    delete this.element;
+	    delete this.result;
 	    this.element = new Image();
 	},
 	ratio: function () {
@@ -57,11 +64,15 @@ var image = (function () {
     if (Modernizr.canvas) {
 	var resizable = inherit(thumbnailer());
 	resizable.resize = function (width, height, quality, context) {
-	    (!height) && (height = width / this.ratio());
+	    var options = {context: context || this, type: this.type};
+	    (!height) && (height = width / this.ratio());  	
 	    (!width) && (width = height * this.ratio());
+	    
+	    
 
-	    this.thumbnail(this.element, width, quality, context || this);
-	}
+	    // TODO Better check element presence
+	    this.thumbnail(this.result || this.element, width, quality, options);
+	}		   						
     } else {
 	
     }

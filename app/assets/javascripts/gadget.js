@@ -22,8 +22,8 @@ var gadget = (function declare_photos () {
 	    this.data = $.extend({
 		id: id++,
 		source: 'http://' + kuva.service.url + '/assets/blank.gif',
-		title: 'Sumonando'
-	    }, this.data);
+		title: 'Sumonando imagem'
+	    }, this.data);	  
 
 	    $(this.parent).jqoteapp('#gadget', this.data);
 	    this.element = $('#gadget-' + this.data.id);
@@ -40,8 +40,9 @@ var gadget = (function declare_photos () {
 	    // TODO better way of cheking if readfile has ended
 	    if (event.loaded == event.total) {
 		resizer.context = this;
+		resizer.type = event.target.file.type;
 		resizer.on('load', $.proxy(handlers.loaded, this))
-			.source(event.target.result);
+		    .source(event.target.result, true);
 	    } else {						 
 
 	    }
@@ -60,7 +61,7 @@ var gadget = (function declare_photos () {
 	},	   
 	thumbnailing: function thumbnailer_thumbnailing (event) {
 	    var percentage = ((event.loaded / event.total) * 100), now = (new Date()).getTime();
-	    
+
 	    if (now - this.bar.updated > 200) {
 		this.bar.clearQueue().animate({width: percentage + '%'}, 1000, 'linear');
 		this.bar.updated = now;

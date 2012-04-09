@@ -13,7 +13,7 @@ var reader = (function() {
 	    index = -1;	      
 
 	    instance.files = [];
-
+	    
 	    instance.add = function (files) {
 		for (var i = 0, j = files.length; i < j; i++) {
 		    this.files.push(files[i]);
@@ -27,10 +27,20 @@ var reader = (function() {
 	    }
 	    instance.next = instance.read;
 
+	    instance.read.as = function (mode) {
+		var method = 'readAs' + mode[0].toUpperCase() + mode.substring(1);
+		if (!instance[method]) throw 'reader.read.as: Invalid read mode: ' + mode
+		this.method = method;
+		return instance;	      	     		      	   	     
+	    }	    	   
+	    instance.read.method = 'readAsText';
+ 		  	  	    
 	    function next () {
 		this.file = this.files[++index];
-		return this.readAsDataURL(this.file);
-	    }
+		// TODO Fill prepare event
+		this.onprepare && this.onprepare.call(this, {});
+		return this[this.read.method](this.file);
+	    }		    	      
 
 	    function ended () {
 		return (instance.files.length - 1) == index;

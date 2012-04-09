@@ -7,6 +7,24 @@ var thumbnailer = (function () {
 	context: null,
 	sample: null,
 	quality: 5,
+	select: function (mixed) {
+	    var parameters = Array.prototype.slice.apply(arguments), 
+	    options = parameters[parameters.length - 1], those = this;
+								 
+	    if (mixed instanceof Image) {			     
+		return engine.thumbnail.apply(this, parameters);
+	    } else if (decoder.decodable(options.type || decoder.format(mixed))) {
+		return decoder.decode(mixed, options.type, function (image) {	 
+		    var context = engine.context,
+		    data = context.createImageData(image.width, image.height);
+		      	      			       
+		    image.copyToImageData(data);
+		    parameters[0] = data;   	     
+		    
+		    return engine.thumbnail.apply(those, parameters);
+		});	   				  
+	    } else return false;	     
+	},
 	thumbnail: function thumbnail (image, width, quality) {
 	    quality = quality || engine.quality || 5;
 	    
@@ -15,7 +33,7 @@ var thumbnailer = (function () {
 	    engine.thumbnailing = this.thumbnailing;
 	    engine.thumbnailed = this.thumbnailed;
 	    engine.instance = this;
-
+	    
 	    engine.sample = 0;
 	    engine.canvas.height = image.height;
 	    engine.canvas.width = image.width;
@@ -36,9 +54,14 @@ var thumbnailer = (function () {
 	warm: function warm(image, width, lobes) { 
 	    var context = engine.context;
 
-	    context.drawImage(image, 0, 0);
 	    engine.image = image;
-	    engine.src = context.getImageData(0, 0, image.width, image.height);
+
+	    if (image instanceof Image) {
+		context.drawImage(image, 0, 0);
+		engine.src = context.getImageData(0, 0, image.width, image.height);
+	    } else if (image instanceof ImageData) {
+		engine.src = image;
+	    }	       	     
 
 	    engine.dest = {
 		width: width,
@@ -128,7 +151,12 @@ var thumbnailer = (function () {
 	    canvas.width = resized.width;
 	    canvas.height = resized.height;
 
-	    context.drawImage(engine.image, 0, 0);
+	    if (engine.image instanceof Image) {
+		context.drawImage(engine.image, 0, 0);
+	    } else if (engine.image instanceof ImageData) {
+		context.putImageData(engine.image, 0, 0);
+	    }
+	    
 	    source = context.getImageData(0, 0, resized.width, resized.height);
 
 	    for (i = 0; i < resized.width; i++) {
@@ -149,14 +177,16 @@ var thumbnailer = (function () {
 	    queue.processed();
 	},
 	clear: function clear_memory() {
-	    delete engine.dest;
+	    delete engine.dest;	  
 	    delete engine.context;
+	    delete engine.instance;
 	    delete engine.ratio;
 	    delete engine.src;
 	    delete engine.cache;
 	}   		       
-    }, queue = {	
-	processor: engine.thumbnail,
+    }, 
+    queue = {	
+	processor: engine.select,
 	processing: false,
 	process: function () {
 	    var event = undefined;
@@ -181,7 +211,7 @@ var thumbnailer = (function () {
 	},
 	shift: Array.prototype.shift,
 	push: Array.prototype.push
-    };
+    };		   
 
     
     // Returns a function that calculates lanczos weight
@@ -200,6 +230,6 @@ var thumbnailer = (function () {
 
     // Gears initialization
     engine.context = engine.canvas.getContext("2d");
-
+      		     	      	    	   	  
     return that;
 })();

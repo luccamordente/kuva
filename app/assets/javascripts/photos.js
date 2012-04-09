@@ -1,3 +1,5 @@
+//=require decoder
+   	   
 var kuva = {
     service: {
 	url: document.location.host
@@ -10,24 +12,32 @@ var photos = (function declare_photos () {
     }, reader = lib.reader(), gadgets = [];
     
     // Setup listeners
-    reader.onprogress = function(event) {
-	gadgets[this.index()].dispatch('progress', event);
-    };
-
-    reader.onabort = function(event) {
-	gadgets[this.index()].dispatch('abort', event);
-    };
-
+    reader.onprepare = function (event) {
+	if (decoder.decodable(this.file.type)) {
+	    this.read.as('arrayBuffer');
+	} else {    	    
+	    this.read.as('dataUrl');
+	}
+    }
+    		       
     reader.onloadstart = function(event) {
-	gadgets[this.index()].dispatch('loadstart', event);
-    };
+	gadgets[this.index()].dispatch('loadstart', event);			 
+    };	       	    	      	     	  
 
     reader.onloadend = function(event) {
 	gadgets[this.index()].dispatch('loadend', event)
 	    .listen('thumbnailed', function () {
 		reader.next();
 	    });
-    };				   
+    };		
+
+    reader.onprogress = function(event) {
+	gadgets[this.index()].dispatch('progress', event);
+    };
+
+    reader.onabort = function(event) {
+	gadgets[this.index()].dispatch('abort', event);
+    };		   
 
     function change (event) {
 	var i = this.files.length, instance = null;

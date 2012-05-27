@@ -5,13 +5,17 @@
 </form>
 
 <div id="gadgets"></div>
-
+       		            
 <script type="text/x-jqote-template" id="gadget">
 <![CDATA[
   <div id="gadget-<*= this.id *>" class="gadget">
-    <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
-    <div class="bar"></div>
+    <img class="thumbnail" src="<*= this.source *>" title="<*= this.title *>" />
+    <div class="bar"></div>					    
   <div>
 ]]>
 </script>
 
+<div id="overlay" class="gadget"></div>		                          
+
+<!-- move partial to a embed tag -->
+<%= render 'flash' %>

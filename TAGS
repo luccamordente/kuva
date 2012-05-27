@@ -8,169 +8,162 @@ var decoder = (function () {decoder4,34
 	decode: function (data, format, callback) {decode15,256
 	decodable: function (mime) {decodable28,575
 
-app/assets/javascripts/gadget.js,1189
-var gadget = (function declare_photos () {gadget1,0
-    var that = function initialize_photo(parent, options) {that2,43
-	options.data = options.data || {};options.data5,169
-    gadget = {gadget8,268
-	show: function () {show9,283
-	dispatch: function (name, event) {dispatch13,416
-	listen: function (name, callback) {listen17,531
-    }, control = {control20,599
-	create: function () {create21,618
-	    this.data = $.extend({$.extend22,641
-	    this.bar = this.element.find('.bar');this.element.find31,948
-    handlers = {handlers34,1001
-	loadstart: function reader_loadstart (event) {loadstart35,1018
-	loadend: function reader_loadend (event) {loadend39,1127
-		resizer.type = event.target.file.type;event.target.file.type43,1294
-	loaded: function image_loaded (event) {loaded50,1463
-	    var thumb = {width: 250, height: 250 / resizer.ratio()}thumb51,1504
-	thumbnailing: function thumbnailer_thumbnailing (event) {thumbnailing62,1789
-	thumbnailed: function thumbnailer_thumbnailed (data) {thumbnailed70,2093
-    }, view = {	      view88,2594
-	show: function () {show89,2617
-    }, configuration = {configuration92,2642
-	resizer: {resizer93,2667
+app/assets/javascripts/gadget.js,1186
+var gadget = (function declare_photos () {	gadget3,19
+    var that = function initialize_photo(parent, options) {that5,64
+		options.data = options.data || {};options.data8,192
+    gadget = {gadget11,297
+		show: function () {show12,312
+		dispatch: function (name, event) {dispatch16,443
+		listen: function (name, callback) {listen20,556
+    }, control = {control23,624
+		create: function () {create24,643
+			this.data = $.extend({$.extend25,667
+			this.bar = this.element.find('.bar');		   this.element.find34,981
+    handlers = {handlers37,1038
+		loadstart: function reader_loadstart (event) {loadstart38,1055
+		loadend: function reader_loadend (event) {loadend41,1152
+			var ratio = event.width / event.height,event.width42,1197
+		thumbnailing: function thumbnailer_thumbnailing (event) {thumbnailing50,1517
+		thumbnailed: function thumbnailer_thumbnailed (event) {thumbnailed58,1822
+					var prefix = "data:image/jpg;base64,";prefix66,2099
+    }, view = {	      view79,2453
+		show: function () {show80,2476
+    }; /*, TODO configuration = {configuration82,2502
+		 resizer: {resizer83,2536
+		template = $.jqotec('#gadget');$.jqotec92,2744
 
 app/assets/javascripts/home.js,0
 
-app/assets/javascripts/image.js,889
+app/assets/javascripts/image.js,1214
 var image = (function () {image1,0
     var that = function (element, options) {that2,27
-	instance = {instance3,72
-    image = {image9,303
-	size: function (width, height) {size11,333
-	hide: function (duration, easing, callback) {hide16,525
-	    var style = this.element.style;this.element.style17,572
-	    else style.display = 'none'; style.display21,749
-	show: function (duration, easing, callback) {show26,858
-	    var style = this.element.style;this.element.style27,905
-	    else style.display = 'block';style.display31,1086
-	source: function (source, store) {source35,1144
-	on: function (event, callback) {on46,1503
-	unload: function () {unload51,1652
-	ratio: function () {ratio58,1818
-	resizable.resize = function (width, height, quality, context) {resizable.resize66,1977
-	    var options = {context: context || this, type: this.type};options67,2042
-
-app/assets/javascripts/photos.js,689
-var kuva = {kuva3,27
-    service: {service4,40
-var photos = (function declare_photos () {photos9,93
-    var that = function initialize_photo(options) {that10,136
-    }, reader = lib.reader(), gadgets = [];gadgets12,190
-    }, reader = lib.reader(), gadgets = [];lib.reader12,190
-    reader.onprepare = function (event) {reader.onprepare15,262
-    reader.onloadstart = function(event) {reader.onloadstart23,452
-    reader.onloadend = function(event) {reader.onloadend27,589
-    reader.onprogress = function(event) {reader.onprogress34,758
-    reader.onabort = function(event) {reader.onabort38,860
-	var i = this.files.length, instance = null;this.files.length43,991
+	    instance = {instance4,137
+	if (typeof options === 'string') options = {title: options};options8,182
+    image = {image19,584
+	size: function (width, height) {size21,614
+	hide: function (duration, easing, callback) {hide26,806
+	    var style = this.element.style;this.element.style27,853
+	    else style.display = 'none'; style.display31,1030
+	show: function (duration, easing, callback) {show36,1139
+	    var style = this.element.style;this.element.style37,1186
+	    else style.display = 'block';style.display41,1367
+	source: function (source, store) {source45,1425
+	on: function (event, callback) {on62,2078
+	unload: function () {unload67,2227
+	ratio: function () {ratio74,2391
+	width: function (width) {width77,2471
+	height: function () {height80,2550
+	title: function (title, no_alt) {title83,2621
+	resizable.resize = function (width, height, quality, context) {resizable.resize92,2858
+	    var options = {context: context || this, type: this.type};options93,2923
+	var resizable = {resizable101,3269
+	    resize: function (width, height, quality, context) {resize102,3288
 
 app/assets/javascripts/process.js,800
-self.onmessage = function (event) {self.onmessage1,0
-    var data = event.data;event.data2,36
-    self.icenter.x = Math.floor(self.center.x);Math.floor10,205
-	self.icenter.y = Math.floor(self.center.y);Math.floor14,340
-	for (i = self.icenter.x - self.range; i <= self.icenter.x + self.range; i++) {self.icenter.x17,406
-	    if (i < 0 || i >= self.src.width) self.src.width18,486
-	    var f_x = Math.floor(1000 * Math.abs(i - self.center.x));Math.floor20,538
-	    for (j = self.icenter.y - self.range; j <= self.icenter.y + self.range; j++) {self.icenter.y23,653
-		if (j < 0 || j >= self.src.height) self.src.height24,737
-		var f_y = Math.floor(1000 * Math.abs(j - self.center.y));Math.floor26,791
-		weight = self.cache[f_x][f_y];self.cache29,1020
-	x *= Math.PI;Math.PI63,1908
+self.onmessage = function (event) {self.onmessage2,8
+    var data = event.data;event.data3,44
+    self.icenter.x = Math.floor(self.center.x);Math.floor11,213
+	self.icenter.y = Math.floor(self.center.y);Math.floor15,348
+	for (i = self.icenter.x - self.range; i <= self.icenter.x + self.range; i++) {self.icenter.x18,552
+	    if (i < 0 || i >= self.src.width) self.src.width19,632
+	    var f_x = Math.floor(1000 * Math.abs(i - self.center.x));Math.floor21,684
+	    for (j = self.icenter.y - self.range; j <= self.icenter.y + self.range; j++) {self.icenter.y24,799
+		if (j < 0 || j >= self.src.height) self.src.height25,883
+		var f_y = Math.floor(1000 * Math.abs(j - self.center.y));Math.floor27,937
+		weight = self.cache[f_x][f_y];self.cache30,1166
+	x *= Math.PI;Math.PI64,2054
 
-app/assets/javascripts/reader.js,805
+app/assets/javascripts/reader.js,796
 lib = {};lib1,0
 var reader = (function() {reader2,10
     var that = function () {that3,37
-	var reader = (function () {reader8,107
-	    var that = function () {that9,136
-	    instance.files = [];instance.files15,260
-	    instance.add = function (files) {instance.add17,292
-		for (var i = 0, j = files.length; i < j; i++) {files.length18,331
-	    instance.read = function (files) {instance.read24,459
-	    instance.next = instance.read;instance.read28,577
-	    instance.read.as = function (mode) {instance.read.as30,614
-		var method = 'readAs' + mode[0].toUpperCase() + mode.substring(1);method31,656
-	    instance.read.method = 'readAsText';instance.read.method36,891
-		this.file = this.files[++index];this.files39,971
-	    instance.index = function () {instance.index49,1242
+		var reader = (function () {reader8,108
+			var that = function () {that9,138
+			instance.files = [];instance.files15,256
+			instance.add = function (files) {instance.add17,284
+				for (var i = 0, j = files.length; i < j; i++) {files.length18,321
+			instance.read = function (files) {instance.read24,445
+			instance.next = instance.read;instance.read28,563
+			instance.read.as = function (mode) {instance.read.as30,598
+				var method = 'readAs' + mode[0].toUpperCase() + mode.substring(1);method31,638
+			instance.read.method = 'readAsText';instance.read.method36,879
+				this.file = this.files[++index];this.files39,948
+			instance.index = function () {instance.index50,1249
 
-app/assets/javascripts/shims.js,108
+app/assets/javascripts/shims.js,100
     Object.create = (function () {Object.create3,63
-inherit = Object.create;			     Object.create12,248
+inherit = Object.create;Object.create12,248
 
-app/assets/javascripts/thumbnailer.js,3461
-var thumbnailer = (function () {thumbnailer1,0
-    var that = function () {that2,33
-    engine = {engine5,105
-	select: function (mixed) {select10,207
-	    var parameters = Array.prototype.slice.apply(arguments), Array.prototype.slice.apply11,235
-		    var context = engine.context,engine.context18,608
-		    data = context.createImageData(image.width, image.height);context.createImageData19,644
-	thumbnail: function thumbnail (image, width, quality) {thumbnail28,922
-	    engine.thumbnailing = this.thumbnailing;this.thumbnailing33,1156
-	    engine.thumbnailed = this.thumbnailed;this.thumbnailed34,1202
-	    engine.canvas.height = image.height;image.height38,1305
-	    engine.canvas.width = image.width;image.width39,1347
-	warm: function warm(image, width, lobes) { warm54,1819
-	    var context = engine.context;engine.context55,1864
-		engine.src = context.getImageData(0, 0, image.width, image.height);context.getImageData61,1997
-	    engine.dest = {engine.dest66,2157
-	    engine.dest.data = new Array(engine.dest.width * engine.dest.height * 3);engine.dest.data71,2261
-	    engine.ratio = image.width / width;image.width73,2378
-	    engine.range = Math.ceil(engine.ratio * lobes / 2);Math.ceil75,2461
-	    engine.cache = {};engine.cache76,2518
- 	    engine.center = {};engine.center77,2542
-	    engine.icenter = {};engine.icenter78,2568
-	    // worker.onmessage = function (event) {worker.onmessage83,2735
-	    // 	var data = event.data;event.data84,2781
-	move: function process(u) {move90,2902
-	    engine.icenter.x = Math.floor(engine.center.x);Math.floor96,3075
-		engine.icenter.y = Math.floor(engine.center.y);Math.floor100,3223
-		for (i = engine.icenter.x - engine.range; i <= engine.icenter.x + engine.range; i++) {engine.icenter.x103,3295
-		    if (i < 0 || i >= engine.src.width) continue;engine.src.width104,3384
-		    f_x = Math.floor(1000 * Math.abs(i - engine.center.x));Math.floor106,3437
-		    for (j = engine.icenter.y - engine.range; j <= engine.icenter.y + engine.range; j++) {engine.icenter.y111,3559
-			if (j < 0 || j >= engine.src.height) continue;engine.src.height112,3652
-			f_y = Math.floor(1000 * Math.abs(j - engine.center.y));Math.floor114,3703
-			    engine.cache[f_x][f_y] = engine.lanczos(Math.sqrt(Math.pow(f_x * engine.rcp_ratio, 2) + Math.pow(f_y * engine.rcp_ratio, 2)) / 1000);engine.lanczos116,3807
-			weight = engine.cache[f_x][f_y];engine.cache118,3949
-	stop: function finish() {stop142,4734
-	    var canvas = engine.canvas, context = engine.context, engine.canvas143,4761
-	    resized = engine.dest,engine.dest145,4842
-	    canvas.width = resized.width;resized.width151,4944
-	    canvas.height = resized.height;resized.height152,4979
-	    source = context.getImageData(0, 0, resized.width, resized.height);context.getImageData160,5210
-		    source.data[idx2] = resized.data[idx];resized.data166,5451
-		    source.data[idx2 + 1] = resized.data[idx + 1];resized.data167,5496
-		    source.data[idx2 + 2] = resized.data[idx + 2];resized.data168,5549
-	clear: function clear_memory() {clear179,5830
-    queue = {	queue188,6048
-	process: function () {process191,6110
-	    event = this.shift();this.shift196,6231
-	processed: function () {processed203,6449
-	enqueue: function enqueue () {enqueue207,6549
-	    x *= Math.PI;Math.PI223,6929
-    engine.context = engine.canvas.getContext("2d");engine.canvas.getContext232,7096
+app/assets/javascripts/thumbnailer.js,3660
+var thumbnailer = (function declare_thumbnailer () {thumbnailer1,0
+    var that = function thumbnailer_singleton () {	    that2,53
+    engine = {engine5,152
+	select: function (mixed) {select10,254
+	    var parameters = Array.prototype.slice.apply(arguments), Array.prototype.slice.apply11,282
+		    var context = engine.context;engine.context18,655
+		    var data = context.createImageData(image.width, image.height);context.createImageData19,691
+	thumbnail: function thumbnail (image, width, quality) {thumbnail26,940
+	    engine.thumbnailing = this.thumbnailing;this.thumbnailing31,1174
+	    engine.thumbnailed = this.thumbnailed;this.thumbnailed32,1220
+	    engine.canvas.height = image.height;image.height36,1323
+	    engine.canvas.width = image.width;image.width37,1365
+	warm: function warm(image, width, lobes) { warm52,1837
+	    var context = engine.context;engine.context53,1882
+		engine.src = context.getImageData(0, 0, image.width, image.height);context.getImageData59,2015
+	    engine.dest = {engine.dest66,2220
+	    engine.dest.data = new Array(engine.dest.width * engine.dest.height * 3);engine.dest.data71,2324
+	    engine.ratio = image.width / width;image.width73,2441
+	    engine.range = Math.ceil(engine.ratio * lobes / 2);Math.ceil75,2524
+	    engine.cache = {};engine.cache76,2581
+ 	    engine.center = {};engine.center77,2605
+	    engine.icenter = {};engine.icenter78,2631
+	    // worker.onmessage = function (event) {worker.onmessage83,2798
+	    // 	var data = event.data;event.data84,2844
+	move: function process(u) {move90,2965
+	    engine.icenter.x = Math.floor(engine.center.x);Math.floor96,3138
+		engine.icenter.y = Math.floor(engine.center.y);Math.floor100,3286
+		for (i = engine.icenter.x - engine.range; i <= engine.icenter.x + engine.range; i++) {engine.icenter.x103,3358
+		    if (i < 0 || i >= engine.src.width) continue;engine.src.width104,3447
+		    f_x = Math.floor(1000 * Math.abs(i - engine.center.x));Math.floor106,3500
+		    for (j = engine.icenter.y - engine.range; j <= engine.icenter.y + engine.range; j++) {engine.icenter.y111,3631
+			if (j < 0 || j >= engine.src.height) continue;engine.src.height112,3724
+			f_y = Math.floor(1000 * Math.abs(j - engine.center.y));Math.floor114,3775
+			    engine.cache[f_x][f_y] = engine.lanczos(Math.sqrt(Math.pow(f_x * engine.rcp_ratio, 2) + Math.pow(f_y * engine.rcp_ratio, 2)) / 1000);engine.lanczos116,3888
+			// weight = engine.cache[f_x][f_y];engine.cache118,4030
+			weight = engine.lanczos(Math.sqrt(Math.pow(f_x * engine.rcp_ratio, 2) + Math.pow(f_y * engine.rcp_ratio, 2)) / 1000);engine.lanczos119,4069
+	stop: function finish() {stop143,4939
+	    var canvas = engine.canvas, context = engine.context, engine.canvas144,4966
+	    resized = engine.dest,engine.dest146,5047
+	    canvas.width = resized.width;resized.width152,5149
+	    canvas.height = resized.height;resized.height153,5184
+	    source = context.getImageData(0, 0, resized.width, resized.height);context.getImageData163,5504
+		    source.data[idx2] = resized.data[idx];resized.data169,5745
+		    source.data[idx2 + 1] = resized.data[idx + 1];resized.data170,5790
+		    source.data[idx2 + 2] = resized.data[idx + 2];resized.data171,5843
+	clear: function clear_memory() {clear182,6124
+    queue = {	queue191,6342
+	process: function () {process194,6404
+	    event = this.shift();this.shift199,6525
+	processed: function () {processed202,6616
+	enqueue: function enqueue () {enqueue206,6716
+	    x *= Math.PI;Math.PI222,7096
+    engine.context = engine.canvas.getContext("2d");engine.canvas.getContext231,7263
 
-app/assets/javascripts/uploader.js,617
+app/assets/javascripts/uploader.js,664
 var uploader = (function declare_uploader (reader) {uploader1,0
-    var that = function initialize (selector, settings) {that2,53
-	transport.uploader = settings.uploader;settings.uploader12,400
-    configuration = {configuration17,518
-    var uploader = {uploader21,559
-	upload: function upload_file(file) {upload22,580
-		for (var i = 0, j = file.length; i < j; i++) {file.length27,700
-    var transport = {transport38,874
-	queue: [],queue40,913
-	enqueue: function (file) {enqueue41,925
-	next: function () {next45,1003
-	sended: function () {sended50,1140
-	send: function (file) {send54,1222
+					var that = function initialize (selector, settings) {that2,53
+						transport.uploader = settings.uploader;settings.uploader12,460
+					configuration = {configuration17,594
+					var uploader = {uploader21,637
+						upload: function upload_file(file) {upload22,659
+								for (var i = 0, j = file.length; i < j; i++) {file.length27,788
+					var transport = {transport38,999
+						queue: [],queue40,1044
+						enqueue: function (file) {enqueue41,1061
+						next: function () {next45,1153
+						sended: function () {sended50,1306
+						send: function (file) {send54,1402
 
 app/controllers/application_controller.rb,79
 class ApplicationController < ActionController::BaseApplicationController1,0
@@ -365,97 +358,97 @@ if (!window.Silverlight) window.Silverlight = {}; Silverlight._silverlightCount 
 			a=[];a286,17646
 			b = [((buf & (255 << 16)) >> 16), ((a[2] == 64) ? -1 : (buf & (255 << 8)) >> 8),((a[3] == 64) ? -1 : (buf & 255))];b291,17787
 
-vendor/assets/javascripts/jpg.js,5585
-var JpegImage = (function jpegImage() {JpegImage12,600
-    var k = 0, code = [], i, j, length = 16;code45,1415
-    code.push({children: [], index: 0});children48,1527
-        p = code.pop();code.pop52,1672
-          p = code.pop();code.pop55,1767
-          code.push(q = {children: [], index: 0});q60,1879
-          code.push(q = {children: [], index: 0});children60,1879
-          p.children[p.index] = q.children;q.children61,1930
-        code.push(q = {children: [], index: 0});q68,2088
-        code.push(q = {children: [], index: 0});children68,2088
-        p.children[p.index] = q.children;q.children69,2137
-    var precision = frame.precision;frame.precision80,2436
-    var samplesPerLine = frame.samplesPerLine;frame.samplesPerLine81,2473
-    var scanLines = frame.scanLines;frame.scanLines82,2520
-    var mcusPerLine = frame.mcusPerLine;frame.mcusPerLine83,2557
-    var progressive = frame.progressive;frame.progressive84,2598
-    var maxH = frame.maxH, maxV = frame.maxV;frame.maxH85,2639
-    var componentsLength = components.length;components.length251,7486
-            h = component.h;component.h289,8658
-            v = component.v;component.v290,8687
-    var lines = [];lines319,9313
-    var blocksPerLine = component.blocksPerLine;component.blocksPerLine320,9333
-    var blocksPerColumn = component.blocksPerColumn;component.blocksPerColumn321,9382
-      var qt = component.quantizationTable;component.quantizationTable331,9891
-  constructor.prototype = {constructor.prototype504,15049
-    load: function load(path) {load505,15077
-      xhr.responseType = "arraybuffer";xhr.responseType508,15182
-      xhr.onload = (function() {xhr.onload509,15222
-    parse: function parse(data) {parse518,15494
-      var offset = 0, length = data.length;data.length519,15528
-        var array = data.subarray(offset, offset + length - 2);data.subarray527,15781
-        offset += array.length;array.length528,15845
-            component = frame.components[componentId];frame.components536,16127
-            if (maxH < component.h) maxH = component.h;component.h537,16182
-            if (maxV < component.v) maxV = component.v;component.v538,16238
-        var mcusPerLine = Math.ceil(frame.samplesPerLine / 8 / maxH);Math.ceil541,16316
-        var mcusPerColumn = Math.ceil(frame.scanLines / 8 / maxV);Math.ceil542,16386
-            component = frame.components[componentId];frame.components545,16563
-            var blocksPerLine = Math.ceil(Math.ceil(frame.samplesPerLine / 8) * component.h / maxH);Math.ceil546,16618
-            var blocksPerColumn = Math.ceil(Math.ceil(frame.scanLines  / 8) * component.v / maxV);Math.ceil547,16719
-            var blocks = [];blocks550,16952
-              var row = [];row552,17043
-      var quantizationTables = [], frames = [];quantizationTables571,17646
-      var huffmanTablesAC = [], huffmanTablesDC = [];huffmanTablesAC572,17694
-                jfif = {jfif604,18835
-                  version: { major: appData[5], minor: appData[6] },version605,18860
-                adobe = {adobe619,19574
-            var quantizationTableCount = Math.floor((readUint16() - 2) / 65);Math.floor630,19929
-            frame = {};frame650,20866
-            frame.components = [];frame.components655,21086
-            var components = [], component;components701,22884
-              component = frame.components[data[offset++]];frame.components703,22979
-      this.width = frame.samplesPerLine;frame.samplesPerLine726,23933
-      this.height = frame.scanLines;frame.scanLines727,23974
-      this.components = [];this.components730,24061
-    getData: function getData(width, height) {getData741,24434
-      var scaleX = this.width / width, scaleY = this.height / height;this.width745,24567
-          component1 = this.components[0];this.components757,25042
-            component1Line = component1.lines[0 | (y * component1.scaleY * scaleY)];component1.lines759,25126
-          component1 = this.components[0];this.components776,25792
-          component2 = this.components[1];this.components777,25835
-          component3 = this.components[2];this.components778,25878
-            component1Line = component1.lines[0 | (y * component1.scaleY * scaleY)];component1.lines780,25962
-            component2Line = component2.lines[0 | (y * component2.scaleY * scaleY)];component2.lines781,26047
-            component3Line = component3.lines[0 | (y * component3.scaleY * scaleY)];component3.lines782,26132
-          component1 = this.components[0];this.components815,27605
-          component2 = this.components[1];this.components816,27648
-          component3 = this.components[2];this.components817,27691
-          component4 = this.components[3];this.components818,27734
-            component1Line = component1.lines[0 | (y * component1.scaleY * scaleY)];component1.lines820,27818
-            component2Line = component2.lines[0 | (y * component2.scaleY * scaleY)];component2.lines821,27903
-            component3Line = component3.lines[0 | (y * component3.scaleY * scaleY)];component3.lines822,27988
-            component4Line = component4.lines[0 | (y * component4.scaleY * scaleY)];component4.lines823,28073
-    copyToImageData: function copyToImageData(imageData) {copyToImageData852,29365
-      var width = imageData.width, height = imageData.height;imageData.width853,29424
-      var imageDataArray = imageData.data;imageData.data854,29486
-      var data = this.getData(width, height);this.getData855,29529
+vendor/assets/javascripts/jpg.js,6099
+var JpegImage = (function module_jpeg_image() {JpegImage12,603
+        var k = 0, code = [], i, j, length = 16, p = undefined, q = undefined;code44,1531
+        code.push({children: [], index: 0});children48,1745
+                p = code.pop();code.pop55,1907
+                    p = code.pop();code.pop59,2027
+                    code.push(q = {children: [], index: 0});q66,2183
+                    code.push(q = {children: [], index: 0});children66,2183
+                    p.children[p.index] = q.children;q.children67,2244
+                code.push(q = {children: [], index: 0});q76,2460
+                code.push(q = {children: [], index: 0});children76,2460
+                p.children[p.index] = q.children;q.children77,2517
+        var precision = frame.precision,frame.precision89,2857
+        samplesPerLine = frame.samplesPerLine,frame.samplesPerLine90,2898
+        scanLines = frame.scanLines,frame.scanLines91,2945
+        mcusPerLine = frame.mcusPerLine,frame.mcusPerLine92,2982
+        progressive = frame.progressive,frame.progressive93,3023
+        maxH = frame.maxH, maxV = frame.maxV,frame.maxH94,3064
+        var componentsLength = components.length;components.length276,9211
+                        h = component.h;component.h314,10597
+                        v = component.v;component.v315,10638
+        var lines = [];lines344,11462
+        var blocksPerLine = component.blocksPerLine;component.blocksPerLine345,11486
+        var blocksPerColumn = component.blocksPerColumn;component.blocksPerColumn346,11539
+            var qt = component.quantizationTable;component.quantizationTable356,12084
+                component = frame.components[componentId];frame.components540,19013
+                if (maxH < component.h) maxH = component.h;component.h541,19072
+                if (maxV < component.v) maxV = component.v;component.v542,19132
+        mcusPerLine = Math.ceil(frame.samplesPerLine / 8 / maxH);Math.ceil546,19217
+        mcusPerColumn = Math.ceil(frame.scanLines / 8 / maxV);Math.ceil547,19283
+                component = frame.components[componentId];frame.components551,19459
+                blocksPerLine = Math.ceil(Math.ceil(frame.samplesPerLine / 8) * component.h / maxH);Math.ceil552,19518
+                blocksPerColumn = Math.ceil(Math.ceil(frame.scanLines  / 8) * component.v / maxV);Math.ceil553,19619
+                blocks = [];blocks556,19852
+                    row = [];row559,19944
+    jpegimage_constructor.prototype = {jpegimage_constructor.prototype579,20500
+        load: function load(path) {load580,20540
+            xhr.responseType = "arraybuffer";xhr.responseType583,20661
+            xhr.onload = (function() {xhr.onload584,20707
+        parse: function parse(data) {parse594,21067
+            var offset = 0, length = data.length;data.length595,21105
+                var array = data.subarray(offset, offset + length - 2);data.subarray603,21414
+                offset += array.length;array.length604,21486
+            var quantizationTables = [], frames = [];quantizationTables612,21711
+            var huffmanTablesAC = [], huffmanTablesDC = [];huffmanTablesAC613,21765
+                                jfif = {jfif645,23106
+                                    version: { major: appData[5], minor: appData[6] },version646,23147
+                                adobe = {adobe660,24059
+                    var quantizationTableCount = Math.floor((readUint16() - 2) / 65);Math.floor671,24550
+                    frame = {};frame691,25673
+                    frame.components = [];frame.components696,25933
+                    var components = [], component;components742,28116
+                        component = frame.components[data[offset++]];frame.components744,28227
+            this.width = frame.samplesPerLine;frame.samplesPerLine767,29436
+            this.height = frame.scanLines;frame.scanLines768,29483
+            this.components = [];this.components771,29588
+        getData: function getData(width, height) {getData782,30057
+            var scaleX = this.width / width, scaleY = this.height / height;this.width783,30108
+                component1 = this.components[0];this.components795,30647
+                    component1Line = component1.lines[0 | (y * component1.scaleY * scaleY)];component1.lines797,30743
+                component1 = this.components[0];this.components814,31515
+                component2 = this.components[1];this.components815,31564
+                component3 = this.components[2];this.components816,31613
+                    component1Line = component1.lines[0 | (y * component1.scaleY * scaleY)];component1.lines818,31709
+                    component2Line = component2.lines[0 | (y * component2.scaleY * scaleY)];component2.lines819,31802
+                    component3Line = component3.lines[0 | (y * component3.scaleY * scaleY)];component3.lines820,31895
+                component1 = this.components[0];this.components853,33636
+                component2 = this.components[1];this.components854,33685
+                component3 = this.components[2];this.components855,33734
+                component4 = this.components[3];this.components856,33783
+                    component1Line = component1.lines[0 | (y * component1.scaleY * scaleY)];component1.lines858,33879
+                    component2Line = component2.lines[0 | (y * component2.scaleY * scaleY)];component2.lines859,33972
+                    component3Line = component3.lines[0 | (y * component3.scaleY * scaleY)];component3.lines860,34065
+                    component4Line = component4.lines[0 | (y * component4.scaleY * scaleY)];component4.lines861,34158
+        copyToImageData: function copyToImageData(imageData) {copyToImageData890,35714
+            var width = imageData.width, height = imageData.height;imageData.width891,35777
+            var imageDataArray = imageData.data;imageData.data892,35845
+            var data = this.getData(width, height);this.getData893,35894
 
-vendor/assets/javascripts/jqote2.js,12041
-(function($){var _=false,E1="UndefinedTemplateError",E2="TemplateCompilationError",E3="TemplateExecutionError",A="[object Array]",S="[object String]",F="[object Function]",n=1,c="%",q=/^[^<]*(<[\w\W]+>)[^>]*$/,ts=Object.prototype.toString;function r(e,x){throw ($.extend(e,x),e)}function dns(f) {var a=[];if(ts.call(f)!==A)return _;for(var i=0,l=f.length;i<l;i++)a[i]=f[i].jqote_id;return a.length?a.sort().join('.').replace(/(\b\d+\b)\.(?:\1(\.|$))+/g,"$1$2"):_}function l(s,t){var f,g=[],t=t||c,x=ts.call(s);if(x===F)return s.jqote_id?[s]:_;if(x!==A)return[$.jqotec(s,t)];if(x===A)for(var i=0,l=s.length;i<l;i++)return g.length?g:_}$.fn.extend({jqote:function(x,y){var x=ts.call(x)===A?x:[x],d="";this.each(function(i){var f=$.jqotec(this,y);for(var j=0;j<x.length;j++)d+=f.call(x[j],i,j,x,f)});return d}});$.each({app:"append",pre:"prepend",sub:"html"},function(x,y){$.fn["jqote"+x]=function(e,d,t){var p,r,s=$.jqote(e,d,t),$$=!q.test(s)?function(s){return $(document.createTextNode(s))}:$;if(!!(p=dns(l(e))))r=new RegExp("(^|\\.)"+p.split(".").join("\\.(.*)?")+"(\\.|$)");return this.each(function(){var z=$$(s);$(this)[y](z);(z[0].nodeType===3?$(this):z).trigger("jqote."+x,[z,r])})}});jqote12,265
-(function($){var _=false,E1="UndefinedTemplateError",E2="TemplateCompilationError",E3="TemplateExecutionError",A="[object Array]",S="[object String]",F="[object Function]",n=1,c="%",q=/^[^<]*(<[\w\W]+>)[^>]*$/,ts=Object.prototype.toString;function r(e,x){throw ($.extend(e,x),e)}function dns(f) {var a=[];if(ts.call(f)!==A)return _;for(var i=0,l=f.length;i<l;i++)a[i]=f[i].jqote_id;return a.length?a.sort().join('.').replace(/(\b\d+\b)\.(?:\1(\.|$))+/g,"$1$2"):_}function l(s,t){var f,g=[],t=t||c,x=ts.call(s);if(x===F)return s.jqote_id?[s]:_;if(x!==A)return[$.jqotec(s,t)];if(x===A)for(var i=0,l=s.length;i<l;i++)return g.length?g:_}$.fn.extend({jqote:function(x,y){var x=ts.call(x)===A?x:[x],d="";this.each(function(i){var f=$.jqotec(this,y);for(var j=0;j<x.length;j++)d+=f.call(x[j],i,j,x,f)});return d}});$.each({app:"append",pre:"prepend",sub:"html"},function(x,y){$.fn["jqote"+x]=function(e,d,t){var p,r,s=$.jqote(e,d,t),$$=!q.test(s)?function(s){return $(document.createTextNode(s))}:$;if(!!(p=dns(l(e))))r=new RegExp("(^|\\.)"+p.split(".").join("\\.(.*)?")+"(\\.|$)");return this.each(function(){var z=$$(s);$(this)[y](z);(z[0].nodeType===3?$(this):z).trigger("jqote."+x,[z,r])})}});a12,265
-(function($){var _=false,E1="UndefinedTemplateError",E2="TemplateCompilationError",E3="TemplateExecutionError",A="[object Array]",S="[object String]",F="[object Function]",n=1,c="%",q=/^[^<]*(<[\w\W]+>)[^>]*$/,ts=Object.prototype.toString;function r(e,x){throw ($.extend(e,x),e)}function dns(f) {var a=[];if(ts.call(f)!==A)return _;for(var i=0,l=f.length;i<l;i++)a[i]=f[i].jqote_id;return a.length?a.sort().join('.').replace(/(\b\d+\b)\.(?:\1(\.|$))+/g,"$1$2"):_}function l(s,t){var f,g=[],t=t||c,x=ts.call(s);if(x===F)return s.jqote_id?[s]:_;if(x!==A)return[$.jqotec(s,t)];if(x===A)for(var i=0,l=s.length;i<l;i++)return g.length?g:_}$.fn.extend({jqote:function(x,y){var x=ts.call(x)===A?x:[x],d="";this.each(function(i){var f=$.jqotec(this,y);for(var j=0;j<x.length;j++)d+=f.call(x[j],i,j,x,f)});return d}});$.each({app:"append",pre:"prepend",sub:"html"},function(x,y){$.fn["jqote"+x]=function(e,d,t){var p,r,s=$.jqote(e,d,t),$$=!q.test(s)?function(s){return $(document.createTextNode(s))}:$;if(!!(p=dns(l(e))))r=new RegExp("(^|\\.)"+p.split(".").join("\\.(.*)?")+"(\\.|$)");return this.each(function(){var z=$$(s);$(this)[y](z);(z[0].nodeType===3?$(this):z).trigger("jqote."+x,[z,r])})}});A?x:[x],d12,265
-(function($){var _=false,E1="UndefinedTemplateError",E2="TemplateCompilationError",E3="TemplateExecutionError",A="[object Array]",S="[object String]",F="[object Function]",n=1,c="%",q=/^[^<]*(<[\w\W]+>)[^>]*$/,ts=Object.prototype.toString;function r(e,x){throw ($.extend(e,x),e)}function dns(f) {var a=[];if(ts.call(f)!==A)return _;for(var i=0,l=f.length;i<l;i++)a[i]=f[i].jqote_id;return a.length?a.sort().join('.').replace(/(\b\d+\b)\.(?:\1(\.|$))+/g,"$1$2"):_}function l(s,t){var f,g=[],t=t||c,x=ts.call(s);if(x===F)return s.jqote_id?[s]:_;if(x!==A)return[$.jqotec(s,t)];if(x===A)for(var i=0,l=s.length;i<l;i++)return g.length?g:_}$.fn.extend({jqote:function(x,y){var x=ts.call(x)===A?x:[x],d="";this.each(function(i){var f=$.jqotec(this,y);for(var j=0;j<x.length;j++)d+=f.call(x[j],i,j,x,f)});return d}});$.each({app:"append",pre:"prepend",sub:"html"},function(x,y){$.fn["jqote"+x]=function(e,d,t){var p,r,s=$.jqote(e,d,t),$$=!q.test(s)?function(s){return $(document.createTextNode(s))}:$;if(!!(p=dns(l(e))))r=new RegExp("(^|\\.)"+p.split(".").join("\\.(.*)?")+"(\\.|$)");return this.each(function(){var z=$$(s);$(this)[y](z);(z[0].nodeType===3?$(this):z).trigger("jqote."+x,[z,r])})}});Object.prototype.toString12,265
-$.extend({jqote:function(e,d,t){var s="",t=t||c,f=l(e);if(f===_)r(new Error("Empty or undefined template passed to $.jqote"),{type:E1});d=ts.call(d)!==A?[d]:d;for(var i=0,m=f.length;i<m;i++)for(var j=0;j<d.length;j++)s+=f[i].call(d[j],i,j,d,f[i]);return s},jqotec:function(x,t){var h,e,y,t=t||c,z=ts.call(x);if(z===S&&q.test(x)){e=y=x;if(h=$.jqotecache[x])return h}else{e=z===S||x.nodeType?$(x):x instanceof jQuery?x:null;if(!e[0]||!(y=e[0].innerHTML)&&!(y=e.text()))r(new Error("Empty or undefined template passed to $.jqotec"),{type:E1});if(h=$.jqotecache[$.data(e[0],"jqote_id")])return h}var s="",i,a=y.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]/g,"").split("<"+t).join(t+">\x1b").split(t+">");for(var m=0,k=a.length;m<k;m++)s+=a[m].charAt(0)!=="\x1b"?"out+='"+a[m].replace(/(\\|["'])/g,"\\$1")+"'":(a[m].charAt(1)==="="?";out+=("+a[m].substr(2)+");":(a[m].charAt(1)==="!"?";out+=$.jqotenc(("+a[m].substr(2)+"));":";"+a[m].substr(1)));s="try{"+('var out="";'+s+";return out;").split("out+='';").join("").split('var out="";out+=').join("var out=")+'}catch(e){e.type="'+E3+'";e.args=arguments;e.template=arguments.callee.toString();throw e;}';try{var f=new Function("i, j, data, fn",s)}catch(e){r(e,{type:E2})}i=e instanceof jQuery?$.data(e[0],"jqote_id",n):e;return $.jqotecache[i]=(f.jqote_id=n++,f)},jqote13,1457
-$.extend({jqote:function(e,d,t){var s="",t=t||c,f=l(e);if(f===_)r(new Error("Empty or undefined template passed to $.jqote"),{type:E1});d=ts.call(d)!==A?[d]:d;for(var i=0,m=f.length;i<m;i++)for(var j=0;j<d.length;j++)s+=f[i].call(d[j],i,j,d,f[i]);return s},jqotec:function(x,t){var h,e,y,t=t||c,z=ts.call(x);if(z===S&&q.test(x)){e=y=x;if(h=$.jqotecache[x])return h}else{e=z===S||x.nodeType?$(x):x instanceof jQuery?x:null;if(!e[0]||!(y=e[0].innerHTML)&&!(y=e.text()))r(new Error("Empty or undefined template passed to $.jqotec"),{type:E1});if(h=$.jqotecache[$.data(e[0],"jqote_id")])return h}var s="",i,a=y.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]/g,"").split("<"+t).join(t+">\x1b").split(t+">");for(var m=0,k=a.length;m<k;m++)s+=a[m].charAt(0)!=="\x1b"?"out+='"+a[m].replace(/(\\|["'])/g,"\\$1")+"'":(a[m].charAt(1)==="="?";out+=("+a[m].substr(2)+");":(a[m].charAt(1)==="!"?";out+=$.jqotenc(("+a[m].substr(2)+"));":";"+a[m].substr(1)));s="try{"+('var out="";'+s+";return out;").split("out+='';").join("").split('var out="";out+=').join("var out=")+'}catch(e){e.type="'+E3+'";e.args=arguments;e.template=arguments.callee.toString();throw e;}';try{var f=new Function("i, j, data, fn",s)}catch(e){r(e,{type:E2})}i=e instanceof jQuery?$.data(e[0],"jqote_id",n):e;return $.jqotecache[i]=(f.jqote_id=n++,f)},out;").split("out+13,1457
-$.extend({jqote:function(e,d,t){var s="",t=t||c,f=l(e);if(f===_)r(new Error("Empty or undefined template passed to $.jqote"),{type:E1});d=ts.call(d)!==A?[d]:d;for(var i=0,m=f.length;i<m;i++)for(var j=0;j<d.length;j++)s+=f[i].call(d[j],i,j,d,f[i]);return s},jqotec:function(x,t){var h,e,y,t=t||c,z=ts.call(x);if(z===S&&q.test(x)){e=y=x;if(h=$.jqotecache[x])return h}else{e=z===S||x.nodeType?$(x):x instanceof jQuery?x:null;if(!e[0]||!(y=e[0].innerHTML)&&!(y=e.text()))r(new Error("Empty or undefined template passed to $.jqotec"),{type:E1});if(h=$.jqotecache[$.data(e[0],"jqote_id")])return h}var s="",i,a=y.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]/g,"").split("<"+t).join(t+">\x1b").split(t+">");for(var m=0,k=a.length;m<k;m++)s+=a[m].charAt(0)!=="\x1b"?"out+='"+a[m].replace(/(\\|["'])/g,"\\$1")+"'":(a[m].charAt(1)==="="?";out+=("+a[m].substr(2)+");":(a[m].charAt(1)==="!"?";out+=$.jqotenc(("+a[m].substr(2)+"));":";"+a[m].substr(1)));s="try{"+('var out="";'+s+";return out;").split("out+='';").join("").split('var out="";out+=').join("var out=")+'}catch(e){e.type="'+E3+'";e.args=arguments;e.template=arguments.callee.toString();throw e;}';try{var f=new Function("i, j, data, fn",s)}catch(e){r(e,{type:E2})}i=e instanceof jQuery?$.data(e[0],"jqote_id",n):e;return $.jqotecache[i]=(f.jqote_id=n++,f)},s13,1457
-$.extend({jqote:function(e,d,t){var s="",t=t||c,f=l(e);if(f===_)r(new Error("Empty or undefined template passed to $.jqote"),{type:E1});d=ts.call(d)!==A?[d]:d;for(var i=0,m=f.length;i<m;i++)for(var j=0;j<d.length;j++)s+=f[i].call(d[j],i,j,d,f[i]);return s},jqotec:function(x,t){var h,e,y,t=t||c,z=ts.call(x);if(z===S&&q.test(x)){e=y=x;if(h=$.jqotecache[x])return h}else{e=z===S||x.nodeType?$(x):x instanceof jQuery?x:null;if(!e[0]||!(y=e[0].innerHTML)&&!(y=e.text()))r(new Error("Empty or undefined template passed to $.jqotec"),{type:E1});if(h=$.jqotecache[$.data(e[0],"jqote_id")])return h}var s="",i,a=y.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]/g,"").split("<"+t).join(t+">\x1b").split(t+">");for(var m=0,k=a.length;m<k;m++)s+=a[m].charAt(0)!=="\x1b"?"out+='"+a[m].replace(/(\\|["'])/g,"\\$1")+"'":(a[m].charAt(1)==="="?";out+=("+a[m].substr(2)+");":(a[m].charAt(1)==="!"?";out+=$.jqotenc(("+a[m].substr(2)+"));":";"+a[m].substr(1)));s="try{"+('var out="";'+s+";return out;").split("out+='';").join("").split('var out="";out+=').join("var out=")+'}catch(e){e.type="'+E3+'";e.args=arguments;e.template=arguments.callee.toString();throw e;}';try{var f=new Function("i, j, data, fn",s)}catch(e){r(e,{type:E2})}i=e instanceof jQuery?$.data(e[0],"jqote_id",n):e;return $.jqotecache[i]=(f.jqote_id=n++,f)},ts.call13,1457
-jqotefn:function(e){var t=ts.call(e),i=t===S&&q.test(e)?e:$.data($(e)[0],"jqote_id");return $.jqotecache[i]||_},jqotetag:function(s){if(ts.call(s)===S)c=s},jqotenc:function(s){return s.toString().replace(/&(?!\w+;)/g,'&#38;').split('<').join('&#60;').split('>').join('&#62;').split('"').join('&#34;').split("'").join('&#39;')},jqotecache:{}});$.event.special.jqote={add:function(o){var n,h=o.handler,d=!o.data?[]:ts.call(o.data)!==A?[o.data]:o.data;if(!o.namespace)o.namespace="app.pre.sub";if(!d.length||!(n=dns(l(d))))return;o.handler=function(e,m,r){return !r||r.test(n)?h.apply(this,[e,m]):null}}}})(jQuery);jqotecache14,2768
-jqotefn:function(e){var t=ts.call(e),i=t===S&&q.test(e)?e:$.data($(e)[0],"jqote_id");return $.jqotecache[i]||_},jqotetag:function(s){if(ts.call(s)===S)c=s},jqotenc:function(s){return s.toString().replace(/&(?!\w+;)/g,'&#38;').split('<').join('&#60;').split('>').join('&#62;').split('"').join('&#34;').split("'").join('&#39;')},jqotecache:{}});$.event.special.jqote={add:function(o){var n,h=o.handler,d=!o.data?[]:ts.call(o.data)!==A?[o.data]:o.data;if(!o.namespace)o.namespace="app.pre.sub";if(!d.length||!(n=dns(l(d))))return;o.handler=function(e,m,r){return !r||r.test(n)?h.apply(this,[e,m]):null}}}})(jQuery);jqotefn14,2768
-jqotefn:function(e){var t=ts.call(e),i=t===S&&q.test(e)?e:$.data($(e)[0],"jqote_id");return $.jqotecache[i]||_},jqotetag:function(s){if(ts.call(s)===S)c=s},jqotenc:function(s){return s.toString().replace(/&(?!\w+;)/g,'&#38;').split('<').join('&#60;').split('>').join('&#62;').split('"').join('&#34;').split("'").join('&#39;')},jqotecache:{}});$.event.special.jqote={add:function(o){var n,h=o.handler,d=!o.data?[]:ts.call(o.data)!==A?[o.data]:o.data;if(!o.namespace)o.namespace="app.pre.sub";if(!d.length||!(n=dns(l(d))))return;o.handler=function(e,m,r){return !r||r.test(n)?h.apply(this,[e,m]):null}}}})(jQuery);ts.call14,2768
+vendor/assets/javascripts/jqote2.js,12049
+(function($){var _=false,E1="UndefinedTemplateError",E2="TemplateCompilationError",E3="TemplateExecutionError",A="[object Array]",S="[object String]",F="[object Function]",n=1,c="%",q=/^[^<]*(<[\w\W]+>)[^>]*$/,ts=Object.prototype.toString;function r(e,x){throw ($.extend(e,x),e)}function dns(f) {var a=[];if(ts.call(f)!==A)return _;for(var i=0,l=f.length;i<l;i++)a[i]=f[i].jqote_id;return a.length?a.sort().join('.').replace(/(\b\d+\b)\.(?:\1(\.|$))+/g,"$1$2"):_}function l(s,t){var f,g=[],t=t||c,x=ts.call(s);if(x===F)return s.jqote_id?[s]:_;if(x!==A)return[$.jqotec(s,t)];if(x===A)for(var i=0,l=s.length;i<l;i++)return g.length?g:_}$.fn.extend({jqote:function(x,y){var x=ts.call(x)===A?x:[x],d="";this.each(function(i){var f=$.jqotec(this,y);for(var j=0;j<x.length;j++)d+=f.call(x[j],i,j,x,f)});return d}});$.each({app:"append",pre:"prepend",sub:"html"},function(x,y){$.fn["jqote"+x]=function(e,d,t){var p,r,s=$.jqote(e,d,t),$$=!q.test(s)?function(s){return $(document.createTextNode(s))}:$;if(!!(p=dns(l(e))))r=new RegExp("(^|\\.)"+p.split(".").join("\\.(.*)?")+"(\\.|$)");return this.each(function(){var z=$$(s);$(this)[y](z);(z[0].nodeType===3?$(this):z).trigger("jqote."+x,[z,r])})}});jqote12,264
+(function($){var _=false,E1="UndefinedTemplateError",E2="TemplateCompilationError",E3="TemplateExecutionError",A="[object Array]",S="[object String]",F="[object Function]",n=1,c="%",q=/^[^<]*(<[\w\W]+>)[^>]*$/,ts=Object.prototype.toString;function r(e,x){throw ($.extend(e,x),e)}function dns(f) {var a=[];if(ts.call(f)!==A)return _;for(var i=0,l=f.length;i<l;i++)a[i]=f[i].jqote_id;return a.length?a.sort().join('.').replace(/(\b\d+\b)\.(?:\1(\.|$))+/g,"$1$2"):_}function l(s,t){var f,g=[],t=t||c,x=ts.call(s);if(x===F)return s.jqote_id?[s]:_;if(x!==A)return[$.jqotec(s,t)];if(x===A)for(var i=0,l=s.length;i<l;i++)return g.length?g:_}$.fn.extend({jqote:function(x,y){var x=ts.call(x)===A?x:[x],d="";this.each(function(i){var f=$.jqotec(this,y);for(var j=0;j<x.length;j++)d+=f.call(x[j],i,j,x,f)});return d}});$.each({app:"append",pre:"prepend",sub:"html"},function(x,y){$.fn["jqote"+x]=function(e,d,t){var p,r,s=$.jqote(e,d,t),$$=!q.test(s)?function(s){return $(document.createTextNode(s))}:$;if(!!(p=dns(l(e))))r=new RegExp("(^|\\.)"+p.split(".").join("\\.(.*)?")+"(\\.|$)");return this.each(function(){var z=$$(s);$(this)[y](z);(z[0].nodeType===3?$(this):z).trigger("jqote."+x,[z,r])})}});a12,264
+(function($){var _=false,E1="UndefinedTemplateError",E2="TemplateCompilationError",E3="TemplateExecutionError",A="[object Array]",S="[object String]",F="[object Function]",n=1,c="%",q=/^[^<]*(<[\w\W]+>)[^>]*$/,ts=Object.prototype.toString;function r(e,x){throw ($.extend(e,x),e)}function dns(f) {var a=[];if(ts.call(f)!==A)return _;for(var i=0,l=f.length;i<l;i++)a[i]=f[i].jqote_id;return a.length?a.sort().join('.').replace(/(\b\d+\b)\.(?:\1(\.|$))+/g,"$1$2"):_}function l(s,t){var f,g=[],t=t||c,x=ts.call(s);if(x===F)return s.jqote_id?[s]:_;if(x!==A)return[$.jqotec(s,t)];if(x===A)for(var i=0,l=s.length;i<l;i++)return g.length?g:_}$.fn.extend({jqote:function(x,y){var x=ts.call(x)===A?x:[x],d="";this.each(function(i){var f=$.jqotec(this,y);for(var j=0;j<x.length;j++)d+=f.call(x[j],i,j,x,f)});return d}});$.each({app:"append",pre:"prepend",sub:"html"},function(x,y){$.fn["jqote"+x]=function(e,d,t){var p,r,s=$.jqote(e,d,t),$$=!q.test(s)?function(s){return $(document.createTextNode(s))}:$;if(!!(p=dns(l(e))))r=new RegExp("(^|\\.)"+p.split(".").join("\\.(.*)?")+"(\\.|$)");return this.each(function(){var z=$$(s);$(this)[y](z);(z[0].nodeType===3?$(this):z).trigger("jqote."+x,[z,r])})}});A?x:[x],d12,264
+(function($){var _=false,E1="UndefinedTemplateError",E2="TemplateCompilationError",E3="TemplateExecutionError",A="[object Array]",S="[object String]",F="[object Function]",n=1,c="%",q=/^[^<]*(<[\w\W]+>)[^>]*$/,ts=Object.prototype.toString;function r(e,x){throw ($.extend(e,x),e)}function dns(f) {var a=[];if(ts.call(f)!==A)return _;for(var i=0,l=f.length;i<l;i++)a[i]=f[i].jqote_id;return a.length?a.sort().join('.').replace(/(\b\d+\b)\.(?:\1(\.|$))+/g,"$1$2"):_}function l(s,t){var f,g=[],t=t||c,x=ts.call(s);if(x===F)return s.jqote_id?[s]:_;if(x!==A)return[$.jqotec(s,t)];if(x===A)for(var i=0,l=s.length;i<l;i++)return g.length?g:_}$.fn.extend({jqote:function(x,y){var x=ts.call(x)===A?x:[x],d="";this.each(function(i){var f=$.jqotec(this,y);for(var j=0;j<x.length;j++)d+=f.call(x[j],i,j,x,f)});return d}});$.each({app:"append",pre:"prepend",sub:"html"},function(x,y){$.fn["jqote"+x]=function(e,d,t){var p,r,s=$.jqote(e,d,t),$$=!q.test(s)?function(s){return $(document.createTextNode(s))}:$;if(!!(p=dns(l(e))))r=new RegExp("(^|\\.)"+p.split(".").join("\\.(.*)?")+"(\\.|$)");return this.each(function(){var z=$$(s);$(this)[y](z);(z[0].nodeType===3?$(this):z).trigger("jqote."+x,[z,r])})}});Object.prototype.toString12,264
+$.extend({jqote:function(e,d,t){var s="",t=t||c,f=l(e,t);if(f===_)r(new Error("Empty or undefined template passed to $.jqote"),{type:E1});d=ts.call(d)!==A?[d]:d;for(var i=0,m=f.length;i<m;i++)for(var j=0;j<d.length;j++)s+=f[i].call(d[j],i,j,d,f[i]);return s},jqotec:function(x,t){var h,e,y,t=t||c,z=ts.call(x);if(z===S&&q.test(x)){e=y=x;if(h=$.jqotecache[x])return h}else{e=z===S||x.nodeType?$(x):x instanceof jQuery?x:null;if(!e[0]||!(y=e[0].innerHTML)&&!(y=e.text()))r(new Error("Empty or undefined template passed to $.jqotec"),{type:E1});if(h=$.jqotecache[$.data(e[0],"jqote_id")])return h}var s="",i,a=y.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]/g,"").split("<"+t).join(t+">\x1b").split(t+">");for(var m=0,k=a.length;m<k;m++)s+=a[m].charAt(0)!=="\x1b"?"out+='"+a[m].replace(/(\\|["'])/g,"\\$1")+"'":(a[m].charAt(1)==="="?";out+=("+a[m].substr(2)+");":(a[m].charAt(1)==="!"?";out+=$.jqotenc(("+a[m].substr(2)+"));":";"+a[m].substr(1)));s="try{"+('var out="";'+s+";return out;").split("out+='';").join("").split('var out="";out+=').join("var out=")+'}catch(e){e.type="'+E3+'";e.args=arguments;e.template=arguments.callee.toString();throw e;}';try{var f=new Function("i, j, data, fn",s)}catch(e){r(e,{type:E2})}i=e instanceof jQuery?$.data(e[0],"jqote_id",n):e;return $.jqotecache[i]=(f.jqote_id=n++,f)},jqote13,1456
+$.extend({jqote:function(e,d,t){var s="",t=t||c,f=l(e,t);if(f===_)r(new Error("Empty or undefined template passed to $.jqote"),{type:E1});d=ts.call(d)!==A?[d]:d;for(var i=0,m=f.length;i<m;i++)for(var j=0;j<d.length;j++)s+=f[i].call(d[j],i,j,d,f[i]);return s},jqotec:function(x,t){var h,e,y,t=t||c,z=ts.call(x);if(z===S&&q.test(x)){e=y=x;if(h=$.jqotecache[x])return h}else{e=z===S||x.nodeType?$(x):x instanceof jQuery?x:null;if(!e[0]||!(y=e[0].innerHTML)&&!(y=e.text()))r(new Error("Empty or undefined template passed to $.jqotec"),{type:E1});if(h=$.jqotecache[$.data(e[0],"jqote_id")])return h}var s="",i,a=y.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]/g,"").split("<"+t).join(t+">\x1b").split(t+">");for(var m=0,k=a.length;m<k;m++)s+=a[m].charAt(0)!=="\x1b"?"out+='"+a[m].replace(/(\\|["'])/g,"\\$1")+"'":(a[m].charAt(1)==="="?";out+=("+a[m].substr(2)+");":(a[m].charAt(1)==="!"?";out+=$.jqotenc(("+a[m].substr(2)+"));":";"+a[m].substr(1)));s="try{"+('var out="";'+s+";return out;").split("out+='';").join("").split('var out="";out+=').join("var out=")+'}catch(e){e.type="'+E3+'";e.args=arguments;e.template=arguments.callee.toString();throw e;}';try{var f=new Function("i, j, data, fn",s)}catch(e){r(e,{type:E2})}i=e instanceof jQuery?$.data(e[0],"jqote_id",n):e;return $.jqotecache[i]=(f.jqote_id=n++,f)},out;").split("out+13,1456
+$.extend({jqote:function(e,d,t){var s="",t=t||c,f=l(e,t);if(f===_)r(new Error("Empty or undefined template passed to $.jqote"),{type:E1});d=ts.call(d)!==A?[d]:d;for(var i=0,m=f.length;i<m;i++)for(var j=0;j<d.length;j++)s+=f[i].call(d[j],i,j,d,f[i]);return s},jqotec:function(x,t){var h,e,y,t=t||c,z=ts.call(x);if(z===S&&q.test(x)){e=y=x;if(h=$.jqotecache[x])return h}else{e=z===S||x.nodeType?$(x):x instanceof jQuery?x:null;if(!e[0]||!(y=e[0].innerHTML)&&!(y=e.text()))r(new Error("Empty or undefined template passed to $.jqotec"),{type:E1});if(h=$.jqotecache[$.data(e[0],"jqote_id")])return h}var s="",i,a=y.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]/g,"").split("<"+t).join(t+">\x1b").split(t+">");for(var m=0,k=a.length;m<k;m++)s+=a[m].charAt(0)!=="\x1b"?"out+='"+a[m].replace(/(\\|["'])/g,"\\$1")+"'":(a[m].charAt(1)==="="?";out+=("+a[m].substr(2)+");":(a[m].charAt(1)==="!"?";out+=$.jqotenc(("+a[m].substr(2)+"));":";"+a[m].substr(1)));s="try{"+('var out="";'+s+";return out;").split("out+='';").join("").split('var out="";out+=').join("var out=")+'}catch(e){e.type="'+E3+'";e.args=arguments;e.template=arguments.callee.toString();throw e;}';try{var f=new Function("i, j, data, fn",s)}catch(e){r(e,{type:E2})}i=e instanceof jQuery?$.data(e[0],"jqote_id",n):e;return $.jqotecache[i]=(f.jqote_id=n++,f)},s13,1456
+$.extend({jqote:function(e,d,t){var s="",t=t||c,f=l(e,t);if(f===_)r(new Error("Empty or undefined template passed to $.jqote"),{type:E1});d=ts.call(d)!==A?[d]:d;for(var i=0,m=f.length;i<m;i++)for(var j=0;j<d.length;j++)s+=f[i].call(d[j],i,j,d,f[i]);return s},jqotec:function(x,t){var h,e,y,t=t||c,z=ts.call(x);if(z===S&&q.test(x)){e=y=x;if(h=$.jqotecache[x])return h}else{e=z===S||x.nodeType?$(x):x instanceof jQuery?x:null;if(!e[0]||!(y=e[0].innerHTML)&&!(y=e.text()))r(new Error("Empty or undefined template passed to $.jqotec"),{type:E1});if(h=$.jqotecache[$.data(e[0],"jqote_id")])return h}var s="",i,a=y.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]/g,"").split("<"+t).join(t+">\x1b").split(t+">");for(var m=0,k=a.length;m<k;m++)s+=a[m].charAt(0)!=="\x1b"?"out+='"+a[m].replace(/(\\|["'])/g,"\\$1")+"'":(a[m].charAt(1)==="="?";out+=("+a[m].substr(2)+");":(a[m].charAt(1)==="!"?";out+=$.jqotenc(("+a[m].substr(2)+"));":";"+a[m].substr(1)));s="try{"+('var out="";'+s+";return out;").split("out+='';").join("").split('var out="";out+=').join("var out=")+'}catch(e){e.type="'+E3+'";e.args=arguments;e.template=arguments.callee.toString();throw e;}';try{var f=new Function("i, j, data, fn",s)}catch(e){r(e,{type:E2})}i=e instanceof jQuery?$.data(e[0],"jqote_id",n):e;return $.jqotecache[i]=(f.jqote_id=n++,f)},ts.call13,1456
+jqotefn:function(e){var t=ts.call(e),i=t===S&&q.test(e)?e:$.data($(e)[0],"jqote_id");return $.jqotecache[i]||_},jqotetag:function(s){if(ts.call(s)===S)c=s},jqotenc:function(s){return s.toString().replace(/&(?!\w+;)/g,'&#38;').split('<').join('&#60;').split('>').join('&#62;').split('"').join('&#34;').split("'").join('&#39;')},jqotecache:{}});$.event.special.jqote={add:function(o){var n,h=o.handler,d=!o.data?[]:ts.call(o.data)!==A?[o.data]:o.data;if(!o.namespace)o.namespace="app.pre.sub";if(!d.length||!(n=dns(l(d))))return;o.handler=function(e,m,r){return !r||r.test(n)?h.apply(this,[e,m]):null}}}})(jQuery);jqotecache14,2769
+jqotefn:function(e){var t=ts.call(e),i=t===S&&q.test(e)?e:$.data($(e)[0],"jqote_id");return $.jqotecache[i]||_},jqotetag:function(s){if(ts.call(s)===S)c=s},jqotenc:function(s){return s.toString().replace(/&(?!\w+;)/g,'&#38;').split('<').join('&#60;').split('>').join('&#62;').split('"').join('&#34;').split("'").join('&#39;')},jqotecache:{}});$.event.special.jqote={add:function(o){var n,h=o.handler,d=!o.data?[]:ts.call(o.data)!==A?[o.data]:o.data;if(!o.namespace)o.namespace="app.pre.sub";if(!d.length||!(n=dns(l(d))))return;o.handler=function(e,m,r){return !r||r.test(n)?h.apply(this,[e,m]):null}}}})(jQuery);jqotefn14,2769
+jqotefn:function(e){var t=ts.call(e),i=t===S&&q.test(e)?e:$.data($(e)[0],"jqote_id");return $.jqotecache[i]||_},jqotetag:function(s){if(ts.call(s)===S)c=s},jqotenc:function(s){return s.toString().replace(/&(?!\w+;)/g,'&#38;').split('<').join('&#60;').split('>').join('&#62;').split('"').join('&#34;').split("'").join('&#39;')},jqotecache:{}});$.event.special.jqote={add:function(o){var n,h=o.handler,d=!o.data?[]:ts.call(o.data)!==A?[o.data]:o.data;if(!o.namespace)o.namespace="app.pre.sub";if(!d.length||!(n=dns(l(d))))return;o.handler=function(e,m,r){return !r||r.test(n)?h.apply(this,[e,m]):null}}}})(jQuery);ts.call14,2769
 
 vendor/assets/javascripts/modernizr.js,82447
 ;window.Modernizr=function(a,b,c){function D(a){j.cssText=a}function E(a,b){return D(n.join(a+";")+(b||""))}function F(a,b){return typeof a===b}function G(a,b){return!!~(""+a).indexOf(b)}function H(a,b){for(var d in a)if(j[a[d]]!==c)return b=="pfx"?a[d]:!0;return!1}function I(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:F(f,"function")?f.bind(d||b):f}return!1}function J(a,b,c){var d=a.charAt(0).toUpperCase()+a.substr(1),e=(a+" "+p.join(d+" ")+d).split(" ");return F(b,"string")||F(b,"undefined")?H(e,b):(e=(a+" "+q.join(d+" ")+d).split(" "),I(e,b,c))}function L(){e.input=function(c){for(var d=0,e=c.length;d<e;d++)u[c[d]]=c[d]in k;return u.list&&(u.list=!!b.createElement("datalist")&&!!a.HTMLDataListElement),u}("autocomplete autofocus list placeholder max min multiple pattern required step".split(" ")),e.inputtypes=function(a){for(var d=0,e,f,h,i=a.length;d<i;d++)k.setAttribute("type",f=a[d]),e=k.type!=="text",e&&(k.value=l,k.style.cssText="position:absolute;visibility:hidden;",/^range$/.test(f)&&k.style.WebkitAppearance!==c?(g.appendChild(k),h=b.defaultView,e=h.getComputedStyle&&h.getComputedStyle(k,null).WebkitAppearance!=="textfield"&&k.offsetHeight!==0,g.removeChild(k)):/^(search|tel)$/.test(f)||(/^(url|email)$/.test(f)?e=k.checkValidity&&k.checkValidity()===!1:/^color$/.test(f)?(g.appendChild(k),g.offsetWidth,e=k.value!=l,g.removeChild(k)):e=k.value!=l)),t[a[d]]=!!e;return t}("search tel url email datetime date month week time datetime-local number range color".split(" "))}var d="2.5.3",e={},f=!0,g=b.documentElement,h="modernizr",i=b.createElement(h),j=i.style,k=b.createElement("input"),l=":)",m={}.toString,n=" -webkit- -moz- -o- -ms- ".split(" "),o="Webkit Moz O ms",p=o.split(" "),q=o.toLowerCase().split(" "),r={svg:"http://www.w3.org/2000/svg"},s={},t={},u={},v=[],w=v.slice,x,y=function(a,c,d,e){var f,i,j,k=b.createElement("div"),l=b.body,m=l?l:b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:h+(d+1),k.appendChild(j);return f=["&#173;","<style>",a,"</style>"].join(""),k.id=h,m.innerHTML+=f,m.appendChild(k),l||(m.style.background="",g.appendChild(m)),i=c(k,a),l?k.parentNode.removeChild(k):m.parentNode.removeChild(m),!!i},z=function(b){var c=a.matchMedia||a.msMatchMedia;if(c)return c(b).matches;var d;return y("@media "+b+" { #"+h+" { position: absolute; } }",function(b){d=(a.getComputedStyle?getComputedStyle(b,null):b.currentStyle)["position"]=="absolute"}),d},A=function(){function d(d,e){e=e||b.createElement(a[d]||"div"),d="on"+d;var f=d in e;return f||(e.setAttribute||(e=b.createElement("div")),e.setAttribute&&e.removeAttribute&&(e.setAttribute(d,""),f=F(e[d],"function"),F(e[d],"undefined")||(e[d]=c),e.removeAttribute(d))),e=null,f}var a={select:"input",change:"input",submit:"form",reset:"form",error:"img",load:"img",abort:"img"};return d}(),B={}.hasOwnProperty,C;!F(B,"undefined")&&!F(B.call,"undefined")?C=function(a,b){return B.call(a,b)}:C=function(a,b){return b in a&&F(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=w.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(w.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(w.call(arguments)))};return e});var K=function(c,d){var f=c.join(""),g=d.length;y(f,function(c,d){var f=b.styleSheets[b.styleSheets.length-1],h=f?f.cssRules&&f.cssRules[0]?f.cssRules[0].cssText:f.cssText||"":"",i=c.childNodes,j={};while(g--)j[i[g].id]=i[g];e.touch="ontouchstart"in a||a.DocumentTouch&&b instanceof DocumentTouch||(j.touch&&j.touch.offsetTop)===9,e.csstransforms3d=(j.csstransforms3d&&j.csstransforms3d.offsetLeft)===9&&j.csstransforms3d.offsetHeight===3,e.generatedcontent=(j.generatedcontent&&j.generatedcontent.offsetHeight)>=1,e.fontface=/src/i.test(h)&&h.indexOf(d.split(" ")[0])===0},g,d)}(['@font-face {font-family:"font";src:url("https://")}',["@media (",n.join("touch-enabled),("),h,")","{#touch{top:9px;position:absolute}}"].join(""),["@media (",n.join("transform-3d),("),h,")","{#csstransforms3d{left:9px;position:absolute;height:3px;}}"].join(""),['#generatedcontent:after{content:"',l,'";visibility:hidden}'].join("")],["fontface","touch","csstransforms3d","generatedcontent"]);s.flexbox=function(){return J("flexOrder")},s.canvas=function(){var a=b.createElement("canvas");return!!a.getContext&&!!a.getContext("2d")},s.canvastext=function(){return!!e.canvas&&!!F(b.createElement("canvas").getContext("2d").fillText,"function")},s.webgl=function(){try{var d=b.createElement("canvas"),e;e=!(!a.WebGLRenderingContext||!d.getContext("experimental-webgl")&&!d.getContext("webgl")),d=c}catch(f){e=!1}return e},s.touch=function(){return e.touch},s.geolocation=function(){return!!navigator.geolocation},s.postmessage=function(){return!!a.postMessage},s.websqldatabase=function(){return!!a.openDatabase},s.indexedDB=function(){return!!J("indexedDB",a)},s.hashchange=function(){return A("hashchange",a)&&(b.documentMode===c||b.documentMode>7)},s.history=function(){return!!a.history&&!!history.pushState},s.draganddrop=function(){var a=b.createElement("div");return"draggable"in a||"ondragstart"in a&&"ondrop"in a},s.websockets=function(){for(var b=-1,c=p.length;++b<c;)if(a[p[b]+"WebSocket"])return!0;return"WebSocket"in a},s.rgba=function(){return D("background-color:rgba(150,255,150,.5)"),G(j.backgroundColor,"rgba")},s.hsla=function(){return D("background-color:hsla(120,40%,100%,.5)"),G(j.backgroundColor,"rgba")||G(j.backgroundColor,"hsla")},s.multiplebgs=function(){return D("background:url(https://),url(https://),red url(https://)"),/(url\s*\(.*?){3}/.test(j.background)},s.backgroundsize=function(){return J("backgroundSize")},s.borderimage=function(){return J("borderImage")},s.borderradius=function(){return J("borderRadius")},s.boxshadow=function(){return J("boxShadow")},s.textshadow=function(){return b.createElement("div").style.textShadow===""},s.opacity=function(){return E("opacity:.55"),/^0.55$/.test(j.opacity)},s.cssanimations=function(){return J("animationName")},s.csscolumns=function(){return J("columnCount")},s.cssgradients=function(){var a="background-image:",b="gradient(linear,left top,right bottom,from(#9f9),to(white));",c="linear-gradient(left top,#9f9, white);";return D((a+"-webkit- ".split(" ").join(b+a)+n.join(c+a)).slice(0,-a.length)),G(j.backgroundImage,"gradient")},s.cssreflections=function(){return J("boxReflect")},s.csstransforms=function(){return!!J("transform")},s.csstransforms3d=function(){var a=!!J("perspective");return a&&"webkitPerspective"in g.style&&(a=e.csstransforms3d),a},s.csstransitions=function(){return J("transition")},s.fontface=function(){return e.fontface},s.generatedcontent=function(){return e.generatedcontent},s.video=function(){var a=b.createElement("video"),c=!1;try{if(c=!!a.canPlayType)c=new Boolean(c),c.ogg=a.canPlayType('video/ogg; codecs="theora"').replace(/^no$/,""),c.h264=a.canPlayType('video/mp4; codecs="avc1.42E01E"').replace(/^no$/,""),c.webm=a.canPlayType('video/webm; codecs="vp8, vorbis"').replace(/^no$/,"")}catch(d){}return c},s.audio=function(){var a=b.createElement("audio"),c=!1;try{if(c=!!a.canPlayType)c=new Boolean(c),c.ogg=a.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/,""),c.mp3=a.canPlayType("audio/mpeg;").replace(/^no$/,""),c.wav=a.canPlayType('audio/wav; codecs="1"').replace(/^no$/,""),c.m4a=(a.canPlayType("audio/x-m4a;")||a.canPlayType("audio/aac;")).replace(/^no$/,"")}catch(d){}return c},s.localstorage=function(){try{return localStorage.setItem(h,h),localStorage.removeItem(h),!0}catch(a){return!1}},s.sessionstorage=function(){try{return sessionStorage.setItem(h,h),sessionStorage.removeItem(h),!0}catch(a){return!1}},s.webworkers=function(){return!!a.Worker},s.applicationcache=function(){return!!a.applicationCache},s.svg=function(){return!!b.createElementNS&&!!b.createElementNS(r.svg,"svg").createSVGRect},s.inlinesvg=function(){var a=b.createElement("div");return a.innerHTML="<svg/>",(a.firstChild&&a.firstChild.namespaceURI)==r.svg},s.smil=function(){return!!b.createElementNS&&/SVGAnimate/.test(m.call(b.createElementNS(r.svg,"animate")))},s.svgclippaths=function(){return!!b.createElementNS&&/SVGClipPath/.test(m.call(b.createElementNS(r.svg,"clipPath")))};for(var M in s)C(s,M)&&(x=M.toLowerCase(),e[x]=s[M](),v.push((e[x]?"":"no-")+x));return e.input||L(),e.addTest=function(a,b){if(typeof a=="object")for(var d in a)C(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,g.className+=" "+(b?"":"no-")+a,e[a]=b}return e},D(""),i=k=null,e._version=d,e._prefixes=n,e._domPrefixes=q,e._cssomPrefixes=p,e.mq=z,e.hasEvent=A,e.testProp=function(a){return H([a])},e.testAllProps=J,e.testStyles=y,e.prefixed=function(a,b,c){return b?J(a,b,c):J(a,"pfx")},g.className=g.className.replace(/(^|\s)no-js(\s|$)/,"$1$2")+(f?" js "+v.join(" "):""),e}(this,this.document),function(a,b){function g(a,b){var c=a.createElement("p"),d=a.getElementsByTagName("head")[0]||a.documentElement;return c.innerHTML="x<style>"+b+"</style>",d.insertBefore(c.lastChild,d.firstChild)}function h(){var a=k.elements;return typeof a=="string"?a.split(" "):a}function i(a){var b={},c=a.createElement,e=a.createDocumentFragment,f=e();a.createElement=function(a){var e=(b[a]||(b[a]=c(a))).cloneNode();return k.shivMethods&&e.canHaveChildren&&!d.test(a)?f.appendChild(e):e},a.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+h().join().replace(/\w+/g,function(a){return b[a]=c(a),f.createElement(a),'c("'+a+'")'})+");return n}")(k,f)}function j(a){var b;return a.documentShived?a:(k.shivCSS&&!e&&(b=!!g(a,"article,aside,details,figcaption,figure,footer,header,hgroup,nav,section{display:block}audio{display:none}canvas,video{display:inline-block;*display:inline;*zoom:1}[hidden]{display:none}audio[controls]{display:inline-block;*display:inline;*zoom:1}mark{background:#FF0;color:#000}")),f||(b=!i(a)),b&&(a.documentShived=b),a)}function o(a){var b,c=a.getElementsByTagName("*"),d=c.length,e=RegExp("^(?:"+h().join("|")+")$","i"),f=[];while(d--)b=c[d],e.test(b.nodeName)&&f.push(b.applyElement(p(b)));return f}function p(a){var b,c=a.attributes,d=c.length,e=a.ownerDocument.createElement(m+":"+a.nodeName);while(d--)b=c[d],b.specified&&e.setAttribute(b.nodeName,b.nodeValue);return e.style.cssText=a.style.cssText,e}function q(a){var b,c=a.split("{"),d=c.length,e=RegExp("(^|[\\s,>+~])("+h().join("|")+")(?=[[\\s,>+~#.:]|$)","gi"),f="$1"+m+"\\:$2";while(d--)b=c[d]=c[d].split("}"),b[b.length-1]=b[b.length-1].replace(e,f),c[d]=b.join("}");return c.join("{")}function r(a){var b=a.length;while(b--)a[b].removeNode()}function s(a){var b,c,d=a.namespaces,e=a.parentWindow;return!n||a.printShived?a:(typeof d[m]=="undefined"&&d.add(m),e.attachEvent("onbeforeprint",function(){var d,e,f,h=a.styleSheets,i=[],j=h.length,k=Array(j);while(j--)k[j]=h[j];while(f=k.pop())if(!f.disabled&&l.test(f.media)){for(d=f.imports,j=0,e=d.length;j<e;j++)k.push(d[j]);try{i.push(f.cssText)}catch(m){}}i=q(i.reverse().join("")),c=o(a),b=g(a,i)}),e.attachEvent("onafterprint",function(){r(c),b.removeNode(!0)}),a.printShived=!0,a)}var c=a.html5||{},d=/^<|^(?:button|form|map|select|textarea)$/i,e,f;(function(){var a=b.createElement("a");a.innerHTML="<xyz></xyz>",e="hidden"in a,f=a.childNodes.length==1||function(){try{b.createElement("a")}catch(a){return!0}var c=b.createDocumentFragment();return typeof c.cloneNode=="undefined"||typeof c.createDocumentFragment=="undefined"||typeof c.createElement=="undefined"}()})();var k={elements:c.elements||"abbr article aside audio bdi canvas data datalist details figcaption figure footer header hgroup mark meter nav output progress section summary time video",shivCSS:c.shivCSS!==!1,shivMethods:c.shivMethods!==!1,type:"default",shivDocument:j};a.html5=k,j(b);var l=/^$|\b(?:all|print)\b/,m="html5shiv",n=!f&&function(){var c=b.documentElement;return typeof b.namespaces!="undefined"&&typeof b.parentWindow!="undefined"&&typeof c.applyElement!="undefined"&&typeof c.removeNode!="undefined"&&typeof a.attachEvent!="undefined"}();k.type+=" print",k.shivPrint=s,s(b)}(this,document),function(a,b,c){function d(a){return o.call(a)=="[object Function]"}function e(a){return typeof a=="string"}function f(){}function g(a){return!a||a=="loaded"||a=="complete"||a=="uninitialized"}function h(){var a=p.shift();q=1,a?a.t?m(function(){(a.t=="c"?B.injectCss:B.injectJs)(a.s,0,a.a,a.x,a.e,1)},0):(a(),h()):q=0}function i(a,c,d,e,f,i,j){function k(b){if(!o&&g(l.readyState)&&(u.r=o=1,!q&&h(),l.onload=l.onreadystatechange=null,b)){a!="img"&&m(function(){t.removeChild(l)},50);for(var d in y[c])y[c].hasOwnProperty(d)&&y[c][d].onload()}}var j=j||B.errorTimeout,l={},o=0,r=0,u={t:d,s:c,e:f,a:i,x:j};y[c]===1&&(r=1,y[c]=[],l=b.createElement(a)),a=="object"?l.data=c:(l.src=c,l.type=a),l.width=l.height="0",l.onerror=l.onload=l.onreadystatechange=function(){k.call(this,r)},p.splice(e,0,u),a!="img"&&(r||y[c]===2?(t.insertBefore(l,s?null:n),m(k,j)):y[c].push(l))}function j(a,b,c,d,f){return q=0,b=b||"j",e(a)?i(b=="c"?v:u,a,b,this.i++,c,d,f):(p.splice(this.i++,0,a),p.length==1&&h()),this}function k(){var a=B;return a.loader={load:j,i:0},a}var l=b.documentElement,m=a.setTimeout,n=b.getElementsByTagName("script")[0],o={}.toString,p=[],q=0,r="MozAppearance"in l.style,s=r&&!!b.createRange().compareNode,t=s?l:n.parentNode,l=a.opera&&o.call(a.opera)=="[object Opera]",l=!!b.attachEvent&&!l,u=r?"object":l?"script":"img",v=l?"script":u,w=Array.isArray||function(a){return o.call(a)=="[object Array]"},x=[],y={},z={timeout:function(a,b){return b.length&&(a.timeout=b[0]),a}},A,B;B=function(a){function b(a){var a=a.split("!"),b=x.length,c=a.pop(),d=a.length,c={url:c,origUrl:c,prefixes:a},e,f,g;for(f=0;f<d;f++)g=a[f].split("="),(e=z[g.shift()])&&(c=e(c,g));for(f=0;f<b;f++)c=x[f](c);return c}function g(a,e,f,g,i){var j=b(a),l=j.autoCallback;j.url.split(".").pop().split("?").shift(),j.bypass||(e&&(e=d(e)?e:e[a]||e[g]||e[a.split("/").pop().split("?")[0]]||h),j.instead?j.instead(a,e,f,g,i):(y[j.url]?j.noexec=!0:y[j.url]=1,f.load(j.url,j.forceCSS||!j.forceJS&&"css"==j.url.split(".").pop().split("?").shift()?"c":c,j.noexec,j.attrs,j.timeout),(d(e)||d(l))&&f.load(function(){k(),e&&e(j.origUrl,i,g),l&&l(j.origUrl,i,g),y[j.url]=2})))}function i(a,b){function c(a,c){if(a){if(e(a))c||(j=function(){var a=[].slice.call(arguments);k.apply(this,a),l()}),g(a,j,b,0,h);else if(Object(a)===a)for(n in m=function(){var b=0,c;for(c in a)a.hasOwnProperty(c)&&b++;return b}(),a)a.hasOwnProperty(n)&&(!c&&!--m&&(d(j)?j=function(){var a=[].slice.call(arguments);k.apply(this,a),l()}:j[n]=function(a){return function(){var b=[].slice.call(arguments);a&&a.apply(this,b),l()}}(k[n])),g(a[n],j,b,n,h))}else!c&&l()}var h=!!a.test,i=a.load||a.both,j=a.callback||f,k=j,l=a.complete||f,m,n;c(h?a.yep:a.nope,!!i),i&&c(i)}var j,l,m=this.yepnope.loader;if(e(a))g(a,0,m,0);else if(w(a))for(j=0;j<a.length;j++)l=a[j],e(l)?g(l,0,m,0):w(l)?B(l):Object(l)===l&&i(l,m);else Object(a)===a&&i(a,m)},B.addPrefix=function(a,b){z[a]=b},B.addFilter=function(a){x.push(a)},B.errorTimeout=1e4,b.readyState==null&&b.addEventListener&&(b.readyState="loading",b.addEventListener("DOMContentLoaded",A=function(){b.removeEventListener("DOMContentLoaded",A,0),b.readyState="complete"},0)),a.yepnope=k(),a.yepnope.executeStack=h,a.yepnope.injectJs=function(a,c,d,e,i,j){var k=b.createElement("script"),l,o,e=e||B.errorTimeout;k.src=a;for(o in d)k.setAttribute(o,d[o]);c=j?h:c||f,k.onreadystatechange=k.onload=function(){!l&&g(k.readyState)&&(l=1,c(),k.onload=k.onreadystatechange=null)},m(function(){l||(l=1,c(1))},e),i?k.onload():n.parentNode.insertBefore(k,n)},a.yepnope.injectCss=function(a,c,d,e,g,i){var e=b.createElement("link"),j,c=i?h:c||f;e.href=a,e.rel="stylesheet",e.type="text/css";for(j in d)e.setAttribute(j,d[j]);g||(n.parentNode.insertBefore(e,n),m(c,0))}}(this,document),Modernizr.load=function(){yepnope.apply(window,[].slice.call(arguments,0))},Modernizr.addTest("filesystem",function(){var a=Modernizr._domPrefixes;for(var b=-1,c=a.length;++b<c;)if(window[a[b]+"RequestFileSystem"])return!0;return"requestFileSystem"in window}),Modernizr.addTest("strictmode",function(){return function(){return"use strict",!this}()}),Modernizr.addTest("filereader",function(){return!!(window.File&&window.FileList&&window.FileReader)})e4,706

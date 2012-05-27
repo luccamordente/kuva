@@ -12,11 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require shims
 //= require modernizr
+//= require shims
 //= require jqote2
-//= require reader
-//= require thumbnailer
-//= require photos
-//= require image
-//= require_tree .
+//= require kuva

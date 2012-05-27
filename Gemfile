@@ -19,9 +19,21 @@ gem "devise", "~> 2.0"
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-   gem 'sass-rails', '~> 3.2.3'
-   gem "haml-rails", '~> 0.3.4'
-   gem 'compass-rails'
+  gem 'sass-rails', '~> 3.2.3'
+  gem 'haml-rails', '~> 0.3.4'  # gem 'capistrano'
+  gem 'coffee-rails', '~> 3.2.1'
+  gem 'cpf_faker'
+  gem 'rspec-rails'
+  gem 'capybara'
+  gem 'launchy'
+  gem 'database_cleaner'
+  gem 'factory_girl_rails'
+  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
+  gem 'guard-rspec'
+  gem 'guard-livereload'
+  gem 'mongoid-rspec'
+  # gem 'growl'
+  gem 'compass-rails'
 
 #  gem 'coffee-rails', '~> 3.2.1'
 

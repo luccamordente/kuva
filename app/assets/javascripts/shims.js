@@ -9,4 +9,7 @@ if (typeof Object.create !== "function") {
     })();
 }
 
-inherit = Object.create;			      
+inherit = Object.create;
+
+// Modernizr add ins 
+Modernizr.addTest('imagedata', !!window['ImageData']);

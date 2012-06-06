@@ -12,10 +12,11 @@ droppable =
   dragover: (event) -> false 
   droped: (event) ->
     files = event.originalEvent.dataTransfer.files
-
+    droppable.overlay.hide();
+             
     if files? && files.length
-      reader.readAsText(files[0])
-    else
+      reader.read(files)
+    else          
       alert('error ao receber arquivos')
 
     false
@@ -25,10 +26,15 @@ droppable =
       controller: 'photos'
       action: 'uploaded'
       destination: 'flash'
-      type: 'file.dropped'
+      type: 'request'
       file:
+        name: @file.name
+        size: @file.size
+        type: @file.type
         data: event.target.result
-    )                      
+    )
+
+    reader.next();
   errored: (event) ->
     console.error(event.target.error)
   overlay:                          
@@ -46,10 +52,6 @@ droppable =
         console.log('leaved');
         droppable.overlay.hide()
      ).bind('dragover', @dragover).bind('drop', @droped)
-
-# Setup overlay events
-
-                 
 
 # Setup Resize listeners 
 # TODO Better listeners interface
@@ -72,6 +74,9 @@ kuva.listen('file.selected', (event) ->
   listen('thumbnailer.progress', (event) ->
     gadgets[event.key].dispatch('thumbnailing', event)
   ).
+  listen('thumbnailer.encoding', (event) ->
+    gadgets[event.key].dispatch('encoding', event)
+  ).                             
   listen('thumbnailer.thumbnailed', (event) ->
     gadgets[event.key].dispatch('thumbnailed', event)
 )
@@ -90,7 +95,7 @@ initialize = ->
 
   # Setup drag and drop
   droppable.overlay.element = $('#overlay')
-  reader = new FileReader()
+  reader.read.as('dataURL');
   reader.onloadend = droppable.readed
   reader.onerror = droppable.errored
   droppable.bind()

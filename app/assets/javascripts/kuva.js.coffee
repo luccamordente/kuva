@@ -10,12 +10,17 @@ this.kuva = (->
       
   publisher =
     publish: (event) ->
-      event.key = event.key.substring(0, 5);
-      console.log('publishing[' + event.key + ']', event.type, Date.now())
-      switch event.destination
+      event.key = event.key.substring(0, 5) if event.key
+
+      console.log('publishing[' + event.key + ']', event.type, event) if (event.type !=  'thumbnailer.progress');
+                                                                                          
+      
+      switch event.destination                                 
         when 'flash'
-          console.log('sending to flash');
-          flash.publish(event);
+          try
+            flash.publish(event);
+          catch e
+            console.error(e.message, e)
         when 'javascript'
         else
           listeners = this.listeners[event.type] || []
@@ -25,16 +30,15 @@ this.kuva = (->
               listeners[i].call(event.target || event.context || event, event);
           catch e
             console.error(e.message, e);
-            
-          true
 
+          true
   # Set public methods
   that.publish = publisher.publish
   that.listen = listener.listen
   that.listeners = {}
   that.service =
-    url: document.location.origin
-
+    url: "#{document.location.protocol}//#{document.location.host}"
+                                            
   # Application wild intiialization
   initialize = ->
     flash ||= window.flash[1] if window.flash?

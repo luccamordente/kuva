@@ -37,7 +37,7 @@ var gadget = (function declare_photos () {
     handlers = {
 		loadstart: function reader_loadstart (event) {
 			this.element.addClass('reading');
-		},			   
+		},			  
 		loadend: function reader_loadend (event) {
 			var ratio = event.width / event.height,
 			width = 250, height = 250 / ratio;
@@ -55,8 +55,11 @@ var gadget = (function declare_photos () {
 				this.bar.updated = now;
 			} 
 		},
+		encoding: function thumbnailer_encoding (event) {
+			this.bar.animate({width: '100%'});
+		},
 		thumbnailed: function thumbnailer_thumbnailed (event) {
-			var gadget = this;			       
+			var gadget = this;  
 
 			this.bar.animate({width: '100%'}, 1000, 'linear', function () {
 				gadget.image.hide();
@@ -75,7 +78,7 @@ var gadget = (function declare_photos () {
 				gadget.thumbnailed && gadget.thumbnailed();		// Execute callback if any
 			});
 
-		}   
+		}   					
     }, view = {	      
 		show: function () {
 		}

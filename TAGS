@@ -8,7 +8,7 @@ var decoder = (function () {decoder4,34
 	decode: function (data, format, callback) {decode15,256
 	decodable: function (mime) {decodable28,575
 
-app/assets/javascripts/gadget.js,1186
+app/assets/javascripts/gadget.js,1255
 var gadget = (function declare_photos () {	gadget3,19
     var that = function initialize_photo(parent, options) {that5,64
 		options.data = options.data || {};options.data8,192
@@ -22,16 +22,17 @@ var gadget = (function declare_photos () {	gadget3,19
 			this.bar = this.element.find('.bar');		   this.element.find34,981
     handlers = {handlers37,1038
 		loadstart: function reader_loadstart (event) {loadstart38,1055
-		loadend: function reader_loadend (event) {loadend41,1152
-			var ratio = event.width / event.height,event.width42,1197
-		thumbnailing: function thumbnailer_thumbnailing (event) {thumbnailing50,1517
-		thumbnailed: function thumbnailer_thumbnailed (event) {thumbnailed58,1822
-					var prefix = "data:image/jpg;base64,";prefix66,2099
-    }, view = {	      view79,2453
-		show: function () {show80,2476
-    }; /*, TODO configuration = {configuration82,2502
-		 resizer: {resizer83,2536
-		template = $.jqotec('#gadget');$.jqotec92,2744
+		loadend: function reader_loadend (event) {loadend41,1151
+			var ratio = event.width / event.height,event.width42,1196
+		thumbnailing: function thumbnailer_thumbnailing (event) {thumbnailing50,1516
+		encoding: function thumbnailer_encoding (event) {encoding58,1821
+		thumbnailed: function thumbnailer_thumbnailed (event) {thumbnailed61,1916
+					var prefix = "data:image/jpg;base64,";prefix69,2185
+    }, view = {	      view82,2544
+		show: function () {show83,2567
+    }; /*, TODO configuration = {configuration85,2593
+		 resizer: {resizer86,2627
+		template = $.jqotec('#gadget');$.jqotec95,2835
 
 app/assets/javascripts/home.js,0
 
@@ -74,7 +75,7 @@ self.onmessage = function (event) {self.onmessage2,8
 		weight = self.cache[f_x][f_y];self.cache30,1166
 	x *= Math.PI;Math.PI64,2054
 
-app/assets/javascripts/reader.js,796
+app/assets/javascripts/reader.js,798
 lib = {};lib1,0
 var reader = (function() {reader2,10
     var that = function () {that3,37
@@ -84,12 +85,12 @@ var reader = (function() {reader2,10
 			instance.add = function (files) {instance.add17,284
 				for (var i = 0, j = files.length; i < j; i++) {files.length18,321
 			instance.read = function (files) {instance.read24,445
-			instance.next = instance.read;instance.read28,563
-			instance.read.as = function (mode) {instance.read.as30,598
-				var method = 'readAs' + mode[0].toUpperCase() + mode.substring(1);method31,638
-			instance.read.method = 'readAsText';instance.read.method36,879
-				this.file = this.files[++index];this.files39,948
-			instance.index = function () {instance.index50,1249
+			instance.next = instance.read;instance.read28,604
+			instance.read.as = function (mode) {instance.read.as30,639
+				var method = 'readAs' + mode[0].toUpperCase() + mode.substring(1);method31,679
+			instance.read.method = 'readAsText';instance.read.method36,920
+					this.file = this.files[++index];this.files40,1033
+			instance.index = function () {instance.index54,1369
 
 app/assets/javascripts/shims.js,100
     Object.create = (function () {Object.create3,63

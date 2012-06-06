@@ -22,9 +22,9 @@ var reader = (function() {
 			}		   
 	    	
 			instance.read = function (files) {
-				if (files) instance.add(files);
-				if (!ended()) next.call(instance);
-			}
+				if (files) this.add(files);
+				if (!ended() && this.readyState !== this.LOADING) next.call(instance);
+			}					 	  
 			instance.next = instance.read;
 
 			instance.read.as = function (mode) {
@@ -36,16 +36,20 @@ var reader = (function() {
 			instance.read.method = 'readAsText';
  		  	
 			function next () {
-				this.file = this.files[++index];
-				// TODO Fill prepare event
-				this.onprepare && this.onprepare.call(this, {});
-				console.log('reading');
-				return this[this.read.method](this.file);
+				if (this.readyState !== this.LOADING) {
+					this.file = this.files[++index];
+					// TODO Fill prepare event
+					this.onprepare && this.onprepare.call(this, {});
+					console.log('nexted');
+					return this[this.read.method](this.file);
+				} else {
+					return true;
+				}
 			}		    	      
 
 			function ended () {
 				return (instance.files.length - 1) == index;
-			}					 
+			}
 			
 			instance.index = function () {
 				return index;

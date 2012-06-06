@@ -47,6 +47,7 @@ describe PhotosController do
   
   
   describe "create" do
+    login_user
     
     let(:count){ 3 }
     let(:order){ Factory.create :order }
@@ -61,32 +62,27 @@ describe PhotosController do
     #   }
     # }
     context "successfully" do
-      context do
-        login_user
-        it "should respond with success and the photo ids" do
-          post :create, :order_id => order.id, :photo => photo_attributes.merge(:spec_attributes => {:paper => "asd"}), :count => count
-          response.should be_success
-          ids = ActiveSupport::JSON.decode(response.body)['photo_ids']
-          ids.compact.size.should == count
-          order.reload
-          photos = []
-          expect { photos = ids.map{ |id| order.photos.find(id) } }.not_to raise_error
-          photos.each { |photo| 
-            photo.order.id.should == order.id 
-            photo.spec.paper.should == "asd"
-            photo.count.should == photo_attributes[:count]
-          }
-        end        
+      it "should respond with success and the photo ids" do
+        post :create, :order_id => order.id, :photo => photo_attributes.merge(:spec_attributes => {:paper => "asd"}), :count => count
+        response.should be_success
+        ids = ActiveSupport::JSON.decode(response.body)['photo_ids']
+        ids.compact.size.should == count
+        order.reload
+        photos = []
+        expect { photos = ids.map{ |id| order.photos.find(id) } }.not_to raise_error
+        photos.each { |photo| 
+          photo.order.id.should == order.id 
+          photo.spec.paper.should == "asd"
+          photo.count.should == photo_attributes[:count]
+        }
       end
-      context do
-        login_user
-        it "should keep only the count, spec and product_id" do
-          post :create, :order_id => order.id, :photo => photo_attributes, :count => count
-          ids = ActiveSupport::JSON.decode(response.body)['photo_ids']
-          order.reload
-          photos = ids.map{ |id| order.photos.find id }
-          photos.map(&:name).compact.should be_empty
-        end
+      
+      it "should keep only the count, spec and product_id" do
+        post :create, :order_id => order.id, :photo => photo_attributes, :count => count
+        ids = ActiveSupport::JSON.decode(response.body)['photo_ids']
+        order.reload
+        photos = ids.map{ |id| order.photos.find id }
+        photos.map(&:name).compact.should be_empty
       end
     end
     
@@ -94,42 +90,34 @@ describe PhotosController do
   
   
   describe "update" do
+    login_user
     
     let!(:order){ Factory.create :order }
     let!(:photo){ order.photos.create Factory.attributes_for(:photo).merge :spec_attributes => { :paper => nil } }
     
     context "successfully" do
-      context do
-        login_user
-        it "should update the photo" do
-          put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :count => photo.count + 1 }
-          photo.should be_valid
-          response.should be_success
-          (photo.count + 1).should == photo.reload.count
-        end
+      it "should update the photo" do
+        put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :count => photo.count + 1 }
+        photo.should be_valid
+        response.should be_success
+        (photo.count + 1).should == photo.reload.count
       end
       
-      context do
-        login_user
-        it "should update the photo nested attributes, like paper spec" do
-          photo.spec.paper.should be_nil
-          put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :spec_attributes => { :paper => :glossy } }
-          photo.should be_valid
-          response.should be_success
-          photo.reload.spec.paper.should_not be_nil
-        end
+      it "should update the photo nested attributes, like paper spec" do
+        photo.spec.paper.should be_nil
+        put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :spec_attributes => { :paper => :glossy } }
+        photo.should be_valid
+        response.should be_success
+        photo.reload.spec.paper.should_not be_nil
       end
       
-      context do
-        login_user
-        it "should upload an image" do
-          pending "Upload tem que ser feito desacoplado da Photo e depois associado a ela!"
-          put :update, :order_id => photo.order.id, :id => photo.id, 
-            :photo => { :image_attributes => { :image => fixture_file_upload(File.join(Rails.root,"app/assets/images/rails.png"), 'image/png') } }
-          photo.should be_valid
-          response.should be_success
-          photo.reload.image.should_not be_nil
-        end
+      it "should upload an image" do
+        pending "Upload tem que ser feito desacoplado da Photo e depois associado a ela!"
+        put :update, :order_id => photo.order.id, :id => photo.id, 
+          :photo => { :image_attributes => { :image => fixture_file_upload(File.join(Rails.root,"app/assets/images/rails.png"), 'image/png') } }
+        photo.should be_valid
+        response.should be_success
+        photo.reload.image.should_not be_nil
       end
     end
     

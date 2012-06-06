@@ -4,7 +4,7 @@ Kuva::Application.routes.draw do
 
   root :to => "home#index"
 
-  resources :photos, :only => [:index, :create] do
+  resources :photos, :only => [:index, :create, :update] do
     post :check, :on => :collection     
   end     
                                 

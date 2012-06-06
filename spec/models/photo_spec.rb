@@ -6,7 +6,9 @@ describe Photo do
   
   describe "relationships" do
     it { should be_embedded_in(:order) }
-    it { should embed_many(:specs) }
+    it { should embed_one(:spec) }
+    it { should belong_to(:product) }
+    it { should belong_to(:image) }
   end
 
 end

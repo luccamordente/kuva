@@ -1,13 +1,15 @@
 Kuva::Application.routes.draw do
-  
+
   devise_for :users, :controllers => { :sessions => "sessions" }
 
   root :to => "home#index"
 
   resources :photos, :only => [:index, :create, :update] do
-    post :check, :on => :collection     
-  end     
-                                
+    post :check, :on => :collection
+  end
+
+  resources :images, :only => [:create]
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

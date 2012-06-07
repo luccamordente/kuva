@@ -95,10 +95,11 @@ describe PhotosController do
     let!(:order){ Factory.create :order }
     let!(:photo){ order.photos.create Factory.attributes_for(:photo).merge :spec_attributes => { :paper => nil } }
     
+    specify{ photo.image.should be_nil }
+    
     context "successfully" do
       it "should update the photo" do
         put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :count => photo.count + 1 }
-        photo.should be_valid
         response.should be_success
         (photo.count + 1).should == photo.reload.count
       end
@@ -106,16 +107,13 @@ describe PhotosController do
       it "should update the photo nested attributes, like paper spec" do
         photo.spec.paper.should be_nil
         put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :spec_attributes => { :paper => :glossy } }
-        photo.should be_valid
         response.should be_success
         photo.reload.spec.paper.should_not be_nil
       end
       
-      it "should upload an image" do
-        pending "Upload tem que ser feito desacoplado da Photo e depois associado a ela!"
-        put :update, :order_id => photo.order.id, :id => photo.id, 
-          :photo => { :image_attributes => { :image => fixture_file_upload(File.join(Rails.root,"app/assets/images/rails.png"), 'image/png') } }
-        photo.should be_valid
+      it "should update the image" do
+        image = Factory.create :image
+        put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :image_id => image.id }
         response.should be_success
         photo.reload.image.should_not be_nil
       end

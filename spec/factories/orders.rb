@@ -2,6 +2,6 @@
 
 FactoryGirl.define do
   factory :order do
-    
+    status Order::EMPTY
   end
 end

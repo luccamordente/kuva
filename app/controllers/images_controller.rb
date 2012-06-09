@@ -5,9 +5,12 @@ class ImagesController < ApplicationController
   def create
     order = Order.find params[:order_id]
     
-    image = order.images.create params[:image]
+    @image = order.images.build params[:image]
+    @image.save!
     
-    success :id => image.id
+    success :id => @image.id  
+  rescue Mongoid::Errors::Validations => exception
+    render :status => :unprocessable_entity, :json => {:errors => @image.errors, :exception => exception}
   end
 
   

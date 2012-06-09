@@ -36,6 +36,7 @@ gem 'jquery-rails'
 
 group :development do
   gem 'foreman'
+  gem 'guard-spork'
 end
 
 group :development, :test do
@@ -54,7 +55,7 @@ group :development, :test do
   gem 'mongoid-rspec'
   gem 'awesome_print'
   gem 'ripper'
-  # gem 'growl'
+  gem 'growl'
 end
 
 

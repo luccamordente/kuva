@@ -4,9 +4,11 @@ class Image
   
   attr_accessible :image, :image_cache
   mount_uploader :image, ImageUploader
+  
+  belongs_to :order
 
   validates :image, :presence => true
   
-  belongs_to :order
+  after_save lambda{ self.order.check_and_update_status }, :if => lambda{ self.order.present? }
   
 end

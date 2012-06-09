@@ -3,6 +3,10 @@ Kuva::Application.routes.draw do
   devise_for :users, :controllers => { :sessions => "sessions" }
 
   root :to => "home#index"
+  
+  resources :photos, :only => [] do
+    post :close, :on => :member
+  end
 
   resources :photos, :only => [:index, :create, :update] do
     post :check, :on => :collection

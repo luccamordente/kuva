@@ -2,6 +2,6 @@
 
 FactoryGirl.define do
   factory :image do
-    image { File.read(File.join(Rails.root,"app/assets/images/rails.png")) }
+    image { File.open(File.join(Rails.root,"spec/fixtures/rails.png")) }
   end
 end

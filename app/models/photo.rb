@@ -12,4 +12,7 @@ class Photo
   
   belongs_to :product 
   belongs_to :image
+  
+  after_save lambda{ self.order.check_and_update_status }
+  
 end

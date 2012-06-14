@@ -8,7 +8,7 @@ class PhotosController < ApplicationController
   end
 
   def create
-    order = Order.find params[:order_id]
+    order = current_user.orders.find params[:order_id]
     count = params[:count].to_i
     
     ids   = []
@@ -22,7 +22,7 @@ class PhotosController < ApplicationController
   end
   
   def update
-    order = Order.find params[:order_id]
+    order = current_user.orders.find params[:order_id]
     @photo = order.photos.find params[:id]
     if @photo.update_attributes! params[:photo]
       success :id => @photo.id.to_s

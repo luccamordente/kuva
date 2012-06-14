@@ -1,0 +1,6 @@
+pt-BR:
+  photo:
+    specs:
+      paper:
+        glossy: "Brilhante"
+        matte:  "Fosco"

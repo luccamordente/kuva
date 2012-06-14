@@ -37,21 +37,14 @@ describe PhotosController do
   end
   
   
-  
-  describe "start" do
-    login_user
-    it "creates a new order for current user each time" do
-      expect { 2.times { get :index } }.to change(subject.current_user.orders, :count).by 2
-    end
-  end
-  
-  
   describe "create" do
     login_user
     
-    let(:count){ 3 }
-    let(:order){ Factory.create :order }
+    let!(:count){ 3 }
+    let(:order){ Factory.create :order, :user_id => current_user.id }
     let(:photo_attributes){ Factory.attributes_for(:photo) }
+    
+    specify { order.user_id.should == current_user.id }
     
     # { 
     #   :count => 10,
@@ -92,10 +85,11 @@ describe PhotosController do
   describe "update" do
     login_user
     
-    let!(:order){ Factory.create :order }
+    let!(:order){ Factory.create :order, :user_id => current_user.id }
     let!(:photo){ order.photos.create Factory.attributes_for(:photo).merge :spec_attributes => { :paper => nil } }
     
     specify{ photo.image.should be_nil }
+    specify { order.user_id.should == current_user.id }
     
     context "successfully" do
       it "should update the photo" do

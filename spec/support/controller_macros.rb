@@ -7,7 +7,7 @@ module ControllerMacros
   end
 
   def login_user
-    let (:current_user) {@user = Factory.create(:user)}
+    let!(:current_user) {@user = Factory.create(:user)}
     
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]

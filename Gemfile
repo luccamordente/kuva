@@ -19,14 +19,10 @@ gem "devise", "~> 2.0"
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-   gem 'sass-rails', '~> 3.2.3'
-   gem "haml-rails", '~> 0.3.4'
-   gem 'compass-rails'
-
-#  gem 'coffee-rails', '~> 3.2.1'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer'
+  gem 'sass-rails', '~> 3.2.3'
+  gem 'haml-rails', '~> 0.3.4'  # gem 'capistrano'
+  gem 'coffee-rails', '~> 3.2.1'
+  gem 'compass-rails'
 
   gem 'uglifier', '>= 1.0.3'
 end
@@ -36,7 +32,6 @@ gem 'jquery-rails'
 
 group :development do
   gem 'foreman'
-  gem 'guard-spork'
 end
 
 group :development, :test do

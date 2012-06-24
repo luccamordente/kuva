@@ -2,10 +2,6 @@ class PhotosController < ApplicationController
   
   before_filter :authenticate_user!#, :except => :index
   #before_filter :create_and_sign_in_anonymous_user, :only => :index
-  
-  def index
-    @order = current_user.orders.create
-  end
 
   def create
     order = current_user.orders.find params[:order_id]

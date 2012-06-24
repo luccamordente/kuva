@@ -85,5 +85,15 @@ describe Order do
     
   end
   
+  describe "downloadable" do
+    it "should not be downloadable when empty    "
+    it "should not be downloadable when progress "
+    it "should be downloadable when closed   "
+    it "should be downloadable when catching "
+    it "should be downloadable when caught   "
+    it "should be downloadable when ready    "
+    it "should be downloadable when delivered"
+  end
+  
   
 end

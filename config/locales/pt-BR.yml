@@ -4,3 +4,12 @@ pt-BR:
       paper:
         glossy: "Brilhante"
         matte:  "Fosco"
+  order:
+    status:
+      empty: Vazia
+      progress: Enviando
+      closed: Enviada
+      catching: Capturando
+      caught: Capturada
+      ready: Executada
+      delivered: Entregue

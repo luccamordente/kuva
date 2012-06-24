@@ -34,6 +34,8 @@ class Order
   # validations
   validates :status, :inclusion => { :in => STATUSES }, :allow_blank => false
   
+  scope :last_updated, all(:sort => [[:updated_at, :desc]])
+  
   # filters
   before_validation :set_empty_status, :on => :create
   
@@ -46,6 +48,10 @@ class Order
     self.status = status
     self.send :"#{status}_at=", Time.now
     save
+  end
+  
+  def downloadable?
+    not [EMPTY, PROGRESS].include? status
   end
   
   

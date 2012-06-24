@@ -23,6 +23,7 @@ group :assets do
   gem 'haml-rails', '~> 0.3.4'  # gem 'capistrano'
   gem 'coffee-rails', '~> 3.2.1'
   gem 'compass-rails'
+  gem "bootstrap-sass"
 
   gem 'uglifier', '>= 1.0.3'
 end

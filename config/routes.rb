@@ -1,5 +1,11 @@
 Kuva::Application.routes.draw do
 
+  namespace :admin do 
+    resources :orders 
+    
+    root :to => "orders#index"
+  end
+
   devise_for :users, :controllers => { :sessions => "sessions" }
 
   root :to => "home#index"
@@ -9,7 +15,7 @@ Kuva::Application.routes.draw do
     post :close, :on => :member
   end
 
-  resources :photos, :only => [:index, :create, :update] do
+  resources :photos, :only => [:create, :update] do
     post :check, :on => :collection
   end
 

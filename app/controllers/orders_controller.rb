@@ -6,13 +6,15 @@ class OrdersController < ApplicationController
   
   def open
     @order = current_user.orders.create
+    
+    success :id => @order.id.to_s
   end
   
   def close
     @order = current_user.orders.find params[:id]
-    @order.close
+    @order.update_status Order::CLOSED
     
-    success :id => @order.id.to_s 
+    success :id => @order.id.to_s
   end
   
   
@@ -25,6 +27,5 @@ class OrdersController < ApplicationController
   def load_products
     @products = Product.only(:_id,:name,:price).all
   end
-
   
 end

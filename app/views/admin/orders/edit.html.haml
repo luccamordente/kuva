@@ -1,0 +1,8 @@
+%h1 Editing admin_order
+
+= form_for @order, :url => admin_order_path(@order) do |f|
+  = render 'form', :f => f
+
+= link_to 'Show', admin_order_path(@order)
+\|
+= link_to 'Back', admin_orders_path

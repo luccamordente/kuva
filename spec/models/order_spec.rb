@@ -43,7 +43,8 @@ describe Order do
     context "PROGRESS" do
       it "should update status to PROGRESS when the first photo is added" do
         order = Factory.create :order
-        order.photos.create Factory.attributes_for :photo
+        photo = order.photos.create Factory.attributes_for :photo
+        photo.should be_persisted
         order.reload.status.should == Order::PROGRESS
       end
       it "should not update status to PROGRESS when the first photo is added and the status is not EMPTY" do
@@ -54,18 +55,34 @@ describe Order do
       end
       it "should update status to PROGRESS when the first image is added" do
         order = Factory.create :order
-        order.images.create Factory.attributes_for :image
+        image = order.images.create Factory.attributes_for :image
+        image.should be_persisted
         order.reload.status.should == Order::PROGRESS
       end
     end
     
-    context "CLOSED" do
-      it "should update status to CLOSED when close is called" do
-        order = Factory.create :order
-        order.close
-        order.status.should == Order::CLOSED
-      end
+    
+    context "update" do
+      Order::STATUSES.each do |status|
+        
+        context "status to #{status}" do
+          subject{ Factory.create :order }
+        
+          specify{ subject.status.should == Order::EMPTY }
+          specify{ subject.send(:"#{status}_at").should be_nil }
+        
+          context do
+            before(:all) { subject.update_status status }
+        
+            its(:status){ should == status}
+            its(:"#{status}_at"){ should_not be_nil }            
+          end
+        end
+        
+      end  
     end
+    
+    
   end
   
   

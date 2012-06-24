@@ -11,6 +11,7 @@ describe OrdersController do
       order.should_not be_nil
       order.should be_persisted
       order.user_id.should == current_user.id
+      ActiveSupport::JSON.decode(response.body)['id'].should == order.id.to_s
     end
     
     it "creates a new order for current user each time" do

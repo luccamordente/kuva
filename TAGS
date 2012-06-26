@@ -8,7 +8,7 @@ var decoder = (function () {decoder4,34
 	decode: function (data, format, callback) {decode15,256
 	decodable: function (mime) {decodable28,575
 
-app/assets/javascripts/gadget.js,1255
+app/assets/javascripts/gadget.js,1273
 var gadget = (function declare_photos () {	gadget3,19
     var that = function initialize_photo(parent, options) {that5,64
 		options.data = options.data || {};options.data8,192
@@ -23,16 +23,16 @@ var gadget = (function declare_photos () {	gadget3,19
     handlers = {handlers37,1038
 		loadstart: function reader_loadstart (event) {loadstart38,1055
 		loadend: function reader_loadend (event) {loadend41,1151
-			var ratio = event.width / event.height,event.width42,1196
-		thumbnailing: function thumbnailer_thumbnailing (event) {thumbnailing50,1516
-		encoding: function thumbnailer_encoding (event) {encoding58,1821
-		thumbnailed: function thumbnailer_thumbnailed (event) {thumbnailed61,1916
-					var prefix = "data:image/jpg;base64,";prefix69,2185
-    }, view = {	      view82,2544
-		show: function () {show83,2567
-    }; /*, TODO configuration = {configuration85,2593
-		 resizer: {resizer86,2627
-		template = $.jqotec('#gadget');$.jqotec95,2835
+			var scale = Math.min(250 / event.width, 250 / event.height),Math.min42,1196
+		thumbnailing: function thumbnailer_thumbnailing (event) {thumbnailing50,1562
+		encoding: function thumbnailer_encoding (event) {encoding58,1867
+		thumbnailed: function thumbnailer_thumbnailed (event) {thumbnailed61,1962
+					var prefix = "data:image/jpg;base64,";prefix69,2231
+    }, view = {	      view82,2590
+		show: function () {show83,2613
+    }; /*, TODO configuration = {configuration85,2639
+		 resizer: {resizer86,2673
+		template = $.jqotec('#gadget');$.jqotec95,2881
 
 app/assets/javascripts/home.js,0
 

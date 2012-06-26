@@ -39,8 +39,8 @@ var gadget = (function declare_photos () {
 			this.element.addClass('reading');
 		},			  
 		loadend: function reader_loadend (event) {
-			var ratio = event.width / event.height,
-			width = 250, height = 250 / ratio;
+			var scale = Math.min(250 / event.width, 250 / event.height),
+			width = scale * event.width, height = scale * event.height;
 			
 			this.element.removeClass('reading').addClass('thumbnailing');
 			this.element.css({width: width, height: height});

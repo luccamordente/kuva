@@ -43,6 +43,7 @@ droppable =
     hide: ->                            
       @element.fadeOut()
   bind: ->
+    console.log('bound')
     $(window).bind('dragenter', (event) ->
        console.log('entered');
        droppable.overlay.show()

@@ -6,12 +6,18 @@ module ControllerMacros
     end
   end
 
-  def login_user user=nil
+  def login_user
+    let!(:current_user) {@user = Factory.create(:user)}
+    
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      user ||= Factory.create(:user)
-      # user.confirm! # or set a confirmed_at inside the factory. Only necessary if you are using the confirmable module
-      sign_in user
+      
+      if (controller) 
+        @request.env["warden"].stub :authenticate!
+        controller.stub(:current_user).and_return current_user
+      end
+      
+      sign_in current_user
     end
   end
 end

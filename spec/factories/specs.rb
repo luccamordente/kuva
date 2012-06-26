@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :spec do
+    paper :glossy
   end
 end

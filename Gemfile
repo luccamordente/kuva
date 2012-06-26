@@ -11,7 +11,7 @@ gem 'rails', '3.2.2'
 
 gem 'json'
 
-gem "mongoid", "~> 2.2"
+gem "mongoid", "~> 2.4"
 gem "bson_ext", "~> 1.5"
 gem "carrierwave-mongoid", :require => "carrierwave/mongoid"
 gem "devise", "~> 2.0"
@@ -22,23 +22,7 @@ group :assets do
   gem 'sass-rails', '~> 3.2.3'
   gem 'haml-rails', '~> 0.3.4'  # gem 'capistrano'
   gem 'coffee-rails', '~> 3.2.1'
-  gem 'cpf_faker'
-  gem 'rspec-rails'
-  gem 'capybara'
-  gem 'launchy'
-  gem 'database_cleaner'
-  gem 'factory_girl_rails'
-  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
-  gem 'guard-rspec'
-  gem 'guard-livereload'
-  gem 'mongoid-rspec'
-  # gem 'growl'
   gem 'compass-rails'
-
-#  gem 'coffee-rails', '~> 3.2.1'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer'
 
   gem 'uglifier', '>= 1.0.3'
 end
@@ -57,12 +41,16 @@ group :development, :test do
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner'
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', '~> 1.7.0'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'guard-livereload'
+  gem 'rails_best_practices'
+  gem 'guard-rails_best_practices'
   gem 'mongoid-rspec'
-  # gem 'growl'
+  gem 'awesome_print'
+  gem 'ripper'
+  gem 'growl'
 end
 
 

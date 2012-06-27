@@ -13,13 +13,14 @@ Kuva::Application.routes.draw do
   resources :orders, :only => [] do
     get  :open, :on => :collection
     post :close, :on => :member
+    
+    resources :photos, :only => [:create, :update] do
+      post :check, :on => :collection
+    end
+
+    resources :images, :only => [:create]
   end
 
-  resources :photos, :only => [:create, :update] do
-    post :check, :on => :collection
-  end
-
-  resources :images, :only => [:create]
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

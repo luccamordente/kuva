@@ -1,33 +1,6 @@
 require 'spec_helper'
 
 describe PhotosController do
-
-  describe "anonymous user" do
-    specify { subject.current_user.should be_nil }
-    
-    it "should not have a current_user" do
-      get :index
-      subject.current_user.should be_nil
-    end
-    
-    # it "should have a current_user" do
-    #   get :index
-    #   subject.current_user.should_not be_nil
-    # end
-    # 
-    # it "should use the same user between subsequent requests" do
-    #   get :index
-    #   first_user_email = subject.current_user.email
-    #   get :index
-    #   first_user_email.should == subject.current_user.email
-    #   pending "teste não está funcionando!"
-    # end
-    # 
-    # it "should be anonymous" do
-    #   get :index
-    #   subject.current_user.should be_anonymous
-    # end
-  end
   
   describe "registered user" do
     login_user

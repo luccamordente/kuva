@@ -45,7 +45,6 @@ group :development, :test do
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'guard-livereload'
-  gem 'rails_best_practices'
   gem 'guard-rails_best_practices'
   gem 'mongoid-rspec'
   gem 'awesome_print'

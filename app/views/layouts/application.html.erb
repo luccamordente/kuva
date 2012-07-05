@@ -3,11 +3,11 @@
 <head>
   <title>Photo</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application", "photos" %>
-  <%= csrf_meta_tags %>                      
+  <%= javascript_include_tag "application", "controllers/photos" %>
+  <%= csrf_meta_tags %>
 </head>
 <body>
-  
+
   <% if user_signed_in? %>
     <% if current_user.anonymous? %>
       Usuário anonimo (<%= link_to "login", new_user_session_path %>)
@@ -15,7 +15,7 @@
       <%= current_user.email %> (<%= link_to "sair", destroy_user_session_path, :method => "delete" %>)
     <% end %>
   <% end %>
-  
+
   <p class="notice"><%= notice %></p>
   <p class="alert"><%= alert %></p>
 

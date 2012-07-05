@@ -1,13 +1,13 @@
-//= require image
+//= require library/image
 
-var gadget = (function declare_photos () {	
+var gadget = (function declare_photos () {
 
     var that = function initialize_photo(parent, options) {
 		options = options || {};
 		options.parent = parent || '#gadgets';
 		options.data = options.data || {};
 		return $.extend(options, inherit(gadget));
-    }, id = 0,    			 
+    }, id = 0,
     gadget = {
 		show: function () {
 			!this.element && control.create.call(this);
@@ -25,41 +25,41 @@ var gadget = (function declare_photos () {
 			this.data = $.extend({
 				id: id++,
 				source: kuva.service.url + '/assets/blank.gif',
-				title: 'Sumonando imagem'	   
-			}, this.data);	  
-			
+				title: 'Sumonando imagem'
+			}, this.data);
+
 			$(this.parent).jqoteapp(template, this.data);
 			this.element = $('#gadget-' + this.data.id);
-			this.image = image(this.element.find('img'), this.data.title);
-			this.bar = this.element.find('.bar');		   
+			this.image = library.image(this.element.find('img'), this.data.title);
+			this.bar = this.element.find('.bar');
 		}
     },
     handlers = {
 		loadstart: function reader_loadstart (event) {
 			this.element.addClass('reading');
-		},			  
+		},
 		loadend: function reader_loadend (event) {
 			var scale = Math.min(250 / event.width, 250 / event.height),
 			width = scale * event.width, height = scale * event.height;
-			
+
 			this.element.removeClass('reading').addClass('thumbnailing');
 			this.element.css({width: width, height: height});
 			this.image.title(event.file.name);
 			this.bar.updated = (new Date()).getTime();
-		},	    	      	     	    	    
+		},
 		thumbnailing: function thumbnailer_thumbnailing (event) {
 			var percentage = ((event.parsed / event.total) * 100), now = (new Date()).getTime();
 
 			if (now - this.bar.updated > 200) {
 				this.bar.clearQueue().animate({width: percentage + '%'}, 1000, 'linear');
 				this.bar.updated = now;
-			} 
+			}
 		},
 		encoding: function thumbnailer_encoding (event) {
 			this.bar.animate({width: '100%'});
 		},
 		thumbnailed: function thumbnailer_thumbnailed (event) {
-			var gadget = this;  
+			var gadget = this;
 
 			this.bar.animate({width: '100%'}, 1000, 'linear', function () {
 				gadget.image.hide();
@@ -78,13 +78,13 @@ var gadget = (function declare_photos () {
 				gadget.thumbnailed && gadget.thumbnailed();		// Execute callback if any
 			});
 
-		}   					
-    }, view = {	      
+		}
+    }, view = {
 		show: function () {
 		}
     }; /*, TODO configuration = {
 		 resizer: {
-	     thumbnailing: handlers.thumbnailing, 
+	     thumbnailing: handlers.thumbnailing,
 	     thumbnailed: handlers.thumbnailed,
 		 }
 		 }, resizer = image(null, configuration.resizer); */
@@ -93,7 +93,7 @@ var gadget = (function declare_photos () {
 
 	function initialize() {
 		template = $.jqotec('#gadget');
-	}				   
+	}
 
 	$(initialize)
 

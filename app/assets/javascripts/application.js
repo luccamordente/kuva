@@ -13,6 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require modernizr
-//= require shims
 //= require jqote2
-//= require kuva
+//= require controllers/kuva
+//= require library/shims
+//= require library/framework/bus

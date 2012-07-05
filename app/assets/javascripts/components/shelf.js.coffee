@@ -1,4 +1,3 @@
-
 input = flash = null
 
 that = (selector, flash_selector) ->
@@ -24,12 +23,12 @@ overlay =
     flash.css(@for(input))
   page: ->
     flash.css(@for($(document.body)))
-                       
+
 initialize = ->
   input.attr('disabled', true);
   console.error("shelf: Flash for shelf not found") unless flash.length
   # TODO kuva.listen('interface.initialized', -> )
-  ready();    
+  ready();
 
 
 ready = ->

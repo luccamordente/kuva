@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spec do
+describe Specification do
   
   validate_timestamps
   

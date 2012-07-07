@@ -21,7 +21,7 @@ class OrdersController < ApplicationController
   private
   
   def load_specs
-    @specs = Spec.to_h
+    @specs = Specification.to_h
   end
   
   def load_products

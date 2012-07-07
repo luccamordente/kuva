@@ -30,6 +30,24 @@ describe Order do
   end
   
   
+  describe "notifications" do
+    
+    context "open" do
+      it "should notify the staff" do
+        expect { order = Factory.create :order }.to change(ActionMailer::Base.deliveries, :count).by(1)
+      end
+    end
+    
+    context "open" do
+      it "should notify the staff" do
+        order = Factory.create :order
+        expect { order.update_status Order::CLOSED }.to change(ActionMailer::Base.deliveries, :count).by(1)
+      end
+    end
+    
+  end
+  
+  
   describe "status" do
     it "should be created with EMPTY status" do
       order = Factory.create :order, :status => nil

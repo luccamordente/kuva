@@ -29,7 +29,7 @@ describe PhotosController do
     # }
     context "successfully" do
       it "should respond with success and the photo ids" do
-        post :create, :order_id => order.id, :photo => photo_attributes.merge(:spec_attributes => {:paper => "asd"}), :count => count
+        post :create, :order_id => order.id, :photo => photo_attributes.merge(:specification_attributes => {:paper => "asd"}), :count => count
         response.should be_success
         ids = ActiveSupport::JSON.decode(response.body)['photo_ids']
         ids.compact.size.should == count
@@ -38,7 +38,7 @@ describe PhotosController do
         expect { photos = ids.map{ |id| order.photos.find(id) } }.not_to raise_error
         photos.each { |photo| 
           photo.order.id.should == order.id 
-          photo.spec.paper.should == "asd"
+          photo.specification.paper.should == "asd"
           photo.count.should == photo_attributes[:count]
         }
       end
@@ -59,7 +59,7 @@ describe PhotosController do
     login_user
     
     let!(:order){ Factory.create :order, :user_id => current_user.id }
-    let!(:photo){ order.photos.create Factory.attributes_for(:photo).merge :spec_attributes => { :paper => nil } }
+    let!(:photo){ order.photos.create Factory.attributes_for(:photo).merge :specification_attributes => { :paper => nil } }
     
     specify{ photo.image.should be_nil }
     specify { order.user_id.should == current_user.id }
@@ -72,10 +72,10 @@ describe PhotosController do
       end
       
       it "should update the photo nested attributes, like paper spec" do
-        photo.spec.paper.should be_nil
-        put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :spec_attributes => { :paper => :glossy } }
+        photo.specification.paper.should be_nil
+        put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :specification_attributes => { :paper => :glossy } }
         response.should be_success
-        photo.reload.spec.paper.should_not be_nil
+        photo.reload.specification.paper.should_not be_nil
       end
       
       it "should update the image" do

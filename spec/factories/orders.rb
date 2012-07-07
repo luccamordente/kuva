@@ -3,5 +3,6 @@
 FactoryGirl.define do
   factory :order do
     status Order::EMPTY
+    association :user
   end
 end

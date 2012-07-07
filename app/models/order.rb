@@ -38,10 +38,12 @@ class Order
   
   # filters
   before_validation :set_empty_status, :on => :create
+  before_create :notify_opened
+  before_save :notify_closed, :if => :closed?
   
   
   def check_and_update_status
-    update_status self.class::PROGRESS if (self.photos.count > 0 || self.images.count > 0) && self.status == self.class::EMPTY
+    update_status self.class::PROGRESS if (self.photos.count > 0 || self.images.count > 0) && is_empty?
   end
     
   def update_status status
@@ -54,11 +56,26 @@ class Order
     not [EMPTY, PROGRESS].include? status
   end
   
+  def is_empty?; self.status == EMPTY ; end
+  def closed?  ; self.status == CLOSED; end
+  
   
   private
   
     def set_empty_status
-      self.status = self.class::EMPTY unless self.status.present?
+      set_status EMPTY unless self.status.present?
+    end
+    
+    def set_status status
+      self.status = status
+    end
+    
+    def notify_opened
+      OrderMailer.opened(self).deliver
+    end
+    
+    def notify_closed
+      OrderMailer.closed(self).deliver
     end
   
 end

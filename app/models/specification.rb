@@ -1,4 +1,4 @@
-class Spec
+class Specification
   
   include Mongoid::Document
   include Mongoid::Timestamps

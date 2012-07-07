@@ -5,6 +5,6 @@ FactoryGirl.define do
     name "Name"
     count { rand(10) }
     association :product
-    association :spec
+    association :specification
   end
 end

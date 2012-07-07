@@ -52,7 +52,7 @@ describe OrdersController do
         get :open
         specs = assigns[:specs]
         specs[:paper].should_not be_nil
-        Spec::PAPERS.each { |paper| specs[:paper][paper].should == I18n.t("photo.specs.paper.#{paper}") }
+        Specification::PAPERS.each { |paper| specs[:paper][paper].should == I18n.t("photo.specs.paper.#{paper}") }
       end
     
       it "loads the products" do

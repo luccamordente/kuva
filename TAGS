@@ -28,30 +28,30 @@ var gadget = (function declare_photos () {gadget3,27
 		 resizer: {resizer86,2611
 		template = $.jqotec('#gadget');$.jqotec95,2818
 
-app/assets/javascripts/library/image.js,1225
-library.image = (function () {library.image1,0
-    var that = function (element, options) {that2,31
-	    instance = {instance4,141
-	if (typeof options === 'string') options = {title: options};options8,186
-    image = {image19,569
-	size: function (width, height) {size21,599
-	hide: function (duration, easing, callback) {hide26,791
-	    var style = this.element.style;this.element.style27,838
-	    else style.display = 'none';style.display31,1015
-	show: function (duration, easing, callback) {show36,1123
-	    var style = this.element.style;this.element.style37,1170
-	    else style.display = 'block';style.display41,1346
-	source: function (source, store) {source45,1404
-	on: function (event, callback) {on62,1999
-	unload: function () {unload67,2148
-	ratio: function () {ratio74,2312
-	width: function (width) {width77,2392
-	height: function () {height80,2465
-	title: function (title, no_alt) {title83,2536
-	resizable.resize = function (width, height, quality, context) {resizable.resize92,2765
-	    var options = {context: context || this, type: this.type};options93,2830
-	var resizable = {resizable101,3157
-	    resize: function (width, height, quality, context) {resize102,3176
+app/assets/javascripts/library/image.js,1248
+    var that = function (element, options) {that2,15
+	    instance = {instance4,125
+	if (typeof options === 'string') options = {title: options};options8,170
+    image = {image19,553
+	size: function (width, height) {size21,583
+	hide: function (duration, easing, callback) {hide26,775
+	    var style = this.element.style;this.element.style27,822
+	    else style.display = 'none';style.display31,999
+	show: function (duration, easing, callback) {show36,1107
+	    var style = this.element.style;this.element.style37,1154
+	    else style.display = 'block';style.display41,1330
+	source: function (source, store) {source45,1388
+	on: function (event, callback) {on62,1983
+	unload: function () {unload67,2132
+	ratio: function () {ratio74,2296
+	width: function (width) {width77,2376
+	height: function () {height80,2449
+	title: function (title, no_alt) {title83,2520
+	resizable.resize = function (width, height, quality, context) {resizable.resize92,2749
+	    var options = {context: context || this, type: this.type};options93,2814
+	var resizable = {resizable101,3141
+	    resize: function (width, height, quality, context) {resize102,3160
+}).call(window.library || (window.library = {}))window.library109,3256
 
 app/assets/javascripts/library/reader.js,798
 lib = {};lib1,0

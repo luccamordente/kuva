@@ -1,4 +1,4 @@
-library.image = (function () {
+(function () {
     var that = function (element, options) {
 	var element = (element && element[0] || element) || new Image()
 	    instance = {
@@ -105,5 +105,5 @@ library.image = (function () {
 	}
     }
 
-    return that;
-}).call(kuva);
+	this.image = that;
+}).call(window.library || (window.library = {}));

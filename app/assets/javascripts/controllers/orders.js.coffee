@@ -5,6 +5,7 @@
 
 kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of record
+  order = null
   order ||= options.order
 
 reader = lib.reader()

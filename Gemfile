@@ -22,8 +22,8 @@ group :assets do
   gem 'sass-rails', '~> 3.2.3'
   gem 'haml-rails', '~> 0.3.4'  # gem 'capistrano'
   gem 'coffee-rails', '~> 3.2.1'
-  gem 'compass-rails'
-  gem "bootstrap-sass"
+  gem 'compass-rails', '~> 1.0.3'
+  gem 'bootstrap-sass', '~> 2.0.4'
 
   gem 'uglifier', '>= 1.0.3'
 end
@@ -46,7 +46,7 @@ group :development, :test do
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'guard-livereload'
-  gem 'rails_best_practices'
+  # gem 'rails_best_practices'
   gem 'guard-rails_best_practices'
   gem 'mongoid-rspec'
   gem 'awesome_print'

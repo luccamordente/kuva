@@ -2,6 +2,7 @@ dump.rdb
 **/*~
 *~
 .rvmrc
+.powrc
 .bundle
 .directory
 .project

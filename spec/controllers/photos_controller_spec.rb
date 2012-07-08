@@ -14,8 +14,9 @@ describe PhotosController do
     login_user
     
     let!(:count){ 3 }
-    let(:order){ Factory.create :order, :user_id => current_user.id }
-    let(:photo_attributes){ Factory.attributes_for(:photo) }
+    let(:order){ Fabricate :order, :user_id => current_user.id }
+    let(:photo_attributes){ Fabricate.attributes_for(:photo) }
+    let(:specification_attributes){ Fabricate.attributes_for :specification, :paper => 'glossy' }
     
     specify { order.user_id.should == current_user.id }
     
@@ -29,18 +30,18 @@ describe PhotosController do
     # }
     context "successfully" do
       it "should respond with success and the photo ids" do
-        post :create, :order_id => order.id, :photo => photo_attributes.merge(:specification_attributes => {:paper => "asd"}), :count => count
+        post :create, :order_id => order.id, :photo => photo_attributes.merge(:specification_attributes => specification_attributes ), :count => count
         response.should be_success
         ids = ActiveSupport::JSON.decode(response.body)['photo_ids']
         ids.compact.size.should == count
         order.reload
         photos = []
         expect { photos = ids.map{ |id| order.photos.find(id) } }.not_to raise_error
-        photos.each { |photo| 
+        photos.each do |photo| 
           photo.order.id.should == order.id 
-          photo.specification.paper.should == "asd"
+          photo.specification.paper.should == 'glossy'
           photo.count.should == photo_attributes[:count]
-        }
+        end
       end
       
       it "should keep only the count, spec and product_id" do
@@ -58,8 +59,9 @@ describe PhotosController do
   describe "update" do
     login_user
     
-    let!(:order){ Factory.create :order, :user_id => current_user.id }
-    let!(:photo){ order.photos.create Factory.attributes_for(:photo).merge :specification_attributes => { :paper => nil } }
+    let!(:paper){ Specification::PAPERS[0] }
+    let!(:order){ Fabricate :order, :user_id => current_user.id }
+    let!(:photo){ order.photos.create Fabricate.attributes_for(:photo).merge :specification_attributes => Fabricate.attributes_for(:specification, :paper => paper ) }
     
     specify{ photo.image.should be_nil }
     specify { order.user_id.should == current_user.id }
@@ -72,14 +74,14 @@ describe PhotosController do
       end
       
       it "should update the photo nested attributes, like paper spec" do
-        photo.specification.paper.should be_nil
+        photo.specification.paper.should == paper
         put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :specification_attributes => { :paper => :glossy } }
         response.should be_success
         photo.reload.specification.paper.should_not be_nil
       end
       
       it "should update the image" do
-        image = Factory.create :image
+        image = Fabricate :image
         put :update, :order_id => photo.order.id, :id => photo.id, :photo => { :image_id => image.id }
         response.should be_success
         photo.reload.image.should_not be_nil

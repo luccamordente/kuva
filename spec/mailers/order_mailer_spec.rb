@@ -3,7 +3,7 @@ require "spec_helper"
 describe OrderMailer do
 
   describe "opened" do
-    let(:order) { Factory.create :order }
+    let(:order) { Fabricate :order }
     let(:mail) { OrderMailer.opened(order) }
  
     #ensure that the subject is correct
@@ -33,7 +33,7 @@ describe OrderMailer do
   end
 
   describe "closed" do
-    let(:order) { Factory.create :order }
+    let(:order) { Fabricate :order }
     let(:mail) { OrderMailer.closed(order) }
  
     #ensure that the subject is correct

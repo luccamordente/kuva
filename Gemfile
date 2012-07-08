@@ -43,7 +43,7 @@ group :development, :test do
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner'
-  gem 'factory_girl_rails', '~> 1.7.0'
+  gem 'fabrication', '~> 1.2.0'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'guard-livereload'
@@ -53,6 +53,7 @@ group :development, :test do
   gem 'awesome_print'
   gem 'ripper'
   gem 'growl'
+  gem 'pry'
 end
 
 

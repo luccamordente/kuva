@@ -15,4 +15,8 @@ class Photo
   
   after_save lambda{ self.order.check_and_update_status }
   
+  def directory
+    @directory ||= Directorizer.new(self)
+  end
+  
 end

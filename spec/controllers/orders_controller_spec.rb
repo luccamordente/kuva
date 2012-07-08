@@ -63,7 +63,7 @@ describe OrdersController do
   
   
     describe "close" do
-      let!(:order){ Factory.create :order, :user_id => current_user.id }
+      let!(:order){ Fabricate :order, :user_id => current_user.id }
     
       specify { order.user_id.should == current_user.id }
     

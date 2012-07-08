@@ -1,7 +1,6 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
-FactoryGirl.define do
-  factory :spec do
-    paper :glossy
-  end
+Fabricator :order do
+  status Order::EMPTY
+  user
 end

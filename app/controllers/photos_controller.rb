@@ -36,7 +36,7 @@ class PhotosController < ApplicationController
     end
     
     def filter_photo_params_for_creation photo_params
-      photo_params.keep_if{ |k,v| ["count", "specification", "product_id", "specification_attributes"].include? k }
+      photo_params.keep_if{ |k,v| ["count", "product_id", "specification_attributes"].include? k }
     end
   
 end

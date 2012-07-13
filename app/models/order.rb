@@ -41,6 +41,11 @@ class Order
   before_create :notify_opened
   before_save :notify_closed, :if => :closed?
   
+
+  def compressed
+    orderizer = Orderizer.new(self)
+    orderizer.compressed
+  end
   
   def check_and_update_status
     update_status self.class::PROGRESS if (self.photos.count > 0 || self.images.count > 0) && is_empty?
@@ -58,6 +63,27 @@ class Order
   
   def is_empty?; self.status == EMPTY ; end
   def closed?  ; self.status == CLOSED; end
+  
+  
+  def tmp_path
+    File.join self.class.tmp_path, tmp_identifier
+  end
+  
+  def tmp_zip_path
+    "#{tmp_path}.zip"
+  end
+  
+  def tmp_identifier
+    id.to_s
+  end
+  
+  def tmp_zip_identifier
+    "#{id}.zip"
+  end
+  
+  def self.tmp_path
+    File.join Rails.root, "tmp"
+  end
   
   
   private

@@ -3,7 +3,11 @@ class Specification
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  PAPERS = %W{ glossy matte }
+  GLOSSY_PAPER = :glossy
+  MATTE_PAPER  = :matte
+  
+  PAPERS = [ GLOSSY_PAPER, MATTE_PAPER ].map(&:to_s)
+  
   PAPERS_DIRECTORY = Hash[ PAPERS.zip(%W{ B F }) ]
   
   field :paper, :type => String

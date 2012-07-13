@@ -3,7 +3,7 @@ class ImagesController < ApplicationController
   before_filter :authenticate_user!
   
   def create
-    order = Order.find params[:order_id]
+    order = current_user.orders.find params[:order_id]
     
     @image = order.images.build params[:image]
     @image.save!

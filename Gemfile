@@ -15,6 +15,7 @@ gem "mongoid", "~> 2.4"
 gem "bson_ext", "~> 1.5"
 gem "carrierwave-mongoid", :require => "carrierwave/mongoid"
 gem "devise", "~> 2.0"
+gem "rubyzip"
 
 # Gems used only for assets and not required
 # in production environments by default.

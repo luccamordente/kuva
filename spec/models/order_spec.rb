@@ -114,4 +114,45 @@ describe Order do
   end
   
   
+  
+  describe "compress" do
+      
+    let!(:product){ Fabricate :product, :name => "10x15" }
+    let!(:order){ Fabricate :order }
+    let!(:image){ order.images.create :image => image_fixture }
+    let!(:photos){[ 
+      order.photos.create(:count => 5, :specification_attributes => { :paper => Specification::GLOSSY_PAPER }, :product_id => product.id, :image_id => image.id),
+      order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id, :image_id => image.id),
+      order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id, :image_id => image.id)
+    ]}
+    
+    subject{ order.compressed }
+    after{ system "rm -rf #{ order.tmp_zip_path }"}
+    
+    it { should_not be_nil }
+    its(:class){ should == File }
+    its(:path) { should match /tmp.*?\.zip/ }
+    
+    it "should delete the original dir" do
+      subject
+      expect{ Dir.new order.tmp_path }.to raise_error Errno::ENOENT
+    end
+    
+    it "should contain 2 dirs" do
+      Dir.chdir Order.tmp_path
+      system "unzip #{subject.path} -d . > /dev/null"
+      Dir.chdir order.tmp_path
+      dirs = Dir["*"]
+      dirs.count.should == 2
+      photos.each do |photo|
+        Dir["#{photo.directory.name}/*"].should include(File.join(photo.directory.name, photo.reload.image.image.current_path.split(/\//).last))
+      end
+      system "rm -r #{order.tmp_path}"
+    end
+    
+    
+  end
+
+
+  
 end

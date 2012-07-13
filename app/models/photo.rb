@@ -19,4 +19,6 @@ class Photo
     @directory ||= Directorizer.new(self)
   end
   
+  
+  
 end

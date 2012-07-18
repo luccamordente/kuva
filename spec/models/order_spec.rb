@@ -59,16 +59,18 @@ describe Order do
     end
     
     context "PROGRESS" do
+      let(:product){ Fabricate :product }
       it "should update status to PROGRESS when the first photo is added" do
         order = Fabricate :order
-        photo = order.photos.create Fabricate.attributes_for :photo
+        photo = order.photos.create Fabricate.attributes_for(:photo).merge(:product_id => product.id)
         photo.should be_persisted
         order.reload.status.should == Order::PROGRESS
       end
       it "should not update status to PROGRESS when the first photo is added and the status is not EMPTY" do
         order = Fabricate :order
         order.update_attribute :status, Order::READY
-        order.photos.create Fabricate.attributes_for :photo
+        photo = order.photos.create Fabricate.attributes_for(:photo).merge(:product_id => product.id)
+        photo.should be_persisted
         order.reload.status.should == Order::READY
       end
       it "should update status to PROGRESS when the first image is added" do
@@ -123,7 +125,9 @@ describe Order do
     let!(:photos){[ 
       order.photos.create(:count => 5, :specification_attributes => { :paper => Specification::GLOSSY_PAPER }, :product_id => product.id, :image_id => image.id),
       order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id, :image_id => image.id),
-      order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id, :image_id => image.id)
+      order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id, :image_id => image.id),
+      # photo without image that cannot fail 
+      order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id)
     ]}
     
     subject{ order.compressed }
@@ -138,17 +142,24 @@ describe Order do
       expect{ Dir.new order.tmp_path }.to raise_error Errno::ENOENT
     end
     
-    it "should contain 2 dirs" do
+    it "should delete zip file"
+    
+    it "should contain 2 dirs and include photos with image" do
       Dir.chdir Order.tmp_path
       system "unzip #{subject.path} -d . > /dev/null"
       Dir.chdir order.tmp_path
       dirs = Dir["*"]
       dirs.count.should == 2
       photos.each do |photo|
-        Dir["#{photo.directory.name}/*"].should include(File.join(photo.directory.name, photo.reload.image.image.current_path.split(/\//).last))
+        image = photo.reload.image
+        next if image.nil?
+        Dir["#{photo.directory.name}/*"].should include(File.join(photo.directory.name, image.image.current_path.split(/\//).last))
       end
       system "rm -r #{order.tmp_path}"
     end
+    
+    it "should delete the original dir when anything wrong happens in between"
+    it "allows photos without image, by simply not copying the image"
     
     
   end

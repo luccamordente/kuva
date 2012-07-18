@@ -20,6 +20,17 @@ class Admin::OrdersController < Admin::ApplicationController
       format.json { render :json => @order }
     end
   end
+  
+  def download
+    @order  = Order.find params[:id]
+    
+    @order.compressed do |file|
+      @order.update_status Order::CATCHING
+      send_data file.read, :filename => "#{@order.id}.zip"
+      @order.update_status Order::CAUGHT
+    end
+    
+  end
 
   # GET /admin/orders/new
   # GET /admin/orders/new.json

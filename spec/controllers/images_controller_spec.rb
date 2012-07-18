@@ -5,7 +5,7 @@ describe ImagesController do
   describe "create" do
     login_user
     
-    let!(:order){ Fabricate :order }
+    let!(:order){ Fabricate :order, :user_id => current_user.id }
     
     context "with correct image" do
       it "should upload an image" do

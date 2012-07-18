@@ -6,11 +6,18 @@ class Orderizer
     @order = order
   end
   
-  def compressed
+  def compressed &block
     base_directory = create_base_directory
     
     place_photos_to base_directory
-    compress        base_directory
+    file = compress base_directory
+    
+    if block_given?
+      yield file
+      delete_compressed
+    end
+    
+    file
   end
 
 private
@@ -19,7 +26,7 @@ private
     Dir.chdir Order.tmp_path
     system "zip -r #{@order.tmp_zip_identifier} #{@order.tmp_identifier} > /dev/null"
     delete_base_directory
-    File.new @order.tmp_zip_path
+    File.open @order.tmp_zip_path
   end
   
   def create_base_directory
@@ -31,11 +38,15 @@ private
     FileUtils.rm_rf @order.tmp_path
   end
   
+  def delete_compressed
+    FileUtils.rm @order.tmp_zip_path
+  end
+  
   def place_photos_to directory
     @order.photos.each do |photo|
       Dir.chdir directory.path
       Dir.mkdir photo.directory.name unless File.directory? photo.directory.name
-      FileUtils.cp photo.image.image.current_path, photo.directory.name
+      FileUtils.cp photo.image.image.current_path, photo.directory.name if photo.image.present?
     end
   end
   

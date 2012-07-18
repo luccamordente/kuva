@@ -3,5 +3,6 @@
 Fabricator :photo do
   name "Name"
   count { rand(10) }
-  product
+  # specification
+  # product
 end

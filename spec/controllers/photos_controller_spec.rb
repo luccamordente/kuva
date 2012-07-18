@@ -15,7 +15,7 @@ describe PhotosController do
     
     let!(:count){ 3 }
     let(:order){ Fabricate :order, :user_id => current_user.id }
-    let(:photo_attributes){ Fabricate.attributes_for(:photo) }
+    let(:photo_attributes){ Fabricate.attributes_for(:photo, :product_id => Fabricate(:product).id) }
     let(:specification_attributes){ Fabricate.attributes_for :specification, :paper => 'glossy' }
     
     specify { order.user_id.should == current_user.id }
@@ -29,8 +29,10 @@ describe PhotosController do
     #   }
     # }
     context "successfully" do
+      let(:product){ Fabricate :product }
+      
       it "should respond with success and the photo ids" do
-        post :create, :order_id => order.id, :photo => photo_attributes.merge(:specification_attributes => specification_attributes ), :count => count
+        post :create, :order_id => order.id, :photo => photo_attributes.merge(:specification_attributes => specification_attributes), :count => count
         response.should be_success
         ids = ActiveSupport::JSON.decode(response.body)['photo_ids']
         ids.compact.size.should == count
@@ -61,7 +63,8 @@ describe PhotosController do
     
     let!(:paper){ Specification::PAPERS[0] }
     let!(:order){ Fabricate :order, :user_id => current_user.id }
-    let!(:photo){ order.photos.create Fabricate.attributes_for(:photo).merge :specification_attributes => Fabricate.attributes_for(:specification, :paper => paper ) }
+    let!(:product){ Fabricate :product }
+    let!(:photo){ order.photos.create Fabricate.attributes_for(:photo).merge :specification_attributes => Fabricate.attributes_for(:specification, :paper => paper ), :product_id => product.id }
     
     specify{ photo.image.should be_nil }
     specify { order.user_id.should == current_user.id }

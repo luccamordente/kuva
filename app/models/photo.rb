@@ -13,6 +13,8 @@ class Photo
   belongs_to :product 
   belongs_to :image
   
+  validates :product, :presence => true
+  
   after_save lambda{ self.order.check_and_update_status }
   
   def directory

@@ -1,7 +1,11 @@
 Kuva::Application.routes.draw do
 
   namespace :admin do 
-    resources :orders 
+    resources :orders do
+      member do
+        get :download
+      end
+    end
     
     root :to => "orders#index"
   end

@@ -17,6 +17,12 @@ class OrdersController < ApplicationController
     success :id => @order.id.to_s
   end
   
+  def download
+    # load order
+    # compress order to zip
+    # stram order
+    # remove zip
+  end
   
   private
   

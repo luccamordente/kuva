@@ -42,9 +42,15 @@ class Order
   before_save :notify_closed, :if => :closed?
   
 
-  def compressed
+  def compressed &block
     orderizer = Orderizer.new(self)
-    orderizer.compressed
+    if block_given?
+      orderizer.compressed do |file|
+        yield file
+      end
+    else
+      orderizer.compressed
+    end
   end
   
   def check_and_update_status

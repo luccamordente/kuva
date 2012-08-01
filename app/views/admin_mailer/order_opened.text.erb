@@ -1,0 +1,7 @@
+Status: <%= @order.status %>
+
+Aberta em: <%= l @order.created_at, :format => :tiny %>
+
+Cliente: <%= @name %>
+
+Acesse o link para acompanhar a ordem: <%= admin_root_url %>

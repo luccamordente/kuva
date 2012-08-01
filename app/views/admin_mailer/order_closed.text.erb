@@ -1,0 +1,11 @@
+Status: <%= t_status @order.status %>
+Preço: <%= number_to_currency @order.price %>
+
+Aberta em:  <%= l @order.created_at, :format => :short %>
+Fechada em: <%= l @order.closed_at, :format => :short %>
+
+Cliente: <%= @name %>
+
+Foi prometido ao cliente que serviço estaria pronto em <%= l @order.promised_for, :format => :short %>.
+
+Acesse o link para baixar a ordem: <%= admin_root_url %>

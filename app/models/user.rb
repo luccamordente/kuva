@@ -50,6 +50,9 @@ class User
    
   has_many :orders, :dependent => :destroy
   
+  def first_name
+    name.split(/\s/).first
+  end
   
   def self.create_anonymous_user
     temp_token = SecureRandom.base64(15).tr('+/=', 'xyz')

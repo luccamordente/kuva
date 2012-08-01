@@ -1,5 +1,0 @@
-%div= @order.status #labeled_status order.status
-%div= @order.created_at.strftime "%d-%b-%Y %H:%M"
-%div= @order.updated_at.strftime "%d-%b-%Y %H:%M"
-%div= @order.user.try :name
-%div= link_to "Clique aqui para abrir", admin_root_url

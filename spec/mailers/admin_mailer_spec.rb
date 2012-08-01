@@ -1,10 +1,10 @@
 require "spec_helper"
 
-describe OrderMailer do
+describe AdminMailer do
 
   describe "opened" do
     let(:order) { Fabricate :order }
-    let(:mail) { OrderMailer.opened(order) }
+    let(:mail) { AdminMailer.order_opened(order) }
  
     #ensure that the subject is correct
     it 'renders the subject' do
@@ -34,7 +34,7 @@ describe OrderMailer do
 
   describe "closed" do
     let(:order) { Fabricate :order }
-    let(:mail) { OrderMailer.closed(order) }
+    let(:mail) { order.update_status Order::CLOSED; AdminMailer.order_closed(order) }
  
     #ensure that the subject is correct
     it 'renders the subject' do
@@ -47,7 +47,7 @@ describe OrderMailer do
     end
  
     #ensure that the sender is correct
-    it 'renders the sender email' do
+    it 'has the correct sender address' do
       mail.from.should == ["notification@kuva.com"]
     end
  

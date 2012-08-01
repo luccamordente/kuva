@@ -2,7 +2,7 @@ module Admin::OrdersHelper
   
   def labeled_status status
     return nil unless status
-    label = t "order.status.#{status}"
+    label = t_status status
     klass = nil
     case status
     when :progress

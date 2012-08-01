@@ -6,8 +6,6 @@ class OrdersController < ApplicationController
   
   def open
     @order = current_user.orders.create
-    
-    success :id => @order.id.to_s
   end
   
   def close

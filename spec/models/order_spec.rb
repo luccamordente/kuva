@@ -39,9 +39,9 @@ describe Order do
     end
     
     context "open" do
-      it "should notify the staff" do
+      it "should notify the staff and the user" do
         order = Fabricate :order
-        expect { order.update_status Order::CLOSED }.to change(ActionMailer::Base.deliveries, :count).by(1)
+        expect { order.update_status Order::CLOSED }.to change(ActionMailer::Base.deliveries, :count).by(2)
       end
     end
     
@@ -95,11 +95,21 @@ describe Order do
             before(:all) { subject.update_status status }
         
             its(:status){ should == status}
-            its(:"#{status}_at"){ should_not be_nil }            
+            its(:"#{status}_at"){ should_not be_nil }
           end
         end
         
       end  
+    end
+    
+    
+    describe "promise" do
+      subject { Fabricate :order }
+      let!(:closed_at) { subject.closed_at }
+      
+      before(:all) { subject.update_status Order::CLOSED }
+      
+      its(:promised_for) { should == closed_at + 1.hour }
     end
     
     
@@ -161,6 +171,53 @@ describe Order do
     it "should delete the original dir when anything wrong happens in between"
     it "allows photos without image, by simply not copying the image"
     
+    
+  end
+  
+  
+  
+  describe "price" do
+    let!(:order)   { Fabricate :order }
+    let (:product1){ Fabricate :product, :price => 1 }
+    let (:product2){ Fabricate :product, :price => 2 }
+    let (:product3){ Fabricate :product, :price => 3 }
+    
+    specify{ order.price.should == 0 }
+    
+    it "should increase order price when a photo is added" do
+      count   = 2
+      product = product1
+      expect {
+        order.photos.create :product_id => product.id, :count => count
+      }.to change(order.reload, :price).by product.price * count
+    end
+    
+    it "should increase order price when the count of a photo is increased" do
+      product = product2
+      count   = 1
+      photo   = order.photos.create :product_id => product.id, :count => 1
+      expect {
+        photo.update_attribute :count, photo.count + count
+      }.to change(order.reload, :price).by product.price * count
+    end
+    
+    it "should decrease order price when the count of a photo is decrease" do
+      product = product3
+      count   = 1
+      photo   = order.photos.create :product_id => product.id, :count => 3
+      expect {
+        photo.update_attribute :count, photo.count - count
+      }.to change(order.reload, :price).by product.price * (-count)
+    end
+    
+    it "should decrese order price when a photo is destroyed" do
+      product = product2
+      count   = 15
+      photo   = order.photos.create :product_id => product.id, :count => count
+      expect {
+        photo.destroy
+      }.to change(order.reload, :price).by product.price * (-count)
+    end
     
   end
 

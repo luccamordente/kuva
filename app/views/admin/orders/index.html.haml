@@ -3,9 +3,11 @@
 %table.table.table-striped
   %tr
     %th Status
-    %th Data
+    %th Preço
+    %th.hidden-phone Data
     %th Atualizado
     %th Cliente
+    %th
     %th.visible-desktop
     / %th.hidden-phone
     / %th.hidden-phone
@@ -13,9 +15,11 @@
   - @orders.each do |order|
     %tr
       %td= labeled_status order.status
-      %td= order.created_at.strftime "%d-%b-%Y %H:%M"
-      %td= order.updated_at.strftime "%d-%b-%Y %H:%M"
+      %td= number_to_currency order.price
+      %td.hidden-phone= l order.created_at, :format => :medium
+      %td= l order.updated_at, :format => :medium
       %td= order.user.try :name
+      %td.visible-desktop= link_to 'Ver', admin_order_path(order), :class => 'btn'
       %td.visible-desktop= link_to 'Download', download_admin_order_path(order), :class => 'btn btn-primary' if order.downloadable?
       / %td.hidden-phone= link_to 'Edit', edit_admin_order_path(order), :class => 'btn'
       / %td.hidden-phone= link_to 'Destroy', admin_order_path(order), :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger'

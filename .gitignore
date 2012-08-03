@@ -9,6 +9,7 @@ dump.rdb
 .loadpath
 .sass-cache
 .DS_*
+TAGS
 db/*.sqlite3
 *~*
 **/*~

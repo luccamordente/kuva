@@ -1,3 +1,4 @@
+/* TODO
 self.onmessage = function (event) {
     var data = event.data;
     process(data.context, 0)
@@ -12,7 +13,7 @@ function process(self, u) {
     for (v = 0; v < self.dest.height; v++) {
 	self.center.y = (v + 0.5) * self.ratio;
 	self.icenter.y = Math.floor(self.center.y);
-	a = r = g = b = 0;
+	a = r = g = b = 0;/^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/;
 
 	for (i = self.icenter.x - self.range; i <= self.icenter.x + self.range; i++) {
 	    if (i < 0 || i >= self.src.width) 
@@ -66,4 +67,4 @@ function lanczos(lobes) {
 	var xx = x / lobes;
 	return Math.sin(x) * Math.sin(xx) / x / xx;
     }
-}
+}*/

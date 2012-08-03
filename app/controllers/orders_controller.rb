@@ -25,7 +25,7 @@ private
   def load_specs
     @specs = Specification.to_h
   end
-  
+
   def load_products
     @products = Product.only(:_id,:name,:price).all
   end

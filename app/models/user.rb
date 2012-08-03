@@ -1,11 +1,12 @@
 class User
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable, :rememberable, :trackable, :validatable,
+         :token_authenticatable
 
   ## Database authenticatable
   field :email,              :type => String, :default => ""
@@ -39,16 +40,19 @@ class User
   # field :unlock_token,    :type => String # Only if unlock strategy is :email or :both
   # field :locked_at,       :type => Time
 
-  ## Token authenticatable
-  # field :authentication_token, :type => String
+  # Token authenticatable
+  field :authentication_token, :type => String
 
   field :name, :type => String
   field :password, :type => String
   field :email, :type => String
-  
+
   field :anonymous, :type => Boolean, :default => false
-   
+
   has_many :orders, :dependent => :destroy
+  
+  before_save :ensure_authentication_token
+  
   
   def first_name
     name.split(/\s/).first
@@ -60,11 +64,11 @@ class User
     user.save!(:validate => false)
     user
   end
-  
+
   def move_to another_user
     raise "Registered users cannot be moved." unless self.anonymous?
     self.orders.each { |order| another_user.orders << order }
     another_user.save && self.reload.destroy
   end
-  
+
 end

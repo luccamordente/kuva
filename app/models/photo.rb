@@ -5,10 +5,10 @@ class Photo
   field :name , :type => String
   field :count, :type => Integer, :default => 0
   
-  accepts_nested_attributes_for :specification
-  
   embedded_in :order
   embeds_one  :specification
+  
+  accepts_nested_attributes_for :specification
   
   belongs_to :product 
   belongs_to :image

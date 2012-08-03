@@ -49,4 +49,12 @@ describe User do
   end
   
   
+  describe "authentication token" do
+    subject{ Fabricate :user }
+    its(:authentication_token){ should_not be_nil }
+    
+    it "better change the authentication token at some point... it's not secure to keep the same token forever!"
+  end
+  
+  
 end

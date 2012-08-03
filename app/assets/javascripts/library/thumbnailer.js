@@ -1,5 +1,5 @@
-var thumbnailer = (function () {
-    var that = function () {
+var thumbnailer = (function declare_thumbnailer () {
+    var that = function thumbnailer_singleton () {	    
 	return {thumbnail: queue.enqueue};
     },
     engine = {
@@ -15,12 +15,10 @@ var thumbnailer = (function () {
 		return engine.thumbnail.apply(this, parameters);
 	    } else if (decoder.decodable(options.type || decoder.format(mixed))) {
 		return decoder.decode(mixed, options.type, function (image) {	 
-		    var context = engine.context,
-		    data = context.createImageData(image.width, image.height);
-		      	      			       
+		    var context = engine.context;
+		    var data = context.createImageData(image.width, image.height);
 		    image.copyToImageData(data);
 		    parameters[0] = data;   	     
-		    
 		    return engine.thumbnail.apply(those, parameters);
 		});	   				  
 	    } else return false;	     
@@ -59,9 +57,11 @@ var thumbnailer = (function () {
 	    if (image instanceof Image) {
 		context.drawImage(image, 0, 0);
 		engine.src = context.getImageData(0, 0, image.width, image.height);
-	    } else if (image instanceof ImageData) {
+	    } else if (Modernizr.imagedata && image instanceof ImageData) {
 		engine.src = image;
-	    }	       	     
+	    } else {
+		engine.src = image;
+	    }
 
 	    engine.dest = {
 		width: width,
@@ -105,17 +105,18 @@ var thumbnailer = (function () {
 
 		    f_x = Math.floor(1000 * Math.abs(i - engine.center.x));
 
-		    if (!engine.cache[f_x]) 
+		    if (false && !engine.cache[f_x]) 
 			engine.cache[f_x] = {};
 
 		    for (j = engine.icenter.y - engine.range; j <= engine.icenter.y + engine.range; j++) {
 			if (j < 0 || j >= engine.src.height) continue;
 
 			f_y = Math.floor(1000 * Math.abs(j - engine.center.y));
-			if (engine.cache[f_x][f_y] == undefined) 
+			if (false && engine.cache[f_x][f_y] == undefined) 
 			    engine.cache[f_x][f_y] = engine.lanczos(Math.sqrt(Math.pow(f_x * engine.rcp_ratio, 2) + Math.pow(f_y * engine.rcp_ratio, 2)) / 1000);
 
-			weight = engine.cache[f_x][f_y];
+			// weight = engine.cache[f_x][f_y];
+			weight = engine.lanczos(Math.sqrt(Math.pow(f_x * engine.rcp_ratio, 2) + Math.pow(f_y * engine.rcp_ratio, 2)) / 1000);
 
 			if (weight > 0) {
 			    idx = (j * engine.src.width + i) * 4;
@@ -153,9 +154,11 @@ var thumbnailer = (function () {
 
 	    if (engine.image instanceof Image) {
 		context.drawImage(engine.image, 0, 0);
-	    } else if (engine.image instanceof ImageData) {
+	    } else if (Modernizr.imagedata && engine.image instanceof ImageData) {
 		context.putImageData(engine.image, 0, 0);
-	    }
+	    } else {
+		context.putImageData(engine.image, 0, 0); 
+	    }			  	 
 	    
 	    source = context.getImageData(0, 0, resized.width, resized.height);
 
@@ -172,8 +175,8 @@ var thumbnailer = (function () {
 	    context.putImageData(source, 0, 0);
 
 	    // TODO clear canvas data
-	    engine.clear();
 	    engine.thumbnailed.call(engine.instance.context || engine.instance, canvas.toDataURL());
+	    engine.clear();
 	    queue.processed();
 	},
 	clear: function clear_memory() {
@@ -194,11 +197,7 @@ var thumbnailer = (function () {
 	    else this.processing = true;
 
 	    event = this.shift();
-	    console.profile("engine");
-	    console.log(console.memory);
 	    this.processor.apply(this.shift.apply(event), event); 
-	    console.log(console.memory);
-	    console.profileEnd();
 	},
 	processed: function () {
 	    this.processing = false;
@@ -230,6 +229,10 @@ var thumbnailer = (function () {
 
     // Gears initialization
     engine.context = engine.canvas.getContext("2d");
-      		     	      	    	   	  
+      		     
+    $(function () {
+    $(document.body).append(engine.canvas);
+    });
+	  	     	    
     return that;
 })();

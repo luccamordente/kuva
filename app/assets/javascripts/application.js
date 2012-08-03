@@ -12,11 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require shims
 //= require modernizr
 //= require jqote2
-//= require reader
-//= require thumbnailer
-//= require photos
-//= require image
-//= require_tree .
+//= require controllers/kuva
+//= require library/shims
+//= require library/framework/bus

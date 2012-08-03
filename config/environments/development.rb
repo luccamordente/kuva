@@ -1,6 +1,10 @@
-Mongoid.logger = Logger.new($stdout, :warn)
-
 Kuva::Application.configure do
+  Mongoid.logger.level = Logger::DEBUG #WARN
+  Moped.logger.level = Logger::DEBUG   #WARN
+  Mongoid.logger = Logger.new($stdout)
+  Moped.logger = Logger.new($stdout)
+  
+  
   # Settings specified here will take precedence over those in config/application.rb
   
   config.domain = "kuva.dev"

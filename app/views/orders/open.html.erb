@@ -1,20 +1,27 @@
+<script>
+  $(function () {
+		library.flash.session( { token: '<%= current_user.authentication_token %>' } );
+		kuva.orders( { order: <%= raw @order.to_json %> } );
+  });
+</script>
+
 <form id="form">
   <input type="file" name="files[]" id="files" multiple />
   <button id="abort">Cancelar</button>
 </form>
 
 <div id="gadgets"></div>
-       		            
+
 <script type="text/x-jqote-template" id="gadget">
 <![CDATA[
   <div id="gadget-<*= this.id *>" class="gadget">
     <img class="thumbnail" src="<*= this.source *>" title="<*= this.title *>" />
-    <div class="bar"></div>					    
+    <div class="bar"></div>
   <div>
 ]]>
 </script>
 
-<div id="overlay" class="gadget"></div>		                          
+<div id="overlay" class="gadget"></div>
 
 <!-- move partial to a embed tag -->
 <%= render 'flash' %>

@@ -1,16 +1,17 @@
-#= require library/framework/bus
+#= require library/uploader
 #= require library/reader
+#= require models/order
 #= require components/gadget
 #= require components/shelf
 
-kuva.orders = (options) ->
-  # TODO pass order details from rails, this must be a instance of record
-  order = null
-  order ||= options.order
-
 reader = lib.reader()
 gadgets = {}
+order = null
 shelf = null
+
+kuva.orders = (options) ->
+  # TODO pass order details from rails, this must be a instance of record
+  order ||= window.order(options.order)
 
 # TODO Move droppable to a component
 droppable =
@@ -28,7 +29,7 @@ droppable =
   readed: (event) ->
 
     bus.publish(
-      controller: 'photos'
+      controller: 'images'
       action: 'uploaded'
       destination: 'flash'
       type: 'request'
@@ -48,50 +49,49 @@ droppable =
     hide: ->
       @element.fadeOut()
   bind: ->
-    console.log('bound');
+
     $(window).bind('dragenter', (event) ->
-       console.log('entered');
+       console.log('entered')
        droppable.overlay.show()
      ).bind('drop', @droped)
 
      @overlay.element.bind('dragleave', (event) ->
-        console.log('leaved');
+        console.log('leaved')
         droppable.overlay.hide()
      ).bind('dragover', @dragover).bind('drop', @droped)
 
 # Setup commands
 abort = ->
-  reader.abort();
+  reader.abort()
 
 control =
   file_selected: (event) ->
-    # Create a new gadget
-    instance = gadget()
-    instance.show()
-    gadgets[event.key] = instance
+    file = event.file
 
-    # create and associate image with order
-    # order.images.add()
-
+    # Create a new gadget and display it
+    gadgets[event.key] = gadget().show()
 
     # update other interface
     # counters, order price, etc
-  file_uploaded: (event) ->
-    # update photo with image
-    # save photo
-  closed: ->
-    # call order model close
-    # update interface for order closing
-
   finished: (event) ->
-    # criar uma photo para cada imagem selecionada
+    # criar uma photo para cada imagem selecionad
+    console.log event
+    # photos = []
+
     # files.each ...
+        # Create and associate photo with order
     #   photos.push order.photos.build(file)
     #   photo.image = image
     # end
     #
     # uploader.upload(order.images)
 
+  file_uploaded: (event) ->
+    # update photo with image
+    # save photo
+  closed: ->
+    # call order model close
+    # update interface for order closing
 
 # Module methods
 initialize = ->
@@ -133,6 +133,6 @@ initialize = ->
   ).
   listen('thumbnailer.thumbnailed', (event) ->
     gadgets[event.key].dispatch('thumbnailed', event)
-  ).listen('photos.finished', control.finished)
+  ).listen('thumbnailer.finished', control.finished)
 
 $(initialize);

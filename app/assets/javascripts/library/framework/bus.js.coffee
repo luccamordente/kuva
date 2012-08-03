@@ -1,11 +1,12 @@
+#= require library/framework/flash
 bus = ->
 flash = null
 
 listener =
   listen: (type, listener) ->
-    this.listeners[type] = [] if (!this.listeners[type])
-    this.listeners[type].push(listener)
-    this
+    @listeners[type] = [] if (!this.listeners[type])
+    @listeners[type].push(listener)
+    @
 
 publisher =
   publish: (event) ->
@@ -19,6 +20,7 @@ publisher =
           flash.publish(event);
         catch e
           console.error(e.message, e)
+
       when 'javascript'
       else
         listeners = this.listeners[event.type] || []
@@ -31,12 +33,23 @@ publisher =
 
         true
 
+  initialized: ->
+    bus.publish $.extend library.flash.session(),
+      controller: 'application'
+      action: 'initialize_session'
+      destination: 'flash'
+      type: 'request'
+
+
 errored = (event = {type: 'unknown'}) ->
   switch event.type
     # Flash is going crazy, kill it fast
     # TODO Display error message for this
     when 'error.uncaughted.maxed'
       $(flash).remove()
+
+
+
 
 # Set public methods
 bus.publish = publisher.publish
@@ -52,6 +65,7 @@ initialize = ->
   console.error('bus: flash not found.') unless flash?
 
   bus.listen('error.uncaughted.maxed', errored)
+  bus.listen('application.initialized', publisher.initialized)
 
 $(initialize)
 

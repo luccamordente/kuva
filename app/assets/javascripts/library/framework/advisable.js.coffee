@@ -1,4 +1,3 @@
-#= require jquery
 @advisable = (($) -> # mixin
   advice =
 		around: (base, wrapped) ->

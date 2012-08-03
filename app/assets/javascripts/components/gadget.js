@@ -12,6 +12,7 @@ var gadget = (function declare_photos () {
 		show: function () {
 			!this.element && control.create.call(this);
 			this.element.css({width: 250, height: 250}).fadeIn();
+			return this;
 		},
 		dispatch: function (name, event) {
 			handlers[name] && handlers[name].call(this, event);
@@ -19,6 +20,7 @@ var gadget = (function declare_photos () {
 		},
 		listen: function (name, callback) {
 			this[name] = callback;
+			return this;
 		}
     }, control = {
 		create: function () {

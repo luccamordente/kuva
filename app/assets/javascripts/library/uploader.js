@@ -1,18 +1,17 @@
+//= require /library/framework/bus
+
 var uploader = (function declare_uploader (reader) {
 	var that = function initialize (selector, settings) {
-		settings = settings || {};
+		settings = $.extend({url: 'images'}, settings)
 		if (!selector && instance) return instance;
 		instance = $(selector);
 
 		// TODO remover split e colocar array
 		$('progress finish error abort'.split(' ')).each(function (index, value) {
-			settings[value] && (transport[value + 'ed'] = settings[value]);
+			settings[value] && (uploader[value + 'ed'] = settings[value]);
 		});
 
-		transport.uploader = settings.uploader;
-
-		instance.settings = settings;
-		return $.extend(instance, uploader);
+		return $.extend(instance, settings, uploader);
 	},
 	configuration = {
 
@@ -26,33 +25,56 @@ var uploader = (function declare_uploader (reader) {
 			if (file.constructor == FileList) {
 
 				for (var i = 0, j = file.length; i < j; i++) {
-					transport.enqueue(file[i]);
+					this.enqueue(file[i]);
 				}
 
-				transport.next();
+				this.next();
 			} else {
-				transport.enqueue(file).next();
+				this.enqueue(file).next();
+			}
+		},
+		queue: [],
+		status: 'idle',
+		enqueue: function (file) {
+			this.queue.push(file);
+		},
+		next: function () {
+			if (this.status === 'idle') {
+				$.ajax({
+					type: 'post',
+					dataType: 'file_reference',
+					data: this.data,
+					url: this.url
+				});
 			}
 		}
 	};
 
 	var transport = {
-		sending: false,
-		queue: [],
-		enqueue: function (file) {
-			this.queue.push(file);
-			return this;
+		flash: function ( settings, original, xhr ) {
+			if ( settings.type === "POST" ) {
+				return {
+					send: function ( headers, completeCallback ) {
+						bus.publish({
+							controller: 'images',
+							action: 'send',
+							destination: 'flash',
+							type: 'request',
+							headers: headers,
+							url: settings.url,
+							settings: settings
+						});
+					},
+					abort: function() {
+						/* abort code */
+					}
+				};
+			}
+
 		},
-		next: function () {
-			if (this.sending || !this.queue.length) return this;
-			this.send(this.queue.shift());
-			return this;
-		},
-		sended: function () {
-			transport.sending = false;
-			transport.next();
-		},
-		send: function (file) {
+		// TODO if and when browser supports xhr upload property and form data
+		// use it
+		native: function (file) {
 			this.sending = true;
 
 			var xhr = new XMLHttpRequest(), data = new FormData();
@@ -74,5 +96,8 @@ var uploader = (function declare_uploader (reader) {
 		}
 	};
 
+	// Activate transports
+	$.ajaxTransport("file_reference", transport.flash);
+
 	return that;
-}).call(library, reader);
+}).call(library, window.reader = window.reader || {});

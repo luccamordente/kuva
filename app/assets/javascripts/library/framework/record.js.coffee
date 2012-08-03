@@ -1,21 +1,20 @@
 #= require library/framework/advisable
 
-
+# private methods
 rest =
   put: ->
-    rest.request.call(@, "#{@path}/#{@id}" || "/#{@resource}/#{@id}")
+    rest.request.call @, "#{@path}/#{@id}" || "/#{@resource}/#{@id}"
   post: ->
-    rest.request.call(@, @path || "/#{@resource}")
+    rest.request.call @, @path || "/#{@resource}"
   request: (url) ->
     data = {}
     data[@resource] = @json
 
-    $.ajax(
+    $.ajax
       url: url
       data: data
       success: @saved
       error: @failed
-    )
 
 initialize_resource = ->
   if @parent_resource
@@ -23,7 +22,7 @@ initialize_resource = ->
     @path = @[@parent_resource].path + '/' + @["#{@parent_resource}_id}"] unless @path
 
 
-@model = ( ->
+@model = do -> # mixin
   mixin = ->
     create: (mixed) ->
       # if mixed == array
@@ -32,17 +31,16 @@ initialize_resource = ->
   instantiate = (data) ->
     data.resource ||= @resource
     data.parent_resource ||= @parent_resource
-    record(data)
+    record.call(data)
 
   ->
     $.extend(@, mixin)
     $.proxy(instantiate, @)
-)
 
-@record = ( -> # mixin
+@record = do -> # mixin
   mixin =
     save: ->
-      rest[if @id then 'post' else 'put'].call(@)
+      rest[if @id then 'post' else 'put'].call @
     saved: ->
       # parsear resposta do servidor e popular dados no modelo atual
       # tinha pensado em botar as propriedades no modelo mermo, sem criar um "data"
@@ -52,7 +50,10 @@ initialize_resource = ->
       json
 
   (data) ->
+    console.error "Mixin called incorrectly, call mixin with call method: record.call(object, data)" if @ == window
     initialize_resource.call(@)
     advisable.call(@)
     $.extend(@, mixin, data)
-)
+
+
+# @association = ()

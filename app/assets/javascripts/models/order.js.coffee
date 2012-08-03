@@ -1,11 +1,13 @@
-#= require library/record
+#= require library/framework/record
+#= require models/photo
+#= require models/image
 
 @order = (data) ->
   # TODO improve model method support
   associations.call(record.call($.extend(path: 'orders', resource: 'order', data)))
 
 # TODO Make association a generic method
-associations = ( ->
+associations = ->
   @before('save', ->
     image.save() for image in @images
     photo.save() for photo in @photos
@@ -17,7 +19,7 @@ associations = ( ->
     build: (data) ->
      data.order = model
      data.parent_resource = "order"
-     image(data)
+     window.image(data)
     push: Array.prototype.push
 
   mixin_photos =
@@ -25,12 +27,11 @@ associations = ( ->
     build: (data) ->
      data.order = model
      data.parent_resource = "order"
-     photo(data)
+     window.photo(data)
     push: Array.prototype.push
 
 
-  -> $.extend(@, images: mixin_images, photos: mixin_photos)
-)
+  $.extend(@, images: mixin_images, photos: mixin_photos)
 
 open = ->
   # requisição para abrir ordem
@@ -39,7 +40,7 @@ opened = ->
   # salvar dados da ordem
   # dispachar evento de abertura de ordem, bus.publish(order.opened)
 
-errored ->
+errored = ->
   # dispachar evento de falha na abertura de ordem, bus.publish(order.opened)
 
 # close, closed

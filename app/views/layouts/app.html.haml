@@ -1,0 +1,20 @@
+!!!
+%html
+  %head
+    %title Enviar fotos
+    = stylesheet_link_tag    "application", :media => "all"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+  %body
+    
+    %nav
+      %ul
+        %li= link_to "Cancelar envio", orders_path, :confirm => "Tem certeza?"
+        
+    - if user_signed_in?
+      - if current_user.anonymous?
+        = "Usuário anonimo (#{link_to "login", new_user_session_path})"
+      - else
+        =raw "#{current_user.email} (#{link_to "sair", destroy_user_session_path, :method => "delete"})"
+    
+    = yield

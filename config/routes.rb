@@ -14,8 +14,7 @@ Kuva::Application.routes.draw do
 
   root :to => "home#index"
   
-  resources :orders, :only => [] do
-    get  :open, :on => :collection
+  resources :orders, :only => [:index, :new] do
     post :close, :on => :member
     
     resources :photos, :only => [:create, :update] do

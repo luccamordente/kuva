@@ -11,8 +11,8 @@ gem 'rails', '3.2.2'
 
 gem 'json'
 
-gem "mongoid", "~> 2.4"
-gem "bson_ext", "~> 1.5"
+gem "mongoid", "~> 3.0"
+gem "carrierwave"
 gem "carrierwave-mongoid", :require => "carrierwave/mongoid"
 gem "devise", "~> 2.0"
 gem "rubyzip"
@@ -53,7 +53,6 @@ group :development, :test do
   gem 'guard-rails_best_practices'
   gem 'mongoid-rspec'
   gem 'awesome_print'
-  gem 'ripper'
   gem 'growl'
   gem 'pry'
 end

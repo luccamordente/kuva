@@ -6,7 +6,7 @@ describe OrdersController do
     specify { subject.current_user.should be_nil }
     
     it "should not have a current_user" do
-      get :open
+      get :new
       subject.current_user.should be_nil
     end
     
@@ -36,7 +36,7 @@ describe OrdersController do
     
     describe "open" do
       it "opens a new order" do
-        get :open
+        get :new
         order = assigns[:order]
         order.should_not be_nil
         order.should be_persisted
@@ -44,18 +44,18 @@ describe OrdersController do
       end
     
       it "creates a new order for current user each time" do
-        expect { 2.times { get :open } }.to change(current_user.orders, :count).by 2
+        expect { 2.times { get :new } }.to change(current_user.orders, :count).by 2
       end
     
       it "loads photos specs" do
-        get :open
+        get :new
         specs = assigns[:specs]
         specs[:paper].should_not be_nil
         Specification::PAPERS.each { |paper| specs[:paper][paper].should == I18n.t("photo.specs.paper.#{paper}") }
       end
     
       it "loads the products" do
-        get :open
+        get :new
         assigns[:products].should_not be_nil
       end
     end

@@ -1,0 +1,14 @@
+%form#form
+  %input#files{ :type => "file", :name => "files[]", :multiple => true}
+  %button#abort Cancelar
+
+#gadgets
+
+%script#gadget{ :type => "text/x-jqote-template" }
+  :plain
+    <![CDATA[
+      <div id="gadget-<*= this.id *>" class="gadget">
+        <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
+        <div class="bar"></div>
+      <div>
+    ]]>

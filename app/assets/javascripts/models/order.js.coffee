@@ -4,7 +4,7 @@
 
 @order = (data) ->
   # TODO improve model method support
-  associations.call(record.call($.extend(path: 'orders', resource: 'order', data)))
+  associations.call(record.call($.extend(resource: 'order', data)))
 
 # TODO Make association a generic method
 associations = ->
@@ -13,20 +13,21 @@ associations = ->
     photo.save() for photo in @photos
   )
 
-  model = @
+  record = @
   mixin_images =
-    add: -> @push(@build.call(@, arguments))
-    build: (data) ->
-     data.order = model
+    add: (record) -> @push(@build(record))
+    build: (data = {}) ->
+     data.order = record
      data.parent_resource = "order"
      window.image(data)
     push: Array.prototype.push
 
   mixin_photos =
-    add: -> @push(@build.call(@, arguments))
-    build: (data) ->
-     data.order = model
+    add: (record) -> @push(@build(record))
+    build: (data = {}) ->
+     data.order = record
      data.parent_resource = "order"
+     console.log('associating with', data)
      window.photo(data)
     push: Array.prototype.push
 

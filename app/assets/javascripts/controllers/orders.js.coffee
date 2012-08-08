@@ -5,13 +5,17 @@
 #= require components/shelf
 
 reader = lib.reader()
-gadgets = {}
+gadgets = inherit(length: 0)
+photos = []                     # Proposital array for automatic counting of length
 order = null
 shelf = null
+uploader = null
+
 
 kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of record
   order ||= window.order(options.order)
+  uploader = window.uploader(data: order_id: order._id)
 
 # TODO Move droppable to a component
 droppable =
@@ -73,22 +77,59 @@ control =
 
     # update other interface
     # counters, order price, etc
-  finished: (event) ->
-    # criar uma photo para cada imagem selecionad
-    console.log event
-    # photos = []
+  thumbnailed: (event) ->
+    files = event.files
+    count = 0
+    key = event.key
 
-    # files.each ...
-        # Create and associate photo with order
-    #   photos.push order.photos.build(file)
-    #   photo.image = image
-    # end
-    #
-    # uploader.upload(order.images)
+    # Criar uma photo para cada arquivo selecionado
+    for file in files
+      # Create photos and associate with order files
+      photo = order.photos.build
+        name: file.name
+        count: 1
+
+      photo.file(file)
+      # TODO associate gadget with photo gadgets[file.key].photo = photo
+
+      photos[key] = photo
+      photos.length += ++count
+
+    control.photos.create(count)
+  photos:
+    create: (count) ->
+      $.ajax
+        url: photo.route
+        type: 'post'
+        data:
+          order_id: order._id
+          count: count
+          photo:
+            count: 1
+        dataType: 'json'
+        success: @created
+        error: @failed
+
+    created: (response) ->
+      ids = response.photo_ids
+
+      for key, photo of photos
+        # TODO check if some photo is without id
+
+        unless photo._id?
+          photo._id = ids.shift()
+          # TODO photo.gadget().unlock()
+          uploader.upload(photo.file())
+
+      true
+    failed: ->
+      console.error 'control.photos.failed: Failed creating photos.'
 
   file_uploaded: (event) ->
-    # update photo with image
-    # save photo
+    photo = photos[event.key]
+
+    # associate and save image
+    photo.images.create(_id: event.image_id)
   closed: ->
     # call order model close
     # update interface for order closing
@@ -112,7 +153,6 @@ initialize = ->
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
   bus.listen('file.selected', control.file_selected)
-  .listen('file.uploaded', control.file_uploaded)
   .listen('reader.loadstart', (event) ->
     gadgets[event.key].dispatch('loadstart', event)
   ).
@@ -133,6 +173,18 @@ initialize = ->
   ).
   listen('thumbnailer.thumbnailed', (event) ->
     gadgets[event.key].dispatch('thumbnailed', event)
-  ).listen('thumbnailer.finished', control.finished)
+  ).
+  listen('thumbnailer.finished', control.thumbnailed).
+  listen('upload.start', (event) ->
+    gadgets[event.key].dispatch('upload', event)
+  ).
+  listen('upload.progress', (event) ->
+    gadgets[event.key].dispatch('uploading', event)
+  ).
+  listen('upload.complete', (event) ->
+    # TODO figure out how get image id control.file_uploaded(event);
+    gadgets[event.key].dispatch('uploaded', event);
+  );
+
 
 $(initialize);

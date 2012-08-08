@@ -5,6 +5,8 @@ class ImagesController < ApplicationController
   def create
     order = current_user.orders.find params[:order_id]
 
+    params[:image] = { :image => params.delete(:'Filedata') }
+
     @image = order.images.build params[:image]
     @image.save!
 
@@ -12,6 +14,5 @@ class ImagesController < ApplicationController
   rescue Mongoid::Errors::Validations => exception
     render :status => :unprocessable_entity, :json => {:errors => @image.errors, :exception => exception}
   end
-
 
 end

@@ -33,7 +33,8 @@ var gadget = (function declare_photos () {
 			$(this.parent).jqoteapp(template, this.data);
 			this.element = $('#gadget-' + this.data.id);
 			this.image = library.image(this.element.find('img'), this.data.title);
-			this.bar = this.element.find('.bar');
+			this.upload_bar = this.element.find('.upload.bar');
+			this.thumbnail_bar = this.element.find('.thumbnail.bar');
 		}
     },
     handlers = {
@@ -47,23 +48,23 @@ var gadget = (function declare_photos () {
 			this.element.removeClass('reading').addClass('thumbnailing');
 			this.element.css({width: width, height: height});
 			this.image.title(event.file.name);
-			this.bar.updated = (new Date()).getTime();
+			this.thumbnail_bar.updated = (new Date()).getTime();
 		},
 		thumbnailing: function thumbnailer_thumbnailing (event) {
 			var percentage = ((event.parsed / event.total) * 100), now = (new Date()).getTime();
 
-			if (now - this.bar.updated > 200) {
-				this.bar.clearQueue().animate({width: percentage + '%'}, 1000, 'linear');
-				this.bar.updated = now;
+			if (now - this.thumbnail_bar.updated > 200) {
+				this.thumbnail_bar.clearQueue().animate({width: percentage + '%'}, 1000, 'linear');
+				this.thumbnail_bar.updated = now;
 			}
 		},
 		encoding: function thumbnailer_encoding (event) {
-			this.bar.animate({width: '100%'});
+			this.thumbnail_bar.animate({width: '100%'});
 		},
 		thumbnailed: function thumbnailer_thumbnailed (event) {
 			var gadget = this;
 
-			this.bar.animate({width: '100%'}, 1000, 'linear', function () {
+			this.thumbnail_bar.animate({width: '100%'}, 1000, 'linear', function () {
 				gadget.image.hide();
 
 				// TODO Fix in a better way the hide bug on webkit browsers
@@ -72,7 +73,7 @@ var gadget = (function declare_photos () {
 
 					gadget.element.addClass('loaded').removeClass('thumbnailing');
 					gadget.image.source(prefix + event.base64).show('slow', function () {
-						gadget.bar.hide();
+						gadget.thumbnail_bar.hide();
 					}, 1)
 				});
 
@@ -80,6 +81,24 @@ var gadget = (function declare_photos () {
 				gadget.thumbnailed && gadget.thumbnailed();		// Execute callback if any
 			});
 
+		},
+		upload: function upload_start (event) {
+			this.element.addClass('uploading');
+			this.upload_bar.width(0).show();
+		},
+		uploading: function upload_progress (event) {
+			var percentage = ((event.loaded / event.total) * 100);
+
+			this.upload_bar.clearQueue().animate({width: percentage + '%'}, 1000, 'linear');
+		},
+		uploaded: function upload_complete(event) {
+			var gadget = this;
+
+			this.thumbnail_bar.animate({width: '100%'}, 1000, 'linear', function () {
+				gadget.upload_bar.fadeOut(function () {
+					gadget.element.removeClass('uploading').addClass('uploaded');
+				});
+			});
 		}
     }, view = {
 		show: function () {

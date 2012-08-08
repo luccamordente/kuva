@@ -2,9 +2,16 @@
 
 var uploader = (function declare_uploader (reader) {
 	var that = function initialize (selector, settings) {
-		settings = $.extend({url: 'images'}, settings)
-		if (!selector && instance) return instance;
-		instance = $(selector);
+		if (!settings) {
+			settings = selector
+			selector = null
+		}
+
+		settings = $.extend(defaults, settings)
+
+		if (selector) instance = $(selector)
+		else instance = {}
+
 
 		// TODO remover split e colocar array
 		$('progress finish error abort'.split(' ')).each(function (index, value) {
@@ -13,24 +20,23 @@ var uploader = (function declare_uploader (reader) {
 
 		return $.extend(instance, settings, uploader);
 	},
-	configuration = {
-
-	}, instance;
+	defaults = {
+		url: '/images'
+	};
 
 	var uploader = {
 		// TODO Check if file is array and upload multiple files
-		upload: function upload_file(file) {
-			file = file || this.get(0).files;
+		upload: function upload_file(files) {
+			this.get && this.get(0).files && (files = this.get(0).files);		// jQuery compatibility
+			files.length || (files = $.makeArray(files));						// Transform any paremeter in array
 
-			if (file.constructor == FileList) {
+			if (files.length) {
 
-				for (var i = 0, j = file.length; i < j; i++) {
-					this.enqueue(file[i]);
+				for (var i = 0, j = files.length; i < j; i++) {
+					this.enqueue(files[i]);
 				}
 
 				this.next();
-			} else {
-				this.enqueue(file).next();
 			}
 		},
 		queue: [],
@@ -40,21 +46,30 @@ var uploader = (function declare_uploader (reader) {
 		},
 		next: function () {
 			if (this.status === 'idle') {
+				this.status = 'sending';
+				console.log('internal data is', this.data)
 				$.ajax({
 					type: 'post',
 					dataType: 'file_reference',
 					data: this.data,
-					url: this.url
+					url: this.url,
+					success: this.success
 				});
 			}
+		},
+		success: function () {
+			uploader.status = 'idle';
+			uploader.queue.length && uploader.next();
 		}
 	};
-
 	var transport = {
 		flash: function ( settings, original, xhr ) {
 			if ( settings.type === "POST" ) {
 				return {
 					send: function ( headers, completeCallback ) {
+						console.log('settings are', settings)
+						settings.data = '&' + settings.data;
+
 						bus.publish({
 							controller: 'images',
 							action: 'send',

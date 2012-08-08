@@ -9,8 +9,15 @@ listener =
     @
 
 publisher =
+  key: (event) ->
+    return event.key.substring(0, 5) if event.key
+    return @key.increment++
   publish: (event) ->
-    event.key = event.key.substring(0, 5) if event.key
+    event.key = publisher.key(event)
+
+    # if event.complete
+    #   listener.listen ("complete.#{event.key}", response) ->
+    #     event.complete.call(event.target || event.context || event, event);
 
     console.log('publishing[' + event.key + ']', event.type, event) if (event.type !=  'thumbnailer.progress');
 
@@ -29,7 +36,7 @@ publisher =
           while(i--)
             listeners[i].call(event.target || event.context || event, event);
         catch e
-          console.error(e.message, e);
+          console.error(e.message, e, 'on listener', listeners[i]);
 
         true
 
@@ -40,15 +47,16 @@ publisher =
       destination: 'flash'
       type: 'request'
 
+# Private namespace variables
+publisher.key.increment = 0;
 
+# Private module variables
 errored = (event = {type: 'unknown'}) ->
   switch event.type
     # Flash is going crazy, kill it fast
     # TODO Display error message for this
     when 'error.uncaughted.maxed'
       $(flash).remove()
-
-
 
 
 # Set public methods

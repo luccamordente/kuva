@@ -1,1 +1,1 @@
-@image = model.call resource: 'image', path: 'images'
+@image = model.call resource: 'image', route: 'images'

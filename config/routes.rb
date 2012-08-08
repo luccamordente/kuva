@@ -1,19 +1,29 @@
 Kuva::Application.routes.draw do
 
+  namespace :admin do 
+    resources :orders do
+      member do
+        get :download
+      end
+    end
+    
+    root :to => "orders#index"
+  end
+
   devise_for :users, :controllers => { :sessions => "sessions" }
 
   root :to => "home#index"
   
-  resources :orders, :only => [] do
-    get  :open, :on => :collection
+  resources :orders, :only => [:index, :new] do
     post :close, :on => :member
+    
+    resources :photos, :only => [:create, :update] do
+      post :check, :on => :collection
+    end
+
+    resources :images, :only => [:create]
   end
 
-  resources :photos, :only => [:index, :create, :update] do
-    post :check, :on => :collection
-  end
-
-  resources :images, :only => [:create]
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

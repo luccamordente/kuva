@@ -3,10 +3,6 @@ class PhotosController < ApplicationController
   before_filter :authenticate_user!#, :except => :index
   #before_filter :create_and_sign_in_anonymous_user, :only => :index
 
-  def index
-    @order = current_user.orders.create
-  end
-
   def create
     order = current_user.orders.find params[:order_id]
     count = params[:count].to_i
@@ -40,7 +36,7 @@ class PhotosController < ApplicationController
     end
 
     def filter_photo_params_for_creation photo_params
-      photo_params.keep_if{ |k,v| ["count", "spec", "product_id", "spec_attributes"].include? k }
+      photo_params.keep_if{ |k,v| ["count", "product_id", "specification_attributes"].include? k }
     end
 
 end

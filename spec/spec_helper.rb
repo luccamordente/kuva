@@ -34,3 +34,11 @@ def validate_timestamps
     it { should have_fields(:created_at, :updated_at) }
   end
 end
+
+def some_image_path
+  File.join(Rails.root,"app/assets/images/rails.png")
+end
+
+def image_fixture
+  File.new some_image_path
+end

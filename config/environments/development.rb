@@ -1,5 +1,13 @@
 Kuva::Application.configure do
+  Mongoid.logger.level = Logger::DEBUG #WARN
+  Moped.logger.level = Logger::DEBUG   #WARN
+  Mongoid.logger = Logger.new($stdout)
+  Moped.logger = Logger.new($stdout)
+  
+  
   # Settings specified here will take precedence over those in config/application.rb
+  
+  config.domain = "kuva.dev"
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -15,7 +23,9 @@ Kuva::Application.configure do
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
+  config.action_mailer.default_url_options   = { :host => 'kuva.dev' }
+  config.action_mailer.asset_host            = 'http://kuva.dev'
+  config.action_mailer.delivery_method = :letter_opener
 
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
@@ -29,13 +39,12 @@ Kuva::Application.configure do
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
-  
-  config.mongoid.logger = Logger.new($stdout, :warn)
-  config.mongoid.persist_in_safe_mode = true
 
   # Do not compress assets
   config.assets.compress = false
 
   # Expands the lines which load the assets
   config.assets.debug = true
+  
+  config.action_controller.asset_host = "http://" + config.domain
 end

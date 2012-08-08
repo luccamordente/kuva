@@ -9,8 +9,8 @@ class User
          :token_authenticatable
 
   ## Database authenticatable
-  field :email,              :type => String, :null => false, :default => ""
-  field :encrypted_password, :type => String, :null => false, :default => ""
+  field :email,              :type => String, :default => ""
+  field :encrypted_password, :type => String, :default => ""
 
   ## Recoverable
   field :reset_password_token,   :type => String
@@ -40,7 +40,7 @@ class User
   # field :unlock_token,    :type => String # Only if unlock strategy is :email or :both
   # field :locked_at,       :type => Time
 
-  ## Token authenticatable
+  # Token authenticatable
   field :authentication_token, :type => String
 
   field :name, :type => String
@@ -50,8 +50,14 @@ class User
   field :anonymous, :type => Boolean, :default => false
 
   has_many :orders, :dependent => :destroy
-
-
+  
+  before_save :ensure_authentication_token
+  
+  
+  def first_name
+    name.split(/\s/).first
+  end
+  
   def self.create_anonymous_user
     temp_token = SecureRandom.base64(15).tr('+/=', 'xyz')
     user = ::User.new(:email => "#{temp_token}@kuva.com", :password => temp_token, :password_confirmation => temp_token, :anonymous => true)

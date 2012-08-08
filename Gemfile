@@ -11,10 +11,12 @@ gem 'rails', '3.2.2'
 
 gem 'json'
 
-gem "mongoid", "~> 2.4"
-gem "bson_ext", "~> 1.5"
+gem "mongoid", "~> 3.0"
+gem "carrierwave"
 gem "carrierwave-mongoid", :require => "carrierwave/mongoid"
 gem "devise", "~> 2.0"
+gem "rubyzip"
+gem "roadie"
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -22,7 +24,8 @@ group :assets do
   gem 'sass-rails', '~> 3.2.3'
   gem 'haml-rails', '~> 0.3.4'  # gem 'capistrano'
   gem 'coffee-rails', '~> 3.2.1'
-  gem 'compass-rails'
+  gem 'compass-rails', '~> 1.0.3'
+  gem 'bootstrap-sass', '~> 2.0.4'
 
   gem 'uglifier', '>= 1.0.3'
 end
@@ -32,6 +35,7 @@ gem 'jquery-rails'
 
 group :development do
   gem 'foreman'
+  gem 'letter_opener'
 end
 
 group :development, :test do
@@ -41,15 +45,16 @@ group :development, :test do
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner'
-  gem 'factory_girl_rails', '~> 1.7.0'
+  gem 'fabrication', '~> 1.2.0'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'guard-livereload'
+  # gem 'rails_best_practices'
   gem 'guard-rails_best_practices'
   gem 'mongoid-rspec'
   gem 'awesome_print'
-  gem 'ripper'
   gem 'growl'
+  gem 'pry'
 end
 
 

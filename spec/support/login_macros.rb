@@ -1,7 +1,7 @@
 module LoginMacros
   def login_admin
     before :each do
-      admin = Factory.create(:admin)
+      admin = Fabricate(:admin)
       visit new_admin_session_path
       fill_in 'admin_email',    :with => admin.email
       fill_in 'admin_password', :with => admin.password
@@ -12,7 +12,7 @@ module LoginMacros
   
   def login_user
     before :each do
-      user = Factory.create(:user)
+      user = Fabricate(:user)
       visit new_user_session_path
       fill_in 'user_email',    :with => user.email
       fill_in 'user_password', :with => user.password

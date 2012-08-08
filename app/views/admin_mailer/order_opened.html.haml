@@ -1,0 +1,14 @@
+%div
+  %b Status:
+  = t_status @order.status
+
+%div
+  %b Aberta em:
+  = l @order.created_at, :format => :tiny
+
+%div
+  %b Cliente:
+  = @name
+
+%div
+  = link_to "Clique aqui para acompanhar a ordem.", admin_root_url

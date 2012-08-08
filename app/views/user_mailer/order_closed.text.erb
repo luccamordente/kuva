@@ -1,0 +1,28 @@
+Olá <%= @name %>,
+
+seu pedido acabou de chegar aqui no Pedro Cine Foto!
+
+
+Suas fotos ficarão prontas em até 1 hora e
+você pode vir buscá-las a partir de <%= l @order.closed_at + 1.hour, :format => :tiny %>.*
+
+O valor total do serviço é de <%= number_to_currency @order.price %> e pode
+ser acertado quando você vier buscar suas fotos.
+
+
+Gostamos de fotos impecáveis e vamos fazer
+de tudo para que as suas também fiquem!
+
+Ricardo Mordente
+Pedro Cine Foto
+
+
+P.S. Se tiver alguma dúvida, pode responder a este e-mail
+     ou ligar no (31) 2128-3400 e pedir para falar comigo.
+
+
+
+* O prazo de 1 hora para prepararmos suas fotos só é válido para o horário 
+  comercial (segunda a sexta de 8:00 às 19:00 e sábado de 8:00 às 13:00).
+  Caso seu pedido tenha sido fechado fora desse horário, este ficará pronto 
+  às 10:00 do próximo dia comercial.

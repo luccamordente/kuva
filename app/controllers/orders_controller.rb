@@ -1,27 +1,33 @@
 class OrdersController < ApplicationController
-
+  
+  layout 'app', :only => :new
+  
   before_filter :authenticate_user!
-
-  before_filter :load_products, :only => :open
-
-  def open
+  before_filter :load_specs, :load_products, :only => :new
+  
+  def new
     @order = current_user.orders.create
   end
-
+  
+  def index
+    @orders = current_user.orders.without(:photos).order_by(:closed_at.desc).all
+  end
+  
   def close
     @order = current_user.orders.find params[:id]
-    @order.close
-
+    @order.update_status Order::CLOSED
+    
     success :id => @order.id.to_s
   end
-
-  private
-
+  
+private
+  
   def load_specs
-    @specs = Spec.to_h
+    @specs = Specification.to_h
   end
 
   def load_products
     @products = Product.only(:_id,:name,:price).all
   end
+  
 end

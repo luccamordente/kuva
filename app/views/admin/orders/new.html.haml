@@ -1,0 +1,6 @@
+%h1 New admin_order
+
+= form_for @order, :url => admin_orders_path do |f|
+  = render 'form', :f => f
+
+= link_to 'Back', admin_orders_path

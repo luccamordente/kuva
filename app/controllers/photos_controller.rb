@@ -7,16 +7,19 @@ class PhotosController < ApplicationController
     order = current_user.orders.find params[:order_id]
     count = params[:count].to_i
 
+    @photo = nil
+
     ids   = []
 
     count.times do
-      photo = order.photos.create filter_photo_params_for_creation params[:photo]
-      ids  << photo.id
+      @photo = order.photos.build filter_photo_params_for_creation params[:photo]
+      @photo.save!
+      ids  << @photo.id
     end
-    
-    order.save
 
     success :photo_ids => ids
+  rescue Mongoid::Errors::Validations => exception
+    render :status => :unprocessable_entity, :json => {:errors => @photo.errors, :exception => exception}
   end
 
   def update

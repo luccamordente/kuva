@@ -37,6 +37,8 @@ gem 'jquery-rails'
 group :development do
   gem 'foreman'
   gem 'letter_opener'
+  gem 'pry'
+  gem 'pry-remote'
 end
 
 group :development, :test do
@@ -54,8 +56,7 @@ group :development, :test do
   gem 'guard-rails_best_practices'
   gem 'mongoid-rspec'
   gem 'awesome_print'
-  gem 'growl'
-  gem 'pry'
+  gem 'terminal-notifier'
 end
 
 

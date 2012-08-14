@@ -4,15 +4,31 @@ flash = null
 
 listener =
   listen: (type, listener) ->
-    @listeners[type] = [] if (!this.listeners[type])
-    @listeners[type].push(listener)
+    @listeners[type] = [] if !@listeners[type]
+    @listeners[type].push listener
     @
+  mute: (type, listener) ->
+    return console.error("Listener for event of type #{type}, does not exist") if !@listeners[type]
+
+    if listener
+      channel = @listener[type]
+      index = channel.indexOf(listener)
+
+      if index != -1
+        channel.splice index, 1
+      else
+        console.warn 'Listener', listener,' already removed or not found'
+
+    else
+      @listeners[type] = []
+    @
+
 
 publisher =
   key: (event) ->
-    return event.key.substring(0, 5) if event.key
+    return event.key.toString().substring(0, 8) if event.key
     return @key.increment++
-  publish: (event) ->
+  publish: (event, acknowledge) ->
     event.key = publisher.key(event)
 
     # if event.complete
@@ -24,9 +40,10 @@ publisher =
     switch event.destination
       when 'flash'
         try
-          flash.publish(event);
+          flash.publish(event)
         catch e
           console.error(e.message, e)
+          return false
 
       when 'javascript'
       else
@@ -34,11 +51,12 @@ publisher =
         i = listeners.length
         try
           while(i--)
-            listeners[i].call(event.target || event.context || event, event);
+            listeners[i].call(event.target || event.context || event, event)
         catch e
-          console.error(e.message, e, 'on listener', listeners[i]);
+          console.error(e.message, e, 'on listener', listeners[i])
+          return false
 
-        true
+    event.key
 
   initialized: ->
     bus.publish $.extend library.flash.session(),
@@ -60,8 +78,10 @@ errored = (event = {type: 'unknown'}) ->
 
 
 # Set public methods
+bus.key = publisher.key
 bus.publish = publisher.publish
 bus.listen = listener.listen
+bus.mute = listener.mute
 bus.listeners = {}
 
 # Application wild initialization

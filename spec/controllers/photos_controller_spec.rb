@@ -55,6 +55,18 @@ describe PhotosController do
       end
     end
     
+    
+    context "with validation error" do
+      it "should respond unprocessable entity" do
+        expect {
+          post :create, :order_id => order.id, :photo => photo_attributes.except(:product_id), :count => count
+        }.not_to change(order.photos, :count)
+        response.should_not be_success
+        response.status.should == 422
+        ActiveSupport::JSON.decode(response.body).should have_key "errors"
+      end
+    end
+    
   end
   
   

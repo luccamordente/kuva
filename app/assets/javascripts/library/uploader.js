@@ -53,15 +53,19 @@ var uploader = (function declare_uploader (reader) {
 					dataType: 'file_reference',
 					data: this.data,
 					url: this.url,
-					success: this.success
+					success: this.success,
+					context: this
 				});
 			}
 		},
-		success: function () {
-			uploader.status = 'idle';
-			uploader.queue.length && uploader.next();
+		success: function (response) {
+			this.status = 'idle';
+			// TODO In response remove especific uploaded files
+			this.queue.splice(0, response.amount);
+			this.queue.length && uploader.next();
 		}
 	};
+
 	var transport = {
 		flash: function ( settings, original, xhr ) {
 			if ( settings.type === "POST" ) {
@@ -69,8 +73,7 @@ var uploader = (function declare_uploader (reader) {
 					send: function ( headers, completeCallback ) {
 						console.log('settings are', settings)
 						settings.data = '&' + settings.data;
-
-						bus.publish({
+						var event = {
 							controller: 'images',
 							action: 'send',
 							destination: 'flash',
@@ -78,7 +81,20 @@ var uploader = (function declare_uploader (reader) {
 							headers: headers,
 							url: settings.url,
 							settings: settings
-						});
+						}, type;
+
+						event.key = bus.key(event);
+						if (settings.success)
+							type = event.controller + '.' + event.action + '(' + event.key + ')'
+     						bus.listen(type + '.success',
+									   function request_succeeded (data) {
+										   data.response && (data.response.original_event = event)
+										   settings.success.call(settings.context || window, data.response);
+										   bus.mute(type + '.success');
+									   }
+									  );
+						bus.publish(event);
+
 					},
 					abort: function() {
 						/* abort code */

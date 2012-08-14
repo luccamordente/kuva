@@ -27,7 +27,6 @@ associations = ->
     build: (data = {}) ->
      data.order = record
      data.parent_resource = "order"
-     console.log('associating with', data)
      window.photo(data)
     push: Array.prototype.push
 

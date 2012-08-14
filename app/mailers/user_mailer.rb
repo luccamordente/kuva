@@ -2,6 +2,7 @@
 
 class UserMailer < ActionMailer::Base
   layout "user_mailer"
+  helper :application
   
   default :from     => "Ricardo Mordente (Pedro Cine Foto) <ricardo@pedrocinefoto.com.br>"
   default :reply_to => "Ricardo Mordente (Pedro Cine Foto) <ricardo@pedrocinefoto.com.br>"

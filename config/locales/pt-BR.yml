@@ -208,17 +208,26 @@ pt-BR:
       short: ! "%d/%b, %H:%Mh"
       tiny: ! "%H:%Mh"
     pm: ""
+    
   photo:
     specs:
       paper:
         glossy: "Brilhante"
         matte:  "Fosco"
+        
   order:
     status:
-      empty: Vazia
-      progress: Enviando
-      closed: Enviada
-      catching: Capturando
-      caught: Capturada
-      ready: Executada
+      empty:     Vazia
+      progress:  Enviando
+      closed:    Enviada
+      catching:  Capturando
+      caught:    Capturada
+      ready:     Executada
       delivered: Entregue
+      
+      humanized:
+        empty:     "Pedido vazio"
+        progress:  "Seu pedido está sendo enviado..."
+        sent:      "Seu pedido foi enviado e fica pronto em %{remaining_time}."
+        ready:     "Seu pedido já está pronto para buscar!"
+        delivered: Entregue

@@ -1,4 +1,4 @@
-Status: <%= t_status @order.status %>
+Status: <%= @order.simple_status %>
 
 Aberta em: <%= l @order.created_at, :format => :tiny %>
 

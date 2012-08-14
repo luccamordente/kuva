@@ -1,6 +1,6 @@
 %p
   %b Status:
-  = t_status @order.status
+  = @order.simple_status
 %p
   %b Preço:
   = number_to_currency @order.price

@@ -113,6 +113,17 @@ describe Order do
     end
     
     
+    describe "sent" do
+      [Order::CLOSED, Order::CATCHING, Order::CAUGHT].each do |status|
+        it "should be sent when status is #{status}" do
+          order = Fabricate :order
+          order.update_status status
+          order.should be_sent
+        end
+      end
+    end
+    
+    
   end
   
   describe "downloadable" do

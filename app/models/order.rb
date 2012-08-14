@@ -72,7 +72,9 @@ class Order
   def is_empty?; self.status == EMPTY ; end
   def closed?  ; self.status == CLOSED; end
   
-  
+  def sent?
+    [CLOSED, CATCHING, CAUGHT].include? status
+  end
   
   
   # download

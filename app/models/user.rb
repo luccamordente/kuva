@@ -54,10 +54,6 @@ class User
   before_save :ensure_authentication_token
   
   
-  def first_name
-    name.split(/\s/).first
-  end
-  
   def self.create_anonymous_user
     temp_token = SecureRandom.base64(15).tr('+/=', 'xyz')
     user = ::User.new(:email => "#{temp_token}@kuva.com", :password => temp_token, :password_confirmation => temp_token, :anonymous => true)

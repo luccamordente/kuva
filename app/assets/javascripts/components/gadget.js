@@ -54,7 +54,7 @@ var gadget = (function declare_photos () {
 			var percentage = ((event.parsed / event.total) * 100), now = (new Date()).getTime();
 
 			if (now - this.thumbnail_bar.updated > 200) {
-				this.thumbnail_bar.clearQueue().animate({width: percentage + '%'}, 1000, 'linear');
+				this.thumbnail_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
 				this.thumbnail_bar.updated = now;
 			}
 		},
@@ -84,17 +84,17 @@ var gadget = (function declare_photos () {
 		},
 		upload: function upload_start (event) {
 			this.element.addClass('uploading');
-			this.upload_bar.width(0).show();
+			this.upload_bar.show().width("0%");
 		},
 		uploading: function upload_progress (event) {
 			var percentage = ((event.loaded / event.total) * 100);
 
-			this.upload_bar.clearQueue().animate({width: percentage + '%'}, 1000, 'linear');
+			this.upload_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
 		},
 		uploaded: function upload_complete(event) {
 			var gadget = this;
 
-			this.thumbnail_bar.animate({width: '100%'}, 1000, 'linear', function () {
+			this.upload_bar.animate({width: '100%'}, 1000, 'linear', function () {
 				gadget.upload_bar.fadeOut(function () {
 					gadget.element.removeClass('uploading').addClass('uploaded');
 				});

@@ -23,16 +23,16 @@
 
 		img {
 			position: relative;
-			z-index: 1;
+			z-index: 2;
 			text-align: center;
 			vertical-align: middle;
 		}
 
 		.bar {
-			// display: none;
+			display: none;
 			position: absolute;
 			top: 0em;
-			z-index: 0;
+			z-index: 1;
 		}
 
 		&.loading {
@@ -83,10 +83,9 @@
 			background-color: #bbb;
 
 			.upload.bar {
-				display: block;
-				height: 1%;
+				height: .5em;
 				background-color: lightBlue;
-				z-index: 1;
+				z-index: 3;
 			}
 		}
 
@@ -94,12 +93,11 @@
 			background-color: transparent;
 
 			.upload.bar {
-				height: 1px;
-				display: block;
+				height: .2em;
 			}
 
 			img {
-				border: 1px solid lightBlue;
+				border: 3px solid lightBlue;
 			}
 		}
 	}

@@ -15,7 +15,11 @@ uploader = null
 kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of record
   order ||= window.order(options.order)
-  uploader = window.uploader(data: order_id: order._id)
+  window.uploader(data: order_id: order._id)
+  uploader = window.uploader
+    url: "/orders/#{order._id}/photos/"
+    data:
+      order_id: order._id
 
 # TODO Move droppable to a component
 droppable =
@@ -99,10 +103,9 @@ control =
   photos:
     create: (count) ->
       $.ajax
-        url: photo.route
+        url: "/orders/#{order._id}/photos"
         type: 'post'
         data:
-          order_id: order._id
           count: count
           photo:
             count: 1

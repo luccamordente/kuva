@@ -17,7 +17,7 @@ kuva.orders = (options) ->
   order ||= window.order(options.order)
   window.uploader(data: order_id: order._id)
   uploader = window.uploader
-    url: "/orders/#{order._id}/photos/"
+    url: "/orders/#{order._id}/images/"
     data:
       order_id: order._id
 

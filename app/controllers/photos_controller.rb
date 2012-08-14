@@ -13,6 +13,8 @@ class PhotosController < ApplicationController
       photo = order.photos.create filter_photo_params_for_creation params[:photo]
       ids  << photo.id
     end
+    
+    order.save
 
     success :photo_ids => ids
   end

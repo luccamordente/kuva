@@ -122,7 +122,7 @@ private
     end
 
     def admin_notify_opened
-      # AdminMailer.order_opened(self).deliver
+      AdminMailer.order_opened(self).deliver
     end
 
     def admin_notify_closed

@@ -65,3 +65,6 @@ module Kuva
     end
   end
 end
+
+
+BSON = Moped::BSON

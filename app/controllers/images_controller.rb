@@ -3,11 +3,9 @@ class ImagesController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => :create
 
   def create
-    order = current_user.orders.find params[:order_id]
+    order = current_user.orders.find params[:order_id]  
 
-    params[:image] = { :image => params.delete(:'Filedata') }
-
-    @image = order.images.build params[:image]
+    @image = order.images.build params
     @image.save!
 
     success :id => @image.id

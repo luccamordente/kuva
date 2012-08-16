@@ -13,8 +13,12 @@ class PhotosController < ApplicationController
 
     count.times do
       @photo = order.photos.build filter_photo_params_for_creation params[:photo]
-      @photo.save!
-      ids  << @photo.id
+      @photo.save! if not @photo.valid?
+    end
+    
+    count.times do
+      @photo.save
+      ids << @photo.id
     end
 
     success :photo_ids => ids

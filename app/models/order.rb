@@ -17,6 +17,7 @@ class Order
   field :caught_at   , :type => DateTime
   field :ready_at    , :type => DateTime
   field :delivered_at, :type => DateTime
+  field :observations, :type => String
 
   # relationships
   embeds_many :photos
@@ -37,7 +38,7 @@ class Order
   validates :status, :inclusion => { :in => STATUSES }, :allow_blank => false
 
   #scopes
-  scope :last_updated, all(:sort => [[:updated_at, :desc]])
+  scope :last_updated, order_by(:updated_at.desc)
 
   # filters
   before_validation :set_empty_status, :on => :create
@@ -68,6 +69,12 @@ class Order
   def downloadable?
     not [EMPTY, PROGRESS].include? status
   end
+
+  def downloaded?
+    [CATCHING, CAUGHT, READY, DELIVERED].include? status
+  end
+  
+  
 
   def is_empty?; self.status == EMPTY ; end
   def closed?  ; self.status == CLOSED; end

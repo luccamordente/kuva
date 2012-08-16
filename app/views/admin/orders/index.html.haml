@@ -12,14 +12,4 @@
     / %th.hidden-phone
     / %th.hidden-phone
 
-  - @orders.each do |order|
-    %tr
-      %td= labeled_status order.status
-      %td= number_to_currency order.price
-      %td.hidden-phone= l order.created_at, :format => :medium
-      %td= l order.updated_at, :format => :medium
-      %td= order.user.try :name
-      %td.visible-desktop= link_to 'Ver', admin_order_path(order), :class => 'btn'
-      %td.visible-desktop= link_to 'Download', download_admin_order_path(order), :class => 'btn btn-primary' if order.downloadable?
-      / %td.hidden-phone= link_to 'Edit', edit_admin_order_path(order), :class => 'btn'
-      / %td.hidden-phone= link_to 'Destroy', admin_order_path(order), :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger'
+  = render @orders

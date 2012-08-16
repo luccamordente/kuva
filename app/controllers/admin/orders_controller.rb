@@ -2,7 +2,7 @@ class Admin::OrdersController < Admin::ApplicationController
   # GET /admin/orders
   # GET /admin/orders.json
   def index
-    @orders = Order.last_updated.all
+    @orders = Order.last_updated
 
     respond_to do |format|
       format.html # index.html.erb

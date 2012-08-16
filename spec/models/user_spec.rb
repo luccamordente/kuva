@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe User do
   
-  validate_timestamps
+  
+  describe "validations" do
+    validate_timestamps
+    it{ should validate_presence_of(:name) }
+  end
   
   describe "relationships" do
     it { should have_many(:orders).with_foreign_key(:user_id) }
@@ -54,6 +58,33 @@ describe User do
     its(:authentication_token){ should_not be_nil }
     
     it "better change the authentication token at some point... it's not secure to keep the same token forever!"
+  end
+  
+  
+  
+  describe "creation" do
+    subject{ Fabricate.build :user }
+    
+    describe "before" do
+      its(:reset_password_token){ should be_nil }
+    end
+    
+    describe "after" do
+      before do
+        subject.save
+      end
+    
+      its(:reset_password_token){ should_not be_nil }
+    end
+  end
+  
+  
+  describe "welcome email with password instructions" do
+    let!(:user){ Fabricate :user }
+    
+    it "should send email" do
+      expect { user.send :send_welcome_mail_with_password_instructions }.to change(ActionMailer::Base.deliveries, :count).by(1)
+    end
   end
   
   

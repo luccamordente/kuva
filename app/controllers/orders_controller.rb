@@ -10,7 +10,7 @@ class OrdersController < ApplicationController
   end
   
   def index
-    @orders = current_user.orders.without(:photos).order_by(:closed_at.desc).all
+    @orders = current_user.orders.without(:photos).order_by(:closed_at.desc, :updated_at.desc).all
   end
   
   def close

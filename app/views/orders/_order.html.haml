@@ -1,8 +1,5 @@
 %br
 .order
+  = order.id
   .status= order.humanized_status
-  - if order.closed_at
-    .closed
-      Enviado em: 
-      = l order.closed_at, :format => :medium
-      = "(#{time_ago_in_words order.closed_at})"
+  = order.status_time

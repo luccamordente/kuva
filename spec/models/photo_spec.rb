@@ -12,12 +12,7 @@ describe Photo do
   end
   
   describe "validations" do
-    it "should not be valid without a product" do
-      order = Fabricate :order
-      photo = order.photos.create :count => 5, :specification_attributes => { :paper => :glossy }, :product_id => nil
-      photo.should_not be_valid
-      photo.errors[:product].should_not be_blank
-    end
+    it{ should validate_presence_of(:product) }
   end
   
   describe "directory" do

@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Order do
-  
-  validate_timestamps
+  extend OrderMacros
   
   describe "relationships" do
     it { should belong_to  :user   }
@@ -11,6 +10,8 @@ describe Order do
   end
   
   describe "validation" do
+    validate_timestamps
+    
     [:status].each do |attr|
       it "should not be valid without #{attr}" do
         order = Fabricate :order
@@ -114,10 +115,8 @@ describe Order do
     
     
     describe "sent" do
-      [Order::CLOSED, Order::CATCHING, Order::CAUGHT].each do |status|
+      orders_with_each_status %W{ CLOSED CATCHING CAUGHT } do |order, status|
         it "should be sent when status is #{status}" do
-          order = Fabricate :order
-          order.update_status status
           order.should be_sent
         end
       end
@@ -127,13 +126,32 @@ describe Order do
   end
   
   describe "downloadable" do
-    it "should not be downloadable when empty    "
-    it "should not be downloadable when progress "
-    it "should be downloadable when closed   "
-    it "should be downloadable when catching "
-    it "should be downloadable when caught   "
-    it "should be downloadable when ready    "
-    it "should be downloadable when delivered"
+    orders_with_each_status %W{ EMPTY PROGRESS } do |order, status|
+      it "should not be downloadable when #{status}" do
+        order.should_not be_downloadable
+      end
+    end
+    
+    orders_with_each_status %W{ CLOSED CATCHING CAUGHT READY DELIVERED } do |order, status|
+      it "should be downloadable when #{status}" do
+        order.should be_downloadable
+      end
+    end
+  end
+  
+  
+  describe "downloaded" do
+    orders_with_each_status %W{ EMPTY PROGRESS CLOSED } do |order, status|
+      it "should not be downloaded when #{status}" do
+        order.should_not be_downloaded
+      end
+    end
+    
+    orders_with_each_status %W{ CATCHING CAUGHT READY DELIVERED } do |order, status|
+      it "should be downloaded when #{status}" do
+        order.should be_downloaded
+      end
+    end
   end
   
   

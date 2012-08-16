@@ -1,21 +1,22 @@
 module OrdersHelper
   
-  def labeled_status status
+  def labeled_status order
+    status = order.status
     return nil unless status
-    label = simple_status status
+    label = order.simple_status
     klass = nil
     case status
-    when :progress
+    when Order::PROGRESS
       klass = "warning"
-    when :catching
+    when Order::CATCHING
       klass = "info"
-    when :caught
+    when Order::CAUGHT
       klass = "important"
-    when :closed
+    when Order::CLOSED
       klass = "success"
-    when :ready
+    when Order::READY
       klass = "success"
-    when :delivered
+    when Order::DELIVERED
       klass = "inverse"
     end
     %Q{<span class="label #{klass ? "label-#{klass}" : ""}">#{label}</span>}.html_safe

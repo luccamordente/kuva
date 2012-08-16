@@ -41,6 +41,10 @@ group :development do
   gem 'pry-remote'
 end
 
+group :test do
+  gem "shoulda-matchers"
+end
+
 group :development, :test do
   # gem 'capistrano'
   gem 'cpf_faker'

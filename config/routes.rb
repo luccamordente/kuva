@@ -7,21 +7,21 @@ Kuva::Application.routes.draw do
       end
     end
     
-    root :to => "orders#index"
+    root to: "orders#index"
   end
 
-  devise_for :users, :controllers => { :sessions => "sessions" }
+  devise_for :users, controllers: { sessions: "sessions" }
 
-  root :to => "home#index"
+  root to: "home#index"
   
-  resources :orders, :only => [:index, :new] do
-    post :close, :on => :member
+  resources :orders, only: [:index, :new] do
+    post :close, on: :member
     
-    resources :photos, :only => [:create, :update] do
-      post :check, :on => :collection
+    resources :photos, only: [:create, :update] do
+      post :check, on: :collection
     end
 
-    resources :images, :only => [:create]
+    resources :images, only: [:create]
   end
 
   
@@ -33,8 +33,8 @@ Kuva::Application.routes.draw do
   # Keep in mind you can assign values other than :controller and :action
 
   # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
+  #   match 'products/:id/purchase' => 'catalog#purchase', as: :purchase
+  # This route can be invoked with purchase_url(id: product.id)
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
@@ -61,7 +61,7 @@ Kuva::Application.routes.draw do
   #   resources :products do
   #     resources :comments
   #     resources :sales do
-  #       get 'recent', :on => :collection
+  #       get 'recent', on: :collection
   #     end
   #   end
 
@@ -74,7 +74,7 @@ Kuva::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  # root :to => 'welcome#index'
+  # root to: 'welcome#index'
 
   # See how all your routes lay out with "rake routes"
 

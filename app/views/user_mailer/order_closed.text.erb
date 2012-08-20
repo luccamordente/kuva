@@ -4,7 +4,7 @@ seu pedido acabou de chegar aqui no Pedro Cine Foto!
 
 
 Suas fotos ficarão prontas em até 1 hora e
-você pode vir buscá-las a partir de <%= l @order.closed_at + 1.hour, :format => :tiny %>.*
+você pode vir buscá-las a partir de <%= l @order.closed_at + 1.hour, format: :tiny %>.*
 
 O valor total do serviço é de <%= number_to_currency @order.price %> e pode
 ser acertado quando você vier buscar suas fotos.

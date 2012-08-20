@@ -7,8 +7,8 @@ class Image
   
   belongs_to :order
 
-  validates :image, :presence => true
+  validates :image, presence: true
   
-  after_save lambda{ self.order.check_and_update_status }, :if => lambda{ self.order.present? }
+  after_save lambda{ self.order.check_and_update_status }, if: lambda{ self.order.present? }
   
 end

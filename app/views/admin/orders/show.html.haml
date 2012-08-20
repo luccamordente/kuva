@@ -6,10 +6,10 @@
   = number_to_currency @order.price
 %p
   %b Aberta em:
-  = l @order.created_at, :format => :medium
+  = l @order.created_at, format: :medium
 %p
   %b Atualizado pela última vez em:
-  =  l @order.updated_at, :format => :medium
+  =  l @order.updated_at, format: :medium
 %p
   %b Cliente:
   = @order.user.try :name
@@ -18,22 +18,22 @@
 
 %p
   %b Início da seleção em:
-  = l @order.progress_at , :format => :medium  if @order.progress_at
+  = l @order.progress_at , format: :medium  if @order.progress_at
 %p
   %b Fechada em:
-  = l @order.closed_at   , :format => :medium  if @order.closed_at
+  = l @order.closed_at   , format: :medium  if @order.closed_at
 %p
   %b Início da captura:
-  = l @order.catching_at , :format => :medium  if @order.catching_at
+  = l @order.catching_at , format: :medium  if @order.catching_at
 %p
   %b Capturado em:
-  = l @order.caught_at   , :format => :medium  if @order.caught_at
+  = l @order.caught_at   , format: :medium  if @order.caught_at
 %p
   %b Pronta em:
-  = l @order.ready_at    , :format => :medium  if @order.ready_at
+  = l @order.ready_at    , format: :medium  if @order.ready_at
 %p
   %b Entregue em:
-  = l @order.delivered_at, :format => :medium  if @order.delivered_at
+  = l @order.delivered_at, format: :medium  if @order.delivered_at
   
   
 %br
@@ -48,7 +48,7 @@
 
 
 - if @order.downloadable?
-  %p= link_to 'Download', download_admin_order_path(@order), :class => 'btn btn-primary'
+  %p= link_to 'Download', download_admin_order_path(@order), class: 'btn btn-primary'
   %br
 
 

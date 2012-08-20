@@ -12,7 +12,7 @@ describe User do
     it { should have_many(:orders).with_foreign_key(:user_id) }
     it "destroy orders when destroyed" do
       user  = Fabricate :user
-      order = Fabricate :order, :user_id => user.id
+      order = Fabricate :order, user_id: user.id
       user.destroy
       expect{ order.reload }.to raise_error
     end
@@ -25,10 +25,10 @@ describe User do
   describe "move to" do
     
     describe "anonymous user" do
-      let!(:anonymous_user){ Fabricate :user, :anonymous => true }
-      let!(:anonymous_order){ Fabricate :order, :user_id => anonymous_user.id }
+      let!(:anonymous_user){ Fabricate :user, anonymous: true }
+      let!(:anonymous_order){ Fabricate :order, user_id: anonymous_user.id }
       let!(:registered_user){ Fabricate :user }
-      let!(:registered_order){ Fabricate :order, :user_id => registered_user.id }
+      let!(:registered_order){ Fabricate :order, user_id: registered_user.id }
       before do
         anonymous_user.move_to registered_user
       end

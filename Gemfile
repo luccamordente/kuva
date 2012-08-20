@@ -5,7 +5,7 @@ gem 'therubyracer'
 gem 'rails', '3.2.2'
 
 # Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+# gem 'rails', git: 'git://github.com/rails/rails.git'
 
 # gem 'mysql2'
 
@@ -13,7 +13,7 @@ gem 'json'
 
 gem "mongoid", "~> 3.0"
 gem "carrierwave"
-gem "carrierwave-mongoid", :require => "carrierwave/mongoid"
+gem "carrierwave-mongoid", require: "carrierwave/mongoid"
 gem "devise", "~> 2.0"
 gem "rubyzip"
 gem "roadie"
@@ -53,7 +53,7 @@ group :development, :test do
   gem 'launchy'
   gem 'database_cleaner'
   gem 'fabrication', '~> 1.2.0'
-  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
+  gem 'rb-fsevent', require: false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'guard-livereload'
   # gem 'rails_best_practices'

@@ -10,7 +10,7 @@ describe Image do
   
   describe "validations" do
     it "should no be valid without image" do
-      image = Fabricate.build :image, :image => nil
+      image = Fabricate.build :image, image: nil
       image.should_not be_valid
       image.errors[:image].should_not be_nil
     end

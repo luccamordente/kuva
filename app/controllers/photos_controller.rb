@@ -1,7 +1,7 @@
 class PhotosController < ApplicationController
 
-  before_filter :authenticate_user!#, :except => :index
-  #before_filter :create_and_sign_in_anonymous_user, :only => :index
+  before_filter :authenticate_user!#, except: :index
+  #before_filter :create_and_sign_in_anonymous_user, only: :index
 
   def create
     order = current_user.orders.find params[:order_id]
@@ -21,21 +21,21 @@ class PhotosController < ApplicationController
       ids << @photo.id
     end
 
-    success :photo_ids => ids
-  rescue Mongoid::Errors::Validations => exception
-    render :status => :unprocessable_entity, :json => {:errors => @photo.errors, :exception => exception}
+    success photo_ids: ids
+  rescue Mongoid::Errors:Validations: exception
+    render status: :unprocessable_entity, json: {errors: @photo.errors, exception: exception}
   end
 
   def update
     order = current_user.orders.find params[:order_id]
     @photo = order.photos.find params[:id]
     if @photo.update_attributes! params[:photo]
-      success :id => @photo.id.to_s
+      success id: @photo.id.to_s
     end
   end
 
   def check
-    render :text => 0
+    render text: 0
   end
 
   private

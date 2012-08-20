@@ -3,7 +3,7 @@
 <head>
   <title>Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <%= stylesheet_link_tag    "admin/application", :media => "all" %>
+  <%= stylesheet_link_tag    "admin/application", media: "all" %>
   <%= javascript_include_tag "admin/application" %>
   <%= csrf_meta_tags %>
 </head>
@@ -17,7 +17,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <%= link_to "Photos!", admin_root_path, :class => "brand" %>
+        <%= link_to "Photos!", admin_root_path, class: "brand" %>
         <ul class="nav pull-right">
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -41,7 +41,7 @@
 
   <div class="container-fluid">
     <div class="row-fluid">
-      <%= render :partial => 'layouts/admin/flash' %>
+      <%= render partial: 'layouts/admin/flash' %>
       <div class="span12">
         <%= yield %>
       </div>

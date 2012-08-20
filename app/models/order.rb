@@ -8,20 +8,20 @@ class Order
   attr_protected :status
 
   # fields
-  field :status      , :type => Symbol
-  field :price       , :type => Float   , :default => 0
-  field :empty_at    , :type => DateTime
-  field :progress_at , :type => DateTime
-  field :closed_at   , :type => DateTime
-  field :catching_at , :type => DateTime
-  field :caught_at   , :type => DateTime
-  field :ready_at    , :type => DateTime
-  field :delivered_at, :type => DateTime
-  field :observations, :type => String
+  field :status      , type: Symbol
+  field :price       , type: Float   , default: 0
+  field :empty_at    , type: DateTime
+  field :progress_at , type: DateTime
+  field :closed_at   , type: DateTime
+  field :catching_at , type: DateTime
+  field :caught_at   , type: DateTime
+  field :ready_at    , type: DateTime
+  field :delivered_at, type: DateTime
+  field :observations, type: String
 
   # relationships
   embeds_many :photos
-  belongs_to  :user  , :index => true
+  belongs_to  :user  , index: true
   has_many    :images
 
   # statuses
@@ -35,17 +35,17 @@ class Order
   STATUSES  = [ EMPTY, PROGRESS, CLOSED, CATCHING, CAUGHT, READY, DELIVERED ]
 
   # validations
-  validates :status, :inclusion => { :in => STATUSES }, :allow_blank => false
+  validates :status, inclusion: { in: STATUSES }, allow_blank: false
 
   #scopes
   scope :last_updated, order_by(:updated_at.desc)
 
   # filters
-  before_validation :set_empty_status, :on => :create
+  before_validation :set_empty_status, on: :create
   # notifications
   before_create :admin_notify_opened
-  before_save   :admin_notify_closed, :if => :closed?
-  before_save   :user_notify_closed , :if => :closed?
+  before_save   :admin_notify_closed, if: :closed?
+  before_save   :user_notify_closed , if: :closed?
 
 
   def delta_update_price difference

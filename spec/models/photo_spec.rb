@@ -17,9 +17,9 @@ describe Photo do
   
   describe "directory" do
       
-    let!(:product){ Fabricate :product, :name => "10x15" }
+    let!(:product){ Fabricate :product, name: "10x15" }
     let!(:order){ Fabricate :order }
-    let!(:photo){ order.photos.create :count => 5, :specification_attributes => { :paper => :glossy }, :product_id => product.id }
+    let!(:photo){ order.photos.create count: 5, specification_attributes: { paper: :glossy }, product_id: product.id }
     
     it "has the correct name" do
       photo.directory.name.should == "P00510x15OBNN"

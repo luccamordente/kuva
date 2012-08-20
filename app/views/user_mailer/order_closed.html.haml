@@ -7,7 +7,7 @@
 %p
   = "Suas fotos ficarão prontas em até 1 hora"
   %br
-  = "e você pode vir buscá-las a partir de #{l @order.closed_at + 1.hour, :format => :tiny}.*"
+  = "e você pode vir buscá-las a partir de #{l @order.closed_at + 1.hour, format: :tiny}.*"
 
 %p
   = "O valor total do serviço é de #{number_to_currency @order.price} e"

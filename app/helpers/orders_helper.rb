@@ -8,14 +8,14 @@ module OrdersHelper
     case status
     when Order::PROGRESS
       klass = "warning"
+    when Order::CLOSED
+      klass = "success"
     when Order::CATCHING
       klass = "info"
     when Order::CAUGHT
-      klass = "important"
-    when Order::CLOSED
-      klass = "success"
+      klass = "inverse"
     when Order::READY
-      klass = "success"
+      klass = "inverse"
     when Order::DELIVERED
       klass = "inverse"
     end

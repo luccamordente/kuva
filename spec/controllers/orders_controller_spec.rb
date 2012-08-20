@@ -62,12 +62,12 @@ describe OrdersController do
   
   
     describe "close" do
-      let!(:order){ Fabricate :order, :user_id => current_user.id }
+      let!(:order){ Fabricate :order, user_id: current_user.id }
     
       specify { order.user_id.should == current_user.id }
     
       it "closes an opened order" do
-        post :close, :id => order.id
+        post :close, id: order.id
         order.reload.status.should == Order::CLOSED
       end
     

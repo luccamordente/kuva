@@ -4,12 +4,12 @@ class ApplicationController < ActionController::Base
   protected
 
   def success response
-    render :json => response
+    render json: response
   end
 
   def error status, errors
-    options = { :status => :unprocessable_entity, :json => { :errors => errors } }
-    options = options.merge :status => status if status
+    options = { status: :unprocessable_entity, json: { errors: errors } }
+    options = options.merge status: status if status
 
     render options
   end

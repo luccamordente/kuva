@@ -33,30 +33,39 @@ initialize_resource = ->
       @route = '/' + pluralize(@parent_resource) + '/' + @["#{@parent_resource}_id"] + '/' + pluralize(@resource)
 
   unless @route
-    @route = '/' + pluralize(@resource)
+    @route = '/' + pluralize @resource
 
 # TODO support other type of associations
 @model = do -> # mixin
-  mixin =
+  modelable =
     create: (mixed) ->
       # if mixed == array
       #  bulk create multiple itens
 
-  instantiate = (data = {resource: @resource, parent_resource: @parent_resource}) ->
+  initialize_record = (data = {resource: @resource, parent_resource: @parent_resource}) ->
     data.resource ||= @resource
     data.parent_resource ||= @parent_resource
     data.route ||= @route
-    record.call $.extend data, @record
+    record.call $.extend data, @record # TODO remove @record from outside scop
 
-  ->
-    proxy = $.proxy instantiate, @
+  mixer = ->
+    mixer.stale = true unless mixer.stale # Prevent model changes
+
+
+    instance = $.proxy initialize_record, @
     initialize_resource.call(@)
-    $.extend proxy, @, mixin
+    $.extend instance, $.extend true, @, modelable
+
+  mixer.mix = (object) ->
+    console.error "Trying to change model mixin with", object, "but model already used.\nCheck your configuration order" if @stale
+    $.extend true, modelable, object
+
+  mixer
 
 @record = do -> # mixin
   mixin =
     save: ->
-      rest[if @_id then 'post' else 'put'].call @
+      rest[if @_id then 'put' else 'post'].call @
     saved: ->
       # parsear resposta do servidor e popular dados no modelo atual
       # tinha pensado em botar as propriedades no modelo mermo, sem criar um "data"
@@ -77,9 +86,7 @@ initialize_resource = ->
     console.error "Mixin called incorrectly, call mixin with call method: record.call(object, data)" if @ == window
     initialize_resource.call(@)
     advisable.call(@)
-    domo = $.extend(@, mixin, data)
-    console.log 'initialized as', @
-    domo
+    $.extend(@, mixin, data)
 
 
 # @association = ()

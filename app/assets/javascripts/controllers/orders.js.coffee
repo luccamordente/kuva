@@ -1,32 +1,38 @@
 #= require library/uploader
 #= require library/reader
 #= require models/order
+#= require models/product
+#= require models/specification
 #= require components/gadget
 #= require components/shelf
 
 reader = lib.reader()
-gadgets = inherit(length: 0)
+gadgets = inherit length: 0
 photos = []                     # Proposital array for automatic counting of length
 order = null
 shelf = null
 uploader = null
-
+product = null
+specifications = null
 
 kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of record
   order ||= window.order(options.order)
-  window.uploader(data: order_id: order._id)
+  product ||= window.product(options.default_product)
+  specifications ||= window.specification(options.specifications)
+  kuva.specs = specifications
+
   uploader = window.uploader
     url: "/orders/#{order._id}/images/"
     data:
       order_id: order._id
 
 # TODO Move droppable to a component
-droppable =
+dropper =
   dragover: (event) -> false
   droped: (event) ->
     files = event.originalEvent.dataTransfer.files
-    droppable.overlay.hide();
+    dropper.overlay.hide();
 
     if files? && files.length
       reader.read(files)
@@ -36,7 +42,7 @@ droppable =
     false
   readed: (event) ->
 
-    bus.publish(
+    bus.publish
       controller: 'images'
       action: 'uploaded'
       destination: 'flash'
@@ -46,11 +52,10 @@ droppable =
         size: @file.size
         type: @file.type
         data: event.target.result
-    )
 
     reader.next();
   errored: (event) ->
-    console.error(event.target.error)
+    console.error event.target.error
   overlay:
     show: ->
       @element.fadeIn()
@@ -60,12 +65,12 @@ droppable =
 
     $(window).bind('dragenter', (event) ->
        console.log('entered')
-       droppable.overlay.show()
+       dropper.overlay.show()
      ).bind('drop', @droped)
 
      @overlay.element.bind('dragleave', (event) ->
         console.log('leaved')
-        droppable.overlay.hide()
+        dropper.overlay.hide()
      ).bind('dragover', @dragover).bind('drop', @droped)
 
 # Setup commands
@@ -84,18 +89,19 @@ control =
   thumbnailed: (event) ->
     files = event.files
     count = 0
-    key = event.key
+    key   = event.key
 
     # Criar uma photo para cada arquivo selecionado
     for file in files
       # Create photos and associate with order files
       photo = order.photos.build
-        name: file.name
-        count: 1
+        name:       file.name
+        count:      1
+        product_id: product._id
 
       photo.file(file)
-      # TODO associate gadget with photo gadgets[file.key].photo = photo
 
+      gadgets[file.key].photo = photo
       photos[key] = photo
       photos.length += ++count
 
@@ -103,21 +109,31 @@ control =
   photos:
     create: (count) ->
       $.ajax
-        url: "/orders/#{order._id}/photos"
-        type: 'post'
+        url:      "/orders/#{order._id}/photos"
+        type:     'post'
+        dataType: 'json'
+        error:    @failed
+        success:  @created
         data:
           count: count
           photo:
-            count: 1
-        dataType: 'json'
-        success: @created
-        error: @failed
+            count:      1
+            product_id: product._id
+            specification:
+              paper: 'glossy'
 
     created: (response) ->
       ids = response.photo_ids
 
       for key, photo of photos
         # TODO check if some photo is without id
+        photo.specification = window.specification() unless photo.specification
+
+        # TODO gadget.bind(specification)
+        rivets.bind gadgets[photo.file().key].element, specification: photo.specification
+
+        photo.specification.subscribe 'paper', $.proxy photo.save, photo
+        window.domo = photo
 
         unless photo._id?
           photo._id = ids.shift()
@@ -139,19 +155,16 @@ control =
 
 # Module methods
 initialize = ->
-  $('#abort').bind('click', abort)
-  $.jqotetag('*')
-  # uploader('#files', {thumbnailer: reader})
 
+  $('#abort').bind 'click', abort
   shelf = kuva.shelf('#files', 'object:last')
 
   # Setup drag and drop
-  droppable.overlay.element = $('#overlay')
-  reader.read.as('dataURL');
-  reader.onloadend = droppable.readed
-  reader.onerror = droppable.errored
-  droppable.bind()
-  #  reader.read.as('dataURL')
+  dropper.overlay.element = $('#overlay')
+  reader.read.as 'dataURL'
+  reader.onloadend = dropper.readed
+  reader.onerror = dropper.errored
+  dropper.bind()
 
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
@@ -186,7 +199,7 @@ initialize = ->
   ).
   listen('upload.complete', (event) ->
     # TODO figure out how get image id control.file_uploaded(event);
-    gadgets[event.key].dispatch('uploaded', event);
+    gadgets[event.key].dispatch('uploaded', event)
   );
 
 

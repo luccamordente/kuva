@@ -1,0 +1,1 @@
+@specification = model.call resource: 'specification', record: paper: 'glossy'

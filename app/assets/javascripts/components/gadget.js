@@ -1,6 +1,6 @@
 //= require library/image
 
-var gadget = (function declare_photos () {
+var gadget = (function declare_gadget () {
 
     var that = function initialize_photo(parent, options) {
 		options = options || {};

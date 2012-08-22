@@ -1,9 +1,13 @@
 :javascript
   $(function () {
     library.flash.session( { token: '#{current_user.authentication_token}' } );
-    kuva.orders( { order: #{raw @order.to_json} } );
+    kuva.orders({
+      order: #{raw @order.to_json},
+      default_product: #{raw @products.first.to_json},
+      products: #{raw @products.to_json},
+      specifications: #{raw @specs.to_json}
+    });
   });
-
 
 %form#form
   %input#files{ :type => "file", :name => "files[]", :multiple => true}
@@ -15,12 +19,13 @@
   :plain
     <![CDATA[
       <div id="gadget-<*= this.id *>" class="gadget">
+        #{select :spec, :paper, Specification::PAPERS, {}, :data => {:value => 'specification.paper'}}
         <div class="upload bar"></div>
         <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
         <div class="thumbnail bar"></div>
       <div>
     ]]>
-    
+
 #overlay.gadgets
 
 / move partial to an embed tag

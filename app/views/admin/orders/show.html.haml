@@ -10,6 +10,10 @@
 %p
   %b Atualizado pela última vez em:
   =  l @order.updated_at, format: :medium
+- if @order.canceled?
+  %p
+    %b Cancelada em:
+    =  l @order.canceled_at, format: :medium
 %p
   %b Cliente:
   = @order.user.try :name

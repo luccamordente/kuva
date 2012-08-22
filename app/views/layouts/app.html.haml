@@ -9,7 +9,7 @@
     
     %nav
       %ul
-        %li= link_to "Cancelar envio", orders_path, confirm: "Tem certeza?"
+        %li= link_to "Cancelar envio", cancel_order_path(@order), confirm: "Tem certeza?", method: "post"
         
     - if user_signed_in?
       - if current_user.anonymous?

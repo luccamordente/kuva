@@ -154,6 +154,18 @@ describe Order do
     end
   end
   
+  describe "canceled" do
+    orders_with_each_status %W{ CANCELED } do |order, status|
+      it "should be canceled when status is #{status}" do
+        order.should be_canceled
+      end
+      it "should be canceled if canceled at any time" do
+        order.update_status Order::READY
+        order.should be_canceled
+      end
+    end
+  end
+  
   
   
   describe "compress" do

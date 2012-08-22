@@ -706,6 +706,7 @@ pt-BR:
       caught:    Capturada
       ready:     Executada
       delivered: Entregue
+      canceled:  Cancelada
       
       humanized:
         empty:     "Pedido vazio"
@@ -713,9 +714,11 @@ pt-BR:
         sent:      "Seu pedido foi enviado e fica pronto em %{remaining_time}."
         ready:     "Seu pedido já está pronto para buscar!"
         delivered: Entregue
+        canceled:  Cancelado
       
       time:
         opened:    "Aberto em:"
         sent:      "Enviado em:"
         ready:     "Executado em:"
         delivered: "Entregue em:"
+        canceled:  "Cancelado em:"

@@ -9,7 +9,7 @@ class ImagesController < ApplicationController
     @image.save!
 
     success id: @image.id
-  rescue Mongoid::Errors:Validations: exception
+  rescue Mongoid::Errors::Validations => exception
     render status: :unprocessable_entity, json: {errors: @image.errors, exception: exception}
   end
 

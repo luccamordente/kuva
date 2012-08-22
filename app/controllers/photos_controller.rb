@@ -22,7 +22,7 @@ class PhotosController < ApplicationController
     end
 
     success photo_ids: ids
-  rescue Mongoid::Errors:Validations: exception
+  rescue Mongoid::Errors::Validations => exception
     render status: :unprocessable_entity, json: {errors: @photo.errors, exception: exception}
   end
 

@@ -1,21 +1,21 @@
 %p
   %b Status:
-  = t_status @order.status
+  = @order.simple_status
 %p
   %b Preço:
   = number_to_currency @order.price
 
 %p
   %b Aberta em:
-  = l @order.created_at, :format => :short
+  = l @order.created_at, format: :short
   %br
   %b Fechada em:
-  = l @order.closed_at, :format => :short
+  = l @order.closed_at, format: :short
 
 %p
   %b Cliente:
   = @name
   
-%p= "Foi prometido ao cliente que serviço estaria pronto em #{l @order.promised_for, :format => :short}."
+%p= "Foi prometido ao cliente que serviço estaria pronto em #{l @order.promised_for, format: :short}."
 
 %p= link_to "Clique aqui baixar a ordem", admin_root_url

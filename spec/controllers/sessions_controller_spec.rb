@@ -7,7 +7,7 @@ describe SessionsController do
       before do
         request.env["HTTP_REFERER"] = "where_i_came_from"
         @request.env["devise.mapping"] = Devise.mappings[:user]
-        sign_in Fabricate :user, :anonymous => false
+        sign_in Fabricate :user, anonymous: false
       end
       it "should be redirected" do
         get :new
@@ -19,7 +19,7 @@ describe SessionsController do
       before do
         request.env["HTTP_REFERER"] = "where_i_came_from"
         @request.env["devise.mapping"] = Devise.mappings[:user]
-        sign_in Fabricate :user, :anonymous => true
+        sign_in Fabricate :user, anonymous: true
       end
       it "should not be redirected" do
         get :new
@@ -30,8 +30,8 @@ describe SessionsController do
   
   describe "POST /create" do
     describe "anonymous user" do
-      let!(:anonymous_user){ Fabricate :user, :anonymous => true }
-      let!(:registered_user){ Fabricate :user, :anonymous => true, :password => "123456", :password_confirmation => "123456" }
+      let!(:anonymous_user){ Fabricate :user, anonymous: true }
+      let!(:registered_user){ Fabricate :user, anonymous: true, password: "123456", password_confirmation: "123456" }
       before do
         request.env["HTTP_REFERER"] = "where_i_came_from"
         @request.env["devise.mapping"] = Devise.mappings[:user]
@@ -39,7 +39,7 @@ describe SessionsController do
       end
       context "with correct password" do
         before do
-          post :create, :user => { :email => registered_user.email, :password => registered_user.password }
+          post :create, user: { email: registered_user.email, password: registered_user.password }
         end
         it "should sign out the anonymous user" do
           subject.current_user.email.should_not == anonymous_user.email
@@ -53,7 +53,7 @@ describe SessionsController do
       end
       context "with incorrect password" do
         before do
-          post :create, :user => { :email => registered_user.email, :password => "IncorrectPassword" }
+          post :create, user: { email: registered_user.email, password: "IncorrectPassword" }
         end
         it "should not sign out the anonymous user" do
           subject.current_user.email.should == anonymous_user.email

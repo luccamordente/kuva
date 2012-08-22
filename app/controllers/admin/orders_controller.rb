@@ -2,11 +2,11 @@ class Admin::OrdersController < Admin::ApplicationController
   # GET /admin/orders
   # GET /admin/orders.json
   def index
-    @orders = Order.last_updated.all
+    @orders = Order.last_updated
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render :json => @orders }
+      format.json { render json: @orders }
     end
   end
 
@@ -17,7 +17,7 @@ class Admin::OrdersController < Admin::ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render :json => @order }
+      format.json { render json: @order }
     end
   end
   
@@ -26,7 +26,7 @@ class Admin::OrdersController < Admin::ApplicationController
     
     @order.compressed do |file|
       @order.update_status Order::CATCHING
-      send_data file.read, :filename => "#{@order.id}.zip"
+      send_data file.read, filename: "#{@order.id}.zip"
       @order.update_status Order::CAUGHT
     end
     
@@ -39,7 +39,7 @@ class Admin::OrdersController < Admin::ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.json { render :json => @order }
+      format.json { render json: @order }
     end
   end
 
@@ -55,11 +55,11 @@ class Admin::OrdersController < Admin::ApplicationController
 
     respond_to do |format|
       if @order.save
-        format.html { redirect_to admin_order_path(@order), :notice => 'Order was successfully created.' }
-        format.json { render :json => @order, :status => :created, :location => admin_order_path(@order) }
+        format.html { redirect_to admin_order_path(@order), notice: 'Order was successfully created.' }
+        format.json { render json: @order, status: :created, location: admin_order_path(@order) }
       else
-        format.html { render :action => "new" }
-        format.json { render :json => @order.errors, :status => :unprocessable_entity }
+        format.html { render action: "new" }
+        format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -71,11 +71,11 @@ class Admin::OrdersController < Admin::ApplicationController
 
     respond_to do |format|
       if @order.update_attributes(params[:order])
-        format.html { redirect_to admin_order_path(@order), :notice => 'Order was successfully updated.' }
+        format.html { redirect_to admin_order_path(@order), notice: 'Order was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render :action => "edit" }
-        format.json { render :json => @order.errors, :status => :unprocessable_entity }
+        format.html { render action: "edit" }
+        format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
   end

@@ -2,13 +2,17 @@ require 'spec_helper'
 
 describe User do
   
-  validate_timestamps
+  
+  describe "validations" do
+    validate_timestamps
+    it{ should validate_presence_of(:name) }
+  end
   
   describe "relationships" do
     it { should have_many(:orders).with_foreign_key(:user_id) }
     it "destroy orders when destroyed" do
       user  = Fabricate :user
-      order = Fabricate :order, :user_id => user.id
+      order = Fabricate :order, user_id: user.id
       user.destroy
       expect{ order.reload }.to raise_error
     end
@@ -21,10 +25,10 @@ describe User do
   describe "move to" do
     
     describe "anonymous user" do
-      let!(:anonymous_user){ Fabricate :user, :anonymous => true }
-      let!(:anonymous_order){ Fabricate :order, :user_id => anonymous_user.id }
+      let!(:anonymous_user){ Fabricate :user, anonymous: true }
+      let!(:anonymous_order){ Fabricate :order, user_id: anonymous_user.id }
       let!(:registered_user){ Fabricate :user }
-      let!(:registered_order){ Fabricate :order, :user_id => registered_user.id }
+      let!(:registered_order){ Fabricate :order, user_id: registered_user.id }
       before do
         anonymous_user.move_to registered_user
       end
@@ -54,6 +58,33 @@ describe User do
     its(:authentication_token){ should_not be_nil }
     
     it "better change the authentication token at some point... it's not secure to keep the same token forever!"
+  end
+  
+  
+  
+  describe "creation" do
+    subject{ Fabricate.build :user }
+    
+    describe "before" do
+      its(:reset_password_token){ should be_nil }
+    end
+    
+    describe "after" do
+      before do
+        subject.save
+      end
+    
+      its(:reset_password_token){ should_not be_nil }
+    end
+  end
+  
+  
+  describe "welcome email with password instructions" do
+    let!(:user){ Fabricate :user }
+    
+    it "should send email" do
+      expect { user.send :send_welcome_mail_with_password_instructions }.to change(ActionMailer::Base.deliveries, :count).by(1)
+    end
   end
   
   

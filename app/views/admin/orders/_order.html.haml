@@ -1,0 +1,12 @@
+%tr
+  %td= labeled_status order
+  %td= number_to_currency order.price
+  %td.hidden-phone= l order.created_at, format: :medium
+  %td= l order.updated_at, format: :medium
+  %td= order.user.try :name
+  - if order.downloadable? and not order.downloaded?
+    %td.visible-desktop= link_to 'Ver e fazer download', admin_order_path(order), class: 'btn btn-primary'
+  - else
+    %td.visible-desktop= link_to 'Ver', admin_order_path(order), class: 'btn'
+  / %td.hidden-phone= link_to 'Edit', edit_admin_order_path(order), class: 'btn'
+  / %td.hidden-phone= link_to 'Destroy', admin_order_path(order), confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger'

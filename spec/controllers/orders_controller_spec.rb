@@ -51,7 +51,7 @@ describe OrdersController do
         get :new
         specs = assigns[:specs]
         specs[:paper].should_not be_nil
-        Specification::PAPERS.each { |paper| specs[:paper][paper].should == I18n.t("photo.specs.paper.#{paper}") }
+        Specification::PAPERS.each { |paper| specs[:paper][I18n.t("photo.specs.paper.#{paper}")].should == paper }
       end
     
       it "loads the products" do
@@ -62,12 +62,12 @@ describe OrdersController do
   
   
     describe "close" do
-      let!(:order){ Fabricate :order, :user_id => current_user.id }
+      let!(:order){ Fabricate :order, user_id: current_user.id }
     
       specify { order.user_id.should == current_user.id }
     
       it "closes an opened order" do
-        post :close, :id => order.id
+        post :close, id: order.id
         order.reload.status.should == Order::CLOSED
       end
     

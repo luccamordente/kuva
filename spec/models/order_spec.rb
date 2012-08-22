@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Order do
-  
-  validate_timestamps
+  extend OrderMacros
   
   describe "relationships" do
     it { should belong_to  :user   }
@@ -11,6 +10,8 @@ describe Order do
   end
   
   describe "validation" do
+    validate_timestamps
+    
     [:status].each do |attr|
       it "should not be valid without #{attr}" do
         order = Fabricate :order
@@ -22,7 +23,7 @@ describe Order do
     
     describe "status" do
       it "should no be valid with random status" do
-        order = Fabricate.build :order, :status => :randommmmmm
+        order = Fabricate.build :order, status: :randommmmmm
         order.should_not be_valid
         order.errors[:status].should_not be_nil
       end
@@ -50,11 +51,11 @@ describe Order do
   
   describe "status" do
     it "should be created with EMPTY status" do
-      order = Fabricate :order, :status => nil
+      order = Fabricate :order, status: nil
       order.status.should == Order::EMPTY
     end
     it "should be created with other than EMPTY status" do
-      order = Fabricate :order, :status => Order::PROGRESS
+      order = Fabricate :order, status: Order::PROGRESS
       order.status.should == Order::PROGRESS
     end
     
@@ -62,14 +63,14 @@ describe Order do
       let(:product){ Fabricate :product }
       it "should update status to PROGRESS when the first photo is added" do
         order = Fabricate :order
-        photo = order.photos.create Fabricate.attributes_for(:photo).merge(:product_id => product.id)
+        photo = order.photos.create Fabricate.attributes_for(:photo).merge(product_id: product.id)
         photo.should be_persisted
         order.reload.status.should == Order::PROGRESS
       end
       it "should not update status to PROGRESS when the first photo is added and the status is not EMPTY" do
         order = Fabricate :order
         order.update_attribute :status, Order::READY
-        photo = order.photos.create Fabricate.attributes_for(:photo).merge(:product_id => product.id)
+        photo = order.photos.create Fabricate.attributes_for(:photo).merge(product_id: product.id)
         photo.should be_persisted
         order.reload.status.should == Order::READY
       end
@@ -113,31 +114,59 @@ describe Order do
     end
     
     
+    describe "sent" do
+      orders_with_each_status %W{ CLOSED CATCHING CAUGHT } do |order, status|
+        it "should be sent when status is #{status}" do
+          order.should be_sent
+        end
+      end
+    end
+    
+    
   end
   
   describe "downloadable" do
-    it "should not be downloadable when empty    "
-    it "should not be downloadable when progress "
-    it "should be downloadable when closed   "
-    it "should be downloadable when catching "
-    it "should be downloadable when caught   "
-    it "should be downloadable when ready    "
-    it "should be downloadable when delivered"
+    orders_with_each_status %W{ EMPTY PROGRESS } do |order, status|
+      it "should not be downloadable when #{status}" do
+        order.should_not be_downloadable
+      end
+    end
+    
+    orders_with_each_status %W{ CLOSED CATCHING CAUGHT READY DELIVERED } do |order, status|
+      it "should be downloadable when #{status}" do
+        order.should be_downloadable
+      end
+    end
+  end
+  
+  
+  describe "downloaded" do
+    orders_with_each_status %W{ EMPTY PROGRESS CLOSED } do |order, status|
+      it "should not be downloaded when #{status}" do
+        order.should_not be_downloaded
+      end
+    end
+    
+    orders_with_each_status %W{ CATCHING CAUGHT READY DELIVERED } do |order, status|
+      it "should be downloaded when #{status}" do
+        order.should be_downloaded
+      end
+    end
   end
   
   
   
   describe "compress" do
       
-    let!(:product){ Fabricate :product, :name => "10x15" }
+    let!(:product){ Fabricate :product, name: "10x15" }
     let!(:order){ Fabricate :order }
-    let!(:image){ order.images.create :image => image_fixture }
+    let!(:image){ order.images.create image: image_fixture }
     let!(:photos){[ 
-      order.photos.create(:count => 5, :specification_attributes => { :paper => Specification::GLOSSY_PAPER }, :product_id => product.id, :image_id => image.id),
-      order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id, :image_id => image.id),
-      order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id, :image_id => image.id),
+      order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id: image.id),
+      order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
+      order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
       # photo without image that cannot fail 
-      order.photos.create(:count => 2, :specification_attributes => { :paper => Specification::MATTE_PAPER  }, :product_id => product.id)
+      order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id)
     ]}
     
     subject{ order.compressed }
@@ -178,9 +207,9 @@ describe Order do
   
   describe "price" do
     let!(:order)   { Fabricate :order }
-    let (:product1){ Fabricate :product, :price => 1 }
-    let (:product2){ Fabricate :product, :price => 2 }
-    let (:product3){ Fabricate :product, :price => 3 }
+    let (:product1){ Fabricate :product, price: 1 }
+    let (:product2){ Fabricate :product, price: 2 }
+    let (:product3){ Fabricate :product, price: 3 }
     
     specify{ order.price.should == 0 }
     
@@ -188,14 +217,14 @@ describe Order do
       count   = 2
       product = product1
       expect {
-        order.photos.create :product_id => product.id, :count => count
+        order.photos.create product_id: product.id, count: count
       }.to change(order.reload, :price).by product.price * count
     end
     
     it "should increase order price when the count of a photo is increased" do
       product = product2
       count   = 1
-      photo   = order.photos.create :product_id => product.id, :count => 1
+      photo   = order.photos.create product_id: product.id, count: 1
       expect {
         photo.update_attribute :count, photo.count + count
       }.to change(order.reload, :price).by product.price * count
@@ -204,7 +233,7 @@ describe Order do
     it "should decrease order price when the count of a photo is decrease" do
       product = product3
       count   = 1
-      photo   = order.photos.create :product_id => product.id, :count => 3
+      photo   = order.photos.create product_id: product.id, count: 3
       expect {
         photo.update_attribute :count, photo.count - count
       }.to change(order.reload, :price).by product.price * (-count)
@@ -213,7 +242,7 @@ describe Order do
     it "should decrese order price when a photo is destroyed" do
       product = product2
       count   = 15
-      photo   = order.photos.create :product_id => product.id, :count => count
+      photo   = order.photos.create product_id: product.id, count: count
       expect {
         photo.destroy
       }.to change(order.reload, :price).by product.price * (-count)

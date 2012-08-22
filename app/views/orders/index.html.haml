@@ -1,4 +1,12 @@
+%br
 - @orders.each do |order|
-  .order
-    .status= labeled_status order.status
-    
+  = render order
+%br
+%br
+
+.infos
+  %div A retirada e o pagamento do serviço devem ser feitas por você na loja principal do Pedro Cine Foto, na Rua da Bahia, 501, Centro, Belo Horizonte - MG
+  %div
+    Caso tenha alguma dúvida ou problema com seu pedido,
+    = link_to "clique aqui para falar com a gente", "#"
+    = "ou ligue no #{main_phone}"

@@ -12,13 +12,12 @@ class Specification
 
   field :paper, :type => String
 
-  belongs_to  :product
   embedded_in :photo
 
-  validates :paper, :inclusion => { :in => PAPERS }
+  validates :paper, inclusion: { :in => PAPERS }
 
   def self.to_h
-    { :paper => PAPERS.inject({}){ |papers, paper| papers[paper] = I18n.t "photo.specs.paper.#{paper}"; papers } }
+    { :paper => PAPERS.inject({}){ |papers, paper| papers[I18n.t "photo.specs.paper.#{paper}"] = paper; papers } }
   end
 
   def paper_to_directory_string

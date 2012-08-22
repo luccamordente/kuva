@@ -10,12 +10,12 @@
   });
 
 %form#form
-  %input#files{ :type => "file", :name => "files[]", :multiple => true}
+  %input#files{ type: "file", name: "files[]", multiple: true}
   %button#abort Cancelar
 
 #gadgets
 
-%script#gadget{ :type => "text/x-jqote-template" }
+%script#gadget{ type: "text/x-jqote-template" }
   :plain
     <![CDATA[
       <div id="gadget-<*= this.id *>" class="gadget">

@@ -2,8 +2,8 @@ class Photo
   include Mongoid::Document
   include Mongoid::Timestamps
                   
-  field :name , :type => String
-  field :count, :type => Integer, :default => 0
+  field :name , type: String
+  field :count, type: Integer, default: 0
   
   embedded_in :order
   embeds_one  :specification
@@ -13,7 +13,7 @@ class Photo
   belongs_to :product 
   belongs_to :image
   
-  validates :product, :presence => true
+  validates :product, presence: true
   
   before_save   :update_order_price
   after_destroy :update_order_price

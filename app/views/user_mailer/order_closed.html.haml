@@ -1,4 +1,4 @@
-%p= "Olá #{@name},"
+%p= "Olá #{@user.first_name},"
 
 %p
   %b seu pedido acabou de chegar aqui no Pedro Cine Foto!
@@ -7,7 +7,7 @@
 %p
   = "Suas fotos ficarão prontas em até 1 hora"
   %br
-  = "e você pode vir buscá-las a partir de #{l @order.closed_at + 1.hour, :format => :tiny}.*"
+  = "e você pode vir buscá-las a partir de #{l @order.closed_at + 1.hour, format: :tiny}.*"
 
 %p
   = "O valor total do serviço é de #{number_to_currency @order.price} e"
@@ -27,7 +27,7 @@
 
 %p
   %b P.S.
-  Se tiver alguma dúvida, pode responder a este e-mail ou ligar no (31) 2128-3400 e pedir para falar comigo.
+  = "Se tiver alguma dúvida, pode responder a este e-mail ou ligar no #{main_phone} e pedir para falar comigo."
 
 
 %small 

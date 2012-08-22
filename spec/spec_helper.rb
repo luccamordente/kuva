@@ -18,15 +18,16 @@ RSpec.configure do |config|
  
   config.before(:each) do
     DatabaseCleaner.orm = "mongoid" 
-    DatabaseCleaner.strategy = :truncation, {:except => %w[ neighborhoods ]}
+    DatabaseCleaner.strategy = :truncation, {except: %w[ neighborhoods ]}
     DatabaseCleaner.clean
   end
   
   # Devise
-  config.include Devise::TestHelpers, :type => :controller
-  config.extend ControllerMacros    , :type => :controller
+  config.include Devise::TestHelpers, type: :controller
+  config.extend ControllerMacros    , type: :controller
   
-  config.extend LoginMacros, :type => :request
+  config.include LoginHelpers, type: :request
+  config.extend LoginMacros, type: :request
 end
 
 def validate_timestamps

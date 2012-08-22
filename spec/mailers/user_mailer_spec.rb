@@ -34,5 +34,28 @@ describe UserMailer do
     end
     
   end
+  
+  
+  describe "welcome with password instructions" do
+    let!(:user){ Fabricate :user }
+    subject{ UserMailer.welcome_with_password_instructions user }
+    specify{ user.reset_password_token.should_not be_nil }
+    
+    #ensure that the subject is correct
+    its(:subject) { should == "Seu cadastro já está pronto! Abra e veja como acessar..." }
+    
+    #ensure that the receiver is correct
+    its(:to){ should == [user.email] }
+    
+    #ensure that the receiver is correct
+    its(:reply_to){ should == ["ricardo@pedrocinefoto.com.br"] }
+    
+    #ensure that the sender is correct
+    its(:from){ should == ["ricardo@pedrocinefoto.com.br"] }
+    
+    #ensure the reset password token in the message
+    its(:"body.encoded"){ should match user.reset_password_token.to_s }
+    
+  end
 
 end

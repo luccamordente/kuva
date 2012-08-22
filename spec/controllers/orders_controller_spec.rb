@@ -73,6 +73,17 @@ describe OrdersController do
     
     end
     
+    
+    describe "cancel" do
+      let!(:order){ Fabricate :order, user_id: current_user.id }
+      
+      it "cancels the order" do
+        post :cancel, id: order.id
+        order.reload.status.should == Order::CANCELED
+      end
+      
+    end
+    
   end
   
   

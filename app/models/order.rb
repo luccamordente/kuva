@@ -17,6 +17,7 @@ class Order
   field :caught_at   , type: DateTime
   field :ready_at    , type: DateTime
   field :delivered_at, type: DateTime
+  field :canceled_at , type: DateTime
   field :observations, type: String
 
   # relationships
@@ -32,7 +33,8 @@ class Order
   CAUGHT    = :caught    # was caught by client application
   READY     = :ready     # was excecuted and is ready to deliver to customer
   DELIVERED = :delivered # in its way to customer
-  STATUSES  = [ EMPTY, PROGRESS, CLOSED, CATCHING, CAUGHT, READY, DELIVERED ]
+  CANCELED  = :canceled  # canceled by the customer
+  STATUSES  = [ EMPTY, PROGRESS, CLOSED, CATCHING, CAUGHT, READY, DELIVERED, CANCELED ]
 
   # validations
   validates :status, inclusion: { in: STATUSES }, allow_blank: false
@@ -83,6 +85,9 @@ class Order
     [CLOSED, CATCHING, CAUGHT].include? status
   end
   
+  def canceled?
+    not canceled_at.nil?
+  end
   
 
   # download

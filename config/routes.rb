@@ -16,7 +16,8 @@ Kuva::Application.routes.draw do
 
   resources :orders, only: [:index, :new] do
     post :close, on: :member
-
+    post :cancel, on: :member
+    
     resources :photos, only: [:create, :update] do
       post :check, on: :collection
     end

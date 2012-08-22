@@ -6,7 +6,7 @@ describe Specification do
   
   describe "relationships" do
     it { should be_embedded_in(:photo) }
-    it { should belong_to(:product) }
+    it { should_not belong_to(:product) }
   end
   
   describe "validations" do

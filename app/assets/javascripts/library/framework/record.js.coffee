@@ -43,9 +43,10 @@ initialize_resource = ->
       #  bulk create multiple itens
 
   initialize_record = (data = {resource: @resource, parent_resource: @parent_resource}) ->
-    data.resource ||= @resource
-    data.parent_resource ||= @parent_resource
-    data.route ||= @route
+    data.resource          ||= @resource
+    data.parent_resource   ||= @parent_resource
+    data.route             ||= @route
+    data.nested_attributes = @nested_attributes || []
     record.call $.extend data, @record # TODO remove @record from outside scop
 
   mixer = ->
@@ -72,14 +73,19 @@ initialize_resource = ->
       # dispatchar evento de registro salvo, usando o nome do resource
     json: ->
       json = {}
-
-      for name, value of @ when $.type(value) isnt 'function' and $.type(value) isnt 'object'
-        json[name] = value
+      
+      for name, value of @ when $.type(value) isnt 'function' and name.indexOf("_") != 0
+        if $.type(value) == 'object'
+          json["#{name}_attributes"] = value.json() for attribute in @nested_attributes when attribute == name
+        else
+          json[name] = value
 
       # Remove model reserved words
       delete json.resource
+      delete json.route
       delete json.parent_resource
-
+      delete json.nested_attributes
+  
       json
 
   (data) ->

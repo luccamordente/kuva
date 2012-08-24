@@ -19,7 +19,8 @@
   :plain
     <![CDATA[
       <div id="gadget-<*= this.id *>" class="gadget">
-        #{select :spec, :paper, Specification::PAPERS, {}, :data => {:value => 'specification.paper'}}
+        #{ select :spec, :paper, Specification::PAPERS, {}, data: {value: 'specification.paper'} }
+        #{ collection_select :photo, :product_id, @products, :id, :name, {}, data: {value: 'photo.product_id'} }
         <div class="upload bar"></div>
         <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
         <div class="thumbnail bar"></div>

@@ -119,7 +119,7 @@ control =
           photo:
             count:      1
             product_id: product._id
-            specification:
+            specification_attributes:
               paper: 'glossy'
 
     created: (response) ->
@@ -131,8 +131,10 @@ control =
 
         # TODO gadget.bind(specification)
         rivets.bind gadgets[photo.file().key].element, specification: photo.specification
+        rivets.bind gadgets[photo.file().key].element, photo: photo
 
         photo.specification.subscribe 'paper', $.proxy photo.save, photo
+        photo.subscribe 'product_id', $.proxy photo.save, photo
         window.domo = photo
 
         unless photo._id?

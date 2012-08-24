@@ -31,7 +31,7 @@ associations = ->
       data.order = record
       data.parent_resource = "order"
       data.route = "/orders/#{record._id}/photos"
-      window.photo(data)
+      photo = window.photo(data)
     push: Array.prototype.push
 
 

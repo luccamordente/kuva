@@ -7,11 +7,11 @@
 
       @["_#{keypath}"] = @[keypath] unless @["_#{keypath}"]
 
-      current_setter = @__lookupSetter__ keypath
+      @current_setter = @__lookupSetter__ keypath
 
-      if current_setter
+      if @current_setter
         setter = (value) ->
-          current_setter value
+          @current_setter value
           callback value
       else
         setter = (value) ->

@@ -35,7 +35,7 @@ describe PhotosController do
         post :create, order_id: order.id, photo: photo_attributes.merge(specification_attributes: specification_attributes), count: count
         response.should be_success
         ids = ActiveSupport::JSON.decode(response.body)['photo_ids']
-        ids.compact.size.should == count
+        ids.uniq.size.should == count
         order.reload
         photos = []
         expect { photos = ids.map{ |id| order.photos.find(id) } }.not_to raise_error

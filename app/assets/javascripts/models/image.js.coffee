@@ -1,1 +1,1 @@
-@image = model.call resource: 'image'
+@image = model.call resource: 'image', belongs_to: 'order'

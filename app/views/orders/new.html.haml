@@ -21,6 +21,8 @@
       <div id="gadget-<*= this.id *>" class="gadget">
         #{ select :spec, :paper, Specification::PAPERS, {}, data: {value: 'specification.paper'} }
         #{ collection_select :photo, :product_id, @products, :id, :name, {}, data: {value: 'photo.product_id'} }
+        #{ text_field_tag :count, 0, type: :number, data: {value: 'photo.count'} }
+        <span data-text="photo.count"></span>
         <div class="upload bar"></div>
         <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
         <div class="thumbnail bar"></div>

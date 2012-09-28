@@ -20,7 +20,6 @@ kuva.orders = (options) ->
   order ||= window.order(options.order)
   product ||= window.product(options.default_product)
   specifications ||= window.specification(options.specifications)
-  kuva.specs = specifications
 
   uploader = window.uploader
     url: "/orders/#{order._id}/images/"
@@ -87,62 +86,58 @@ control =
     # update other interface
     # counters, order price, etc
   thumbnailed: (event) ->
+    key   = event.key
     files = event.files
     count = 0
-    key   = event.key
 
     # Criar uma photo para cada arquivo selecionado
     for file in files
+      gadget = gadgets[file.key]
+
       # Create photos and associate with order files
       photo = order.photos.build
         name:       file.name
         count:      1
         product_id: product._id
 
-      photo.file(file)
+      gadget.photo = photo
+      gadget.files ||= []
+      gadget.files.push file
 
-      gadgets[file.key].photo = photo
-      photos[key] = photo
-      photos.length += ++count
+      photos.push photo
+      count++
 
-    control.photos.create(count)
+    control.photos.create count
   photos:
     create: (count) ->
       $.ajax
-        url:      "/orders/#{order._id}/photos"
-        type:     'post'
-        dataType: 'json'
-        error:    @failed
-        success:  @created
+        url      : "/orders/#{order._id}/photos"
+        type     : 'post'
+        dataType : 'json'
+        error    : @failed
+        success  : @created
         data:
           count: count
           photo:
-            count:      1
+            count     : 1
             product_id: product._id
             specification_attributes:
               paper: 'glossy'
 
+      true
     created: (response) ->
       ids = response.photo_ids
 
-      for key, photo of photos
-        # TODO check if some photo is without id
-        photo.specification = window.specification() unless photo.specification
+      for key, gadget of gadgets
+        photo = gadget.photo
 
-        # TODO gadget.bind(specification)
-        rivets.bind gadgets[photo.file().key].element, specification: photo.specification
-        rivets.bind gadgets[photo.file().key].element, photo: photo
+        continue if photo._id?
 
-        photo.specification.subscribe 'paper', $.proxy photo.save, photo
-        photo.subscribe 'product_id', $.proxy photo.save, photo
-        window.domo = photo
+        gadget.tie ids.shift()
 
-        unless photo._id?
-          photo._id = ids.shift()
-          # TODO photo.gadget().unlock()
-          uploader.upload(photo.file())
+        # TODO photo.gadget().unlock()
+        uploader.upload gadget.files[gadget.files.length - 1]
 
-      true
     failed: ->
       console.error 'control.photos.failed: Failed creating photos.'
 

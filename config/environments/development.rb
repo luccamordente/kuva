@@ -3,10 +3,12 @@ Kuva::Application.configure do
   Moped.logger.level = Logger::DEBUG   #WARN
   Mongoid.logger = Logger.new($stdout)
   Moped.logger = Logger.new($stdout)
-  
-  
+
+  # Activate mongoid logger
+  # config.mongoid.logger = Logger.new($stdout, :debug)
+
   # Settings specified here will take precedence over those in config/application.rb
-  
+
   config.domain = "kuva.dev"
 
   # In the development environment your application's code is reloaded on
@@ -45,6 +47,6 @@ Kuva::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
-  
+
   config.action_controller.asset_host = "http://" + config.domain
 end

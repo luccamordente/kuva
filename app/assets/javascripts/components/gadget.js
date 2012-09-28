@@ -21,6 +21,26 @@ var gadget = (function declare_gadget () {
 		listen: function (name, callback) {
 			this[name] = callback;
 			return this;
+		},
+		tie: function (photo_id) {
+			var photo;
+			if (this.tied) {
+				console.error('Gadget ', this.key, ' already tied');
+			}
+			photo = this.photo;
+			photo._id = photo_id;
+
+			(!photo.specification) && (photo.specification = window.specification());
+
+			photo.tie(this.element)
+			photo.specification.tie(this.element)
+
+			// Save changes when relavant data changes
+			// TODO better change event support on record
+			photo.subscribe('product_id', $.proxy(photo.save, photo))
+			photo.specification.subscribe('paper', $.proxy(photo.save, photo))
+
+			this.tied = true;
 		}
     }, control = {
 		create: function () {

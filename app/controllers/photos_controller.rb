@@ -11,7 +11,6 @@ class PhotosController < ApplicationController
     ids    = []
     photos = []
 
-
     count.times do
       @photo = order.photos.build filter_photo_params_for_creation params[:photo]
       @photo.save! if not @photo.valid?

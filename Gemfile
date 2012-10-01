@@ -18,6 +18,7 @@ gem "devise", "~> 2.0"
 gem "rubyzip"
 gem "roadie"
 gem "active_decorator"
+gem "airbrake"
 
 # Gems used only for assets and not required
 # in production environments by default.

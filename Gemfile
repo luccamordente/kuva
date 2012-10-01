@@ -51,6 +51,7 @@ group :development, :test do
   # gem 'capistrano'
   gem 'cpf_faker'
   gem 'rspec-rails'
+  gem 'rspec-nc'
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner'

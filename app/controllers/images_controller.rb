@@ -3,9 +3,9 @@ class ImagesController < ApplicationController
   skip_before_filter :verify_authenticity_token, only: :create
 
   def create
-    order = current_user.orders.find params[:order_id]  
+    order = current_user.orders.find params[:order_id]
 
-    @image = order.images.build params
+    @image = order.images.build params[:image]
     @image.save!
 
     success id: @image.id

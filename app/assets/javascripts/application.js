@@ -17,4 +17,5 @@
 //= require controllers/kuva
 //= require library/shims
 //= require library/framework/bus
+//= require library/framework/record/adapters/rivets
 //= require controllers/orders

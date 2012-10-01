@@ -8,7 +8,6 @@ class PhotosController < ApplicationController
     count = params[:count].to_i
 
     @photo = nil
-
     ids    = []
     photos = []
 
@@ -17,7 +16,7 @@ class PhotosController < ApplicationController
       @photo.save! if not @photo.valid?
       photos << @photo
     end
-    
+
     photos.each do |photo|
       photo.save
       ids << photo.id

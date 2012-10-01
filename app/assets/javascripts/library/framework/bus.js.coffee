@@ -1,4 +1,5 @@
 #= require library/framework/flash
+
 bus = ->
 flash = null
 

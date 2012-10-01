@@ -2,9 +2,11 @@
 #= require models/photo
 #= require models/image
 
+order_model = model.call resource: 'order', hasMany: 'images'
+
 @order = (data) ->
   # TODO improve model method support
-  associations.call(record.call($.extend(resource: 'order', data)))
+  associations.call order_model(data)
 
 # TODO Make association a generic method
 associations = ->
@@ -17,17 +19,19 @@ associations = ->
   mixin_images =
     add: (record) -> @push(@build(record))
     build: (data = {}) ->
-     data.order = record
-     data.parent_resource = "order"
-     window.image(data)
+      data.order = record
+      data.parent_resource = "order"
+      data.route = "/orders/#{record._id}/images"
+      window.image(data)
     push: Array.prototype.push
 
   mixin_photos =
     add: (record) -> @push(@build(record))
     build: (data = {}) ->
-     data.order = record
-     data.parent_resource = "order"
-     window.photo(data)
+      data.order = record
+      data.parent_resource = "order"
+      data.route = "/orders/#{record._id}/photos"
+      photo = window.photo(data)
     push: Array.prototype.push
 
 

@@ -14,7 +14,7 @@ group 'views' do
 end
 
 group 'specs' do
-  guard 'rspec', version: 2 do
+  guard 'rspec', version: 2, cli: "--color --format=doc --format=Nc --fail-fast", notification: false  do
     watch(%r{^spec/.+_spec\.rb$})
     watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
     watch('spec/spec_helper.rb')  { "spec" }

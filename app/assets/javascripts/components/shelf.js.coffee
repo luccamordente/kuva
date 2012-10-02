@@ -17,26 +17,26 @@ overlay =
       width: element.width()
       height: element.height()
       top: offset.top
-      bottom: offset.bottom
+      left: offset.left
     }
   button: ->
-    flash.css(@for(input))
+    flash.css @for input
   page: ->
-    flash.css(@for($(document.body)))
+    flash.css @for $ document.body
 
 initialize = ->
-  input.attr('disabled', true);
-  console.error("shelf: Flash for shelf not found") unless flash.length
+  input.attr 'disabled', true
+  console.error "shelf: Flash for shelf not found" unless flash.length
   # TODO kuva.listen('interface.initialized', -> )
-  ready();
+  $ ready
 
 
 ready = ->
-  input.attr('disabled', false);
+  input.attr 'disabled', false
   overlay.button()
-  flash.css(configuration.flash.css)
+  flash.css configuration.flash.css
 
 
-that.overlay = overlay;
+that.overlay = overlay
 
 kuva.shelf = that

@@ -154,7 +154,7 @@ control =
 initialize = ->
 
   $('#abort').bind 'click', abort
-  shelf = kuva.shelf('#files', 'object:last')
+  shelf = kuva.shelf('.add-files', 'object:last')
 
   # Setup drag and drop
   dropper.overlay.element = $('#overlay')

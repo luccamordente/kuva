@@ -1,0 +1,276 @@
+@import 'nib'
+@import 'helpers'
+
+
+
+
+
+#photos
+
+
+  #overlay
+    width 100%
+    height 100%
+    position absolute
+    top 0px
+    left 0px
+    display none
+    background image_url('bla.gif') center center rgba(0,0,0,0.4) no-repeat
+
+
+
+
+
+  .add-files
+    color = #EEE
+    border 0.15em dashed color
+    border-radius 20px
+    color color
+    font-size 1.25em
+    line-height 1.25em
+    padding 0 1em
+    text-align center
+    vertical-align middle
+
+
+
+
+
+  #main
+    padding-right 11em
+
+
+    #gadgets
+      border-spacing 1em
+      width 100%
+
+      .gadget
+        margin 1em
+        text-align center
+        position relative
+        background-color #eee
+
+        display inline-block
+
+        img
+          position relative
+          z-index 2
+          text-align center
+          vertical-align middle
+
+
+        .bar
+          display none
+          position absolute
+          top 0em
+          z-index 1
+
+
+        &.loading
+          width 10em
+          height 10em
+          background-color #eee
+          background image_url('jla.gif') center center no-repeat
+
+          img
+            width 25px
+            height 25px
+
+
+
+        &.thumbnailing
+          width 10em
+          height 10em
+          outline 1px solid #eee
+          background-color #bbb
+
+          .thumbnail.bar
+            display block
+            height 100%
+            background white
+
+
+          img
+            width 100%
+            height 100%
+            background image_url('la.gif') center center no-repeat
+
+
+
+        &.loaded
+          background-color transparent
+
+          img
+            box-shadow 1px 1px 4px #777
+            transition opacity 1s ease-in
+
+
+          .thumbnail.bar
+            display none
+
+
+
+        &.uploading
+          background-color #bbb
+
+          .upload.bar
+            height .5em
+            background-color lightBlue
+            z-index 3
+
+
+
+        &.uploaded
+          background-color transparent
+
+          .upload.bar
+            height .2em
+
+
+          img
+            border 3px solid lightBlue
+
+
+
+
+
+    #main-add
+
+      text-align center
+
+      #add-button
+        color = #333
+        border-color color
+        color color
+        cursor pointer
+        margin 6em auto 0
+        padding-top 4em
+        width 15em
+
+        .action
+          color #666
+          line-height 1.3em
+          .main
+            color color
+            font-size 1.3em
+            text-transform uppercase
+
+        .alternative
+          color #999
+          font-size 0.7em
+          padding-top 1em
+
+        .formats
+          color #999
+          font-size 0.6em
+          padding-top 6em
+
+        &:hover, .over
+          color = #000
+          border-color color
+          background-color #EEE
+          color color
+
+      .afterwards
+          color #999
+          padding-top 3em
+
+
+
+
+
+
+  #aside
+
+    background-color #000
+    color #FFF
+    height 100%
+    padding 1em
+    position fixed
+    right 0
+    top 0
+    width 9em
+
+
+    .header
+      position absolute
+      top 1em
+      width 5em
+      z-index 1
+
+      .add-files
+        display table-cell
+        height 6.9em
+        text-transform uppercase
+
+        &:hover, .over
+          background-color #222
+          border-color #FFF
+          color #FFF
+
+
+    #summary
+      padding-top 11.5em
+
+      .item
+        margin-bottom 1.4em
+        text-align center
+        .block
+          display inline-block
+          vertical-align middle
+        .count
+          color #FFF
+          font-size 1.2em
+        .times
+          color #666
+        .product .name
+          color #999
+          font-size 0.9em
+
+      .divisor
+        border-bottom 1px solid #444444
+
+      .total
+        color #99FF66
+        padding-top 1.5em
+        text-align center
+
+        .unit
+          font-size 0.9em
+        .count
+          font-size 2em
+
+
+    a.button#end
+      bottom 5em
+      display block
+      position absolute
+      width 8.5em
+
+    #cancel
+      bottom 3em
+      position absolute
+      text-align center
+      width 9em
+
+      a
+        link-color(#999)
+        display block
+        font-size 13px
+        // .icon
+        //   background url("sprite.png") no-repeat sprite("/assets/x.png")
+        img
+          vertical-align middle
+
+    .faded
+      opacity 0.4
+      transition opacity 0.5s ease-in
+
+    &:hover
+      .faded
+        opacity 1
+
+
+
+
+

@@ -1,35 +1,117 @@
-:javascript
-  $(function () {
-    library.flash.session( { token: '#{current_user.authentication_token}' } );
-    kuva.orders({
-      order: #{raw @order.to_json},
-      default_product: #{raw @products.first.to_json},
-      products: #{raw @products.to_json},
-      specifications: #{raw @specs.to_json}
-    });
-  });
+!!!
+%html
+  %head
+    %title Enviar fotos
+    = stylesheet_link_tag    "application", media: "all"
+    = javascript_include_tag "application"
+    = airbrake_javascript_notifier
+    = csrf_meta_tags
 
-%form#form
-  %input#files{ type: "file", name: "files[]", multiple: true}
-  %button#abort Cancelar
+  %body#photos
 
-#gadgets
+    #main
 
-%script#gadget{ type: "text/x-jqote-template" }
-  :plain
-    <![CDATA[
-      <div id="gadget-<*= this.id *>" class="gadget">
-        #{ select :spec, :paper, Specification::PAPERS, {}, data: {value: 'specification.paper'} }
-        #{ collection_select :photo, :product_id, @products, :id, :name, {}, data: {value: 'photo.product_id'} }
-        #{ text_field_tag :count, 0, type: :number, data: {value: 'photo.count'} }
-        <span data-text="photo.count"></span>
-        <div class="upload bar"></div>
-        <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
-        <div class="thumbnail bar"></div>
-      <div>
-    ]]>
+      %nav
+        %ul
+          %li= link_to "Cancelar envio", cancel_order_path(@order), confirm: "Tem certeza?", method: "post"
 
-#overlay.gadgets
+      - if user_signed_in?
+        - if current_user.anonymous?
+          = "Usuário anonimo (#{link_to "login", new_user_session_path})"
+        - else
+          =raw "#{current_user.email} (#{link_to "sair", destroy_user_session_path, method: "delete"})"
 
-/ move partial to an embed tag
-= render 'flash'
+
+      :javascript
+        $(function () {
+          library.flash.session( { token: '#{current_user.authentication_token}' } );
+          kuva.orders({
+            order: #{raw @order.to_json},
+            default_product: #{raw @products.first.to_json},
+            products: #{raw @products.to_json},
+            specifications: #{raw @specs.to_json}
+          });
+        });
+
+
+      #main-add
+        #add-button.add-files
+          .action
+            clique aqui para
+            .main adicionar fotos
+            do seu computador
+          .alternative ou arraste e solte suas fotos aqui
+          .formats Formatos suportados: BMP, GIF, JPG, PNG, TIFF
+
+        .afterwards
+          Depois você irá selecionar como quer cada foto:&nbsp;
+          %u> tamanho
+          ,
+          %u papel
+          e
+          %u quantidade
+
+      #gadgets
+
+
+    #aside
+      .header
+        .add-files Adicionar mais fotos
+
+      #summary.faded
+        .item
+          .block.count 15
+          .block.times &times;
+          .block.product
+            .thumb= image_tag "generic-temporary-small-photo-pile.png"
+            .name 10&times;15
+        .item
+          .block.count 7
+          .block.times &times;
+          .block.product
+            .thumb= image_tag "generic-temporary-small-photo-pile.png"
+            .name 15&times;21
+        .item
+          .block.count 2
+          .block.times &times;
+          .block.product
+            .thumb= image_tag "generic-temporary-small-photo-pile.png"
+            .name 20&times;30
+        .divisor
+        .total
+          %span.unit  R$
+          %span.count 20,76
+
+
+
+      %a#end.button.success.faded{ :href => "javascript:void(0);" }
+        Enviar fotos
+        %br
+        %small e fechar pedido
+
+      #cancel.faded
+        %a{ :href => "javascript:void(0);" }
+          = image_tag "x.png"
+          cancelar pedido
+
+
+
+
+    %script#gadget{ type: "text/x-jqote-template" }
+      :plain
+        <![CDATA[
+          <div id="gadget-<*= this.id *>" class="gadget">
+            #{ select :spec, :paper, Specification::PAPERS, {}, data: {value: 'specification.paper'} }
+            #{ collection_select :photo, :product_id, @products, :id, :name, {}, data: {value: 'photo.product_id'} }
+            #{ text_field_tag :count, 0, type: :number, data: {value: 'photo.count'} }
+            <span data-text="photo.count"></span>
+            <div class="upload bar"></div>
+            <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
+            <div class="thumbnail bar"></div>
+          <div>
+        ]]>
+
+    #overlay.gadgets
+
+    / move partial to an embed tag
+    = render 'flash'

@@ -1,12 +1,12 @@
 class OrdersController < ApplicationController
   
-  layout 'app', only: :new
-  
   before_filter :authenticate_user!
   before_filter :load_specs, :load_products, only: :new
   
   def new
     @order = current_user.orders.create
+    
+    render layout: false
   end
   
   def index

@@ -3,9 +3,32 @@
 
 
 
+control-style(color)
+  background-color color
+  background-image linear-gradient(top, lighten(color, 10%), darken(color, 10%))
+  box-shadow inset 0 1px 1px rgba(255,255,255,0.3), inset 0 -1px 1px #000, 0 1px 2px rgba(0,0,0,0.4)
+
+  &:hover, &.over
+    background-color lighten(color, 20%)
+    background-image linear-gradient(top, lighten(color, 30%), lighten(color, 20%))
+
+  &:active, &.active
+    background-color color
+    background-image linear-gradient(bottom, darken(color, 20%), lighten(color, 0%))
+
+
 
 
 #photos
+
+  & > .tooltip
+    .tooltip-inner
+      line-height 1em
+      padding 0.7em
+    small
+      color #999
+      display block
+      margin-top 0.5em
 
 
   #overlay
@@ -15,7 +38,7 @@
     top 0px
     left 0px
     display none
-    background image_url('bla.gif') center center rgba(0,0,0,0.4) no-repeat
+    background image('bla.gif') center center rgba(0,0,0,0.4) no-repeat
 
 
 
@@ -45,18 +68,45 @@
       width 100%
 
       .gadget
-        margin 1em
-        text-align center
-        position relative
+        control-background-color = #111
+
         background-color #eee
-
         display inline-block
+        height 250px
+        margin 10px
+        padding 20px
+        position relative
+        text-align center
+        width @height
 
-        img
-          position relative
-          z-index 2
-          text-align center
-          vertical-align middle
+
+        &.ruler-pomp
+          background-position -8px -8px
+
+
+        sizes      = "10x15", "15x21"
+        directions = "horizontal", "vertical"
+
+        for direction in directions
+          for size in sizes
+            composition = size + "-" + direction
+            &.size-{size}.{direction}
+              &.ruler-pomp
+                background-image image("size-" + composition + ".png")
+
+
+        &.paper-glossy
+          .canvas
+            .control.paper
+              background-image image('control-icon-paper-glossy.png')
+            .pomp.paper-pomp
+              background-image image('paper-glossy.png')
+        &.paper-matte
+          .canvas
+            .control.paper
+              background-image image('control-icon-paper-matte.png')
+            .pomp.paper-pomp
+              background-image image('paper-matte.png')
 
 
         .bar
@@ -66,11 +116,128 @@
           z-index 1
 
 
+        .canvas
+
+          display inline-block
+          position relative
+
+          img
+            position relative
+            z-index 2
+            text-align center
+            vertical-align middle
+
+          .pomp
+            position absolute
+            z-index 3
+
+            &.paper-pomp
+              height 77px
+              right 0
+              top 0
+              width 76px
+            // &.size-pomp
+
+
+          .control
+            size = 28px
+            control-style(control-background-color)
+            border-radius 100px
+            color #FFF
+            cursor pointer
+            transition opacity 0.5s
+            height size
+            line-height @height
+            min-width @height
+            position absolute
+            width @height
+            z-index 3
+
+            &.hideable
+              opacity 0
+
+            &.size
+              background-image image('control-icon-size.png')
+              background-position 0 0
+              background-repeat no-repeat
+              left -(size + 5px)
+              top @left
+
+            &.paper
+              right 6px
+              top 6px
+
+            &.duplicate
+              background-image image('control-icon-duplicate.png')
+              margin-top -(size / 2)
+              right @margin-top
+              top 50%
+
+            &.count
+              background-color #EEE
+              background-color rgba(255,255,255,0.8)
+              background-image none
+              bottom -( size / 2)
+              color #000
+              cursor default
+              font-size 0.9em
+              right 20px
+              text-align center
+              width size
+              transition all 0.5s, right 0.25s, width 0.25s
+
+              &:hover
+                right -6px
+                width 80px
+                .subcontrol
+                  opacity 1
+
+              .pomp
+                display inline-block
+                position relative
+                .times
+                  color #999
+                  font-size 0.8em
+              .subcontrol
+                min-width auto
+                opacity 0
+                position absolute
+                transition opacity 0.5s
+                &.minus
+                  control-style(#F33)
+                  height 14px
+                  font-size 1.5em
+                  left 7px
+                  line-height @height - 1px
+                  top @left
+                  width @height
+                &.plus
+                  control-style(#6F6)
+                  color black
+                  font-size 1.7em
+                  height 22px
+                  line-height @height - 1px
+                  right 3px
+                  top @right
+                  width @height
+
+
+
+        &:hover, &.over
+          .canvas
+            .control
+              opacity 1
+              &.count
+                background-image none
+                background-color control-background-color
+                color #FFF
+
+
         &.loading
           width 10em
           height 10em
           background-color #eee
-          background image_url('jla.gif') center center no-repeat
+          background image('jla.gif') center center no-repeat
 
           img
             width 25px
@@ -93,7 +260,7 @@
           img
             width 100%
             height 100%
-            background image_url('la.gif') center center no-repeat
+            background image('la.gif') center center no-repeat
 
 
 
@@ -272,5 +439,12 @@
 
 
 
-
-
+.no-opacity
+  #photos #main #gadgets .gadget .control.hideable
+    display none
+  #photos #main #gadgets .gadget:hover .control.hideable
+    display block
+  #photos #main #gadgets .gadget .control.count .subcontrol
+    display none
+  #photos #main #gadgets .gadget .control.count:hover .subcontrol
+    display block

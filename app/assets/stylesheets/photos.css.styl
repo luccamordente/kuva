@@ -1,9 +1,7 @@
 @import 'nib'
 @import 'helpers'
-
-
-
-
+@import 'bootstrap/tooltip'
+@import 'bootstrap/progress-bars'
 
 
 
@@ -28,6 +26,7 @@
 
 
 
+
 // display(type)
 //   if type == inline-block
 //     display -moz-inline-stack
@@ -38,6 +37,8 @@
 //     *display inline
 //   else
 //     display {type}
+
+
 
 
 control-style(color)
@@ -489,8 +490,17 @@ control-style(color)
 
 
 
+  states = normal, sending
+
+  for state in states
+    &.{state} #aside .{state}
+      display block
 
   #aside
+
+    for state in states
+      .{state}
+        display none
 
     background-color #000
     color #FFF
@@ -503,80 +513,111 @@ control-style(color)
     z-index 4
 
 
-    .header
-      position absolute
-      top 1em
-      width 5em
-      z-index 1
-
-      .add-files
-        display table-cell
-        height 6.9em
-        text-transform uppercase
-
-        &:hover, .over
-          background-color #222
-          border-color #FFF
-          color #FFF
-
-
-    #summary
-      padding-top 11.5em
-
-      .item
-        margin-bottom 1.4em
+    .sending
+      .title
+        color #999
+        font-size 14px
+        padding-bottom 2em
         text-align center
-        .block
-          display inline-block
-          vertical-align middle
-        .count
-          color #FFF
-          font-size 1.2em
-        .times
+        text-transform lowercase
+      .progress
+        background-color #FFF
+        .bar
+          background-color #6ED46E
+      .counter
+        text-align center
+        .numbers
           color #666
-        .product .name
-          color #999
-          font-size 0.9em
-
-      .divisor
-        border-bottom 1px solid #444444
-
-      .total
-        color #99FF66
-        padding-top 1.5em
-        text-align center
-
-        .unit
-          font-size 0.9em
-        .count
-          font-size 2em
+          font-size 1em
+          .done
+            color #6ED46E
+            font-size 1.8em
+          .total
+            color #FFF
+      .caution
+        color #D2A046
+        font-size 0.7em
+        line-height 1.5em
+        padding-top 2.5em
+        text-align justify
 
 
-    #end
-      bottom 5em
-      position absolute
-      width 8.5em
-      & > a.button
-        display block
-      #end-confirmation.tooltip
+    .normal
+      .header
         position absolute
-        right 14.5em
-        top -1.6em
-        .tooltip-inner
-          font-size 14px
-          max-width none
-          padding 1em
-          width 18em
-          .question
+        top 1em
+        width 5em
+        z-index 1
+
+        .add-files
+          display table-cell
+          height 6.9em
+          text-transform uppercase
+
+          &:hover, .over
+            background-color #222
+            border-color #FFF
+            color #FFF
+
+
+      #summary
+        padding-top 11.5em
+
+        .item
+          margin-bottom 1.4em
+          text-align center
+          .block
+            display inline-block
+            vertical-align middle
+          .count
+            color #FFF
+            font-size 1.2em
+          .times
+            color #666
+          .product .name
             color #999
-            margin-bottom 1em
-          .button
-            display: inline-block
-            padding 0.5em
-          .not-yet
             font-size 0.9em
-            link-color(#CCC)
-            text-decoration underline
+
+        .divisor
+          border-bottom 1px solid #444444
+
+        .total
+          color #99FF66
+          padding-top 1.5em
+          text-align center
+
+          .unit
+            font-size 0.9em
+          .count
+            font-size 2em
+
+
+      #end
+        bottom 5em
+        position absolute
+        width 8.5em
+        & > a.button
+          display block
+        #end-confirmation.tooltip
+          display none
+          position absolute
+          right 14.5em
+          top -1.6em
+          .tooltip-inner
+            font-size 14px
+            max-width none
+            padding 1em
+            width 18em
+            .question
+              color #999
+              margin-bottom 1em
+            .button
+              display: inline-block
+              padding 0.5em
+            .not-yet
+              font-size 0.9em
+              link-color(#CCC)
+              text-decoration underline
 
 
     #cancel

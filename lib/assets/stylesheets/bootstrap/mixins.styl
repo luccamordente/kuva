@@ -1,0 +1,9 @@
+gradient-striped(color = #555, angle = 45deg)
+  background-color color
+  background-image linear-gradient(angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent 100%)
+
+
+gradient-vertical(startColor = #555, endColor = #333)
+  background-image linear-gradient(top bottom, startColor, endColor)
+  background-repeat repeat-x
+  filter "progid:DXImageTransform.Microsoft.gradient(startColorstr='{argb(startColor)}', endColorstr='{argb(endColor)}', GradientType=0)"

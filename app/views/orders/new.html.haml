@@ -7,7 +7,8 @@
     = airbrake_javascript_notifier
     = csrf_meta_tags
 
-  %body#photos
+  -# .normal, .sending
+  %body#photos.sending
 
     #main
 
@@ -174,53 +175,66 @@
             .upload.bar
 
 
-
     #aside
-      .header
-        .add-files Adicionar mais fotos
+      .sending
+        .title Enviando fotos...
+        .progress.progress-striped.active
+          .bar{ style: "width: 40%" }
+        .counter
+          .numbers
+            %span.done 2
+            de
+            %span.total 8
+        .caution
+          %b Atenção:
+          mantenha a página aberta até que o envio seja concluído.
 
-      #summary.faded
-        .item
-          .block.count 15
-          .block.times &times;
-          .block.product
-            .thumb= image_tag "generic-temporary-small-photo-pile.png"
-            .name 10&times;15
-        .item
-          .block.count 7
-          .block.times &times;
-          .block.product
-            .thumb= image_tag "generic-temporary-small-photo-pile.png"
-            .name 15&times;21
-        .item
-          .block.count 2
-          .block.times &times;
-          .block.product
-            .thumb= image_tag "generic-temporary-small-photo-pile.png"
-            .name 20&times;30
-        .divisor
-        .total
-          %span.unit  R$
-          %span.count 20,76
+      .normal
+        .header
+          .add-files Adicionar mais fotos
+
+        #summary.faded
+          .item
+            .block.count 15
+            .block.times &times;
+            .block.product
+              .thumb= image_tag "generic-temporary-small-photo-pile.png"
+              .name 10&times;15
+          .item
+            .block.count 7
+            .block.times &times;
+            .block.product
+              .thumb= image_tag "generic-temporary-small-photo-pile.png"
+              .name 15&times;21
+          .item
+            .block.count 2
+            .block.times &times;
+            .block.product
+              .thumb= image_tag "generic-temporary-small-photo-pile.png"
+              .name 20&times;30
+          .divisor
+          .total
+            %span.unit  R$
+            %span.count 20,76
 
 
-      #end
-        #end-confirmation.tooltip.left.in
-          .tooltip-inner
-            .question Está tudo certo para enviar suas fotos?
-            %a.button.success{ :href => "javascript:void(0);" } Sim, enviar
-            &nbsp;
-            %a.not-yet{ :href => "javascript:void(0);" } Ainda não, quero voltar
-          .tooltip-arrow
-        %a.button.success.faded{ :href => "javascript:void(0);" }
-          Enviar fotos
-          %br
-          %small e fechar pedido
+        #end
+          #end-confirmation.tooltip.left.in
+            .tooltip-inner
+              .question Está tudo certo para enviar suas fotos?
+              %a.button.success{ :href => "javascript:void(0);" } Sim, enviar
+              &nbsp;
+              %a.not-yet{ :href => "javascript:void(0);" } Ainda não, quero voltar
+            .tooltip-arrow
+          %a.button.success.faded{ :href => "javascript:void(0);" }
+            Enviar fotos
+            %br
+            %small e fechar pedido
 
-      #cancel.faded
-        %a{ :href => "javascript:void(0);" }
-          = image_tag "x.png"
-          cancelar pedido
+        #cancel.faded
+          %a{ :href => "javascript:void(0);" }
+            = image_tag "x.png"
+            cancelar pedido
 
 
 

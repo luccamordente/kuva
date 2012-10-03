@@ -151,6 +151,27 @@
                 %span.number 1
               .control.subcontrol.plus +
 
+        .gadget.ruler-pomp.loaded.paper-glossy.size-10x15.vertical.uploading
+          .canvas
+            %div{ style: "width: 167px; height: 250px; background-color: #FFBA00" }
+            .pomp.size-pomp
+              .dimension.height
+                %span.count 15
+                %span.unit  cm
+              .dimension.width
+                %span.count 10
+                %span.unit  cm
+            .pomp.paper-pomp
+            .control.hideable.size{ rel: "tooltip", title: "Alterar tamanho" }
+            .control.hideable.paper{ rel: "tooltip", title: "Papel brilhante<br /><small>clique para alterar</small>" }
+            .control.hideable.duplicate{ rel: "tooltip", title: "Duplicar esta foto<br /><small>para impressão, em<br />outro tamanho ou<br />papel, da mesma foto</small>", data: { html: true, placement: "right" } }
+            .control.count{ rel: "tooltip", title: "Quantidade", data: { placement: "bottom" } }
+              .control.subcontrol.minus -
+              .pomp
+                %span.times> &times;
+                %span.number 2
+              .control.subcontrol.plus +
+            .upload.bar
 
 
 
@@ -183,11 +204,18 @@
           %span.count 20,76
 
 
-
-      %a#end.button.success.faded{ :href => "javascript:void(0);" }
-        Enviar fotos
-        %br
-        %small e fechar pedido
+      #end
+        #end-confirmation.tooltip.left.in
+          .tooltip-inner
+            .question Está tudo certo para enviar suas fotos?
+            %a.button.success{ :href => "javascript:void(0);" } Sim, enviar
+            &nbsp;
+            %a.not-yet{ :href => "javascript:void(0);" } Ainda não, quero voltar
+          .tooltip-arrow
+        %a.button.success.faded{ :href => "javascript:void(0);" }
+          Enviar fotos
+          %br
+          %small e fechar pedido
 
       #cancel.faded
         %a{ :href => "javascript:void(0);" }
@@ -210,6 +238,7 @@
             <div class="thumbnail bar"></div>
           <div>
         ]]>
+
 
     #overlay.gadgets
 

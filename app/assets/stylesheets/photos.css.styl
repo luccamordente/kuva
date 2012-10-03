@@ -3,6 +3,12 @@
 
 
 
+
+
+
+
+
+
 // @keyframes flip-paper-glossy {
 //   0% {
 //     translate: rotateY(0deg)
@@ -20,6 +26,18 @@
 //   }
 // }
 
+
+
+// display(type)
+//   if type == inline-block
+//     display -moz-inline-stack
+//     display inline-block
+//     vertical-align middle
+//     *vertical-align auto
+//     zoom: 1
+//     *display inline
+//   else
+//     display {type}
 
 
 control-style(color)
@@ -51,13 +69,16 @@ control-style(color)
 
 
   #overlay
-    width 100%
+    // background image('bla.gif') center center rgba(0,0,0,0.4) no-repeat
+    background rgba(238,238,238,0.7)
     height 100%
     position absolute
     top 0px
     left 0px
     display none
-    background image('bla.gif') center center rgba(0,0,0,0.4) no-repeat
+    width 100%
+    z-index 3
+
 
 
 
@@ -134,8 +155,7 @@ control-style(color)
             display none
           &:hover
             .canvas .pomp.size-pomp .dimension
-              background-color #EEE
-              background-color rgba(230,230,230,0.7)
+              background-color rgba(230,230,230,0.7), #EEE
             .control
               display none
               &.size
@@ -145,8 +165,7 @@ control-style(color)
 
         .modal
           background = #111
-          background-color background
-          background-color rgba(0,0,0,0.8)
+          background-color rgba(#000,0.8), background
           border-radius 5px
           color #999
           font-size 11px
@@ -168,21 +187,18 @@ control-style(color)
             padding 1.5em 0
             a.size
               color = #FFF
-              border-bottom 1px solid #FFF
-              border-color rgba(255,255,255,0.1)
+              border-bottom 1px solid color
+              border-color rgba(color,0.1), lighten(background, 15%)
               cursor pointer
               display block
               link-color(color)
               padding 0.5em 0
               transition background-color 0.5s, border-color 0.5s
               &.selected
-                background-color lighten(background, 10%)
-                background-color rgba(255,255,255,0.05)
+                background-color rgba(255,255,255,0.05), lighten(background, 10%)
               &:hover
-                background-color lighten(background, 15%)
-                background-color rgba(255,255,255,0.1)
-                border-color lighten(background, 20%)
-                border-color rgba(255,255,255,0.2)
+                background-color rgba(255,255,255,0.1), lighten(background, 15%)
+                border-color rgba(255,255,255,0.2), lighten(background, 20%)
               .times
                 color darken(color, 30%)
               .unit
@@ -268,6 +284,8 @@ control-style(color)
 
             &.hideable
               opacity 0
+              .no-opacity &
+                display none
 
             &.size
               background-image image('control-icon-size.png')
@@ -304,6 +322,8 @@ control-style(color)
                 width 80px
                 .subcontrol
                   opacity 1
+                  .no-opacity
+                    display block
 
               .pomp
                 display inline-block
@@ -316,6 +336,8 @@ control-style(color)
                 opacity 0
                 position absolute
                 transition opacity 0.5s
+                .no-opacity &
+                  display none
                 &.minus
                   control-style(#F33)
                   height 14px
@@ -340,6 +362,9 @@ control-style(color)
           .canvas
             .control
               opacity 1
+              &.hideable
+                .no-opacity &
+                  display block
               &.count
                 background-image none
                 background-color control-background-color
@@ -391,11 +416,16 @@ control-style(color)
 
 
         &.uploading
-          background-color #bbb
+          background none !important
+          .control, .pomp
+            display none
 
           .upload.bar
-            height .5em
-            background-color lightBlue
+            background-color rgba(#FFF,0.65)
+            display block
+            height 100%
+            right 0
+            width 100%
             z-index 3
 
 
@@ -470,6 +500,7 @@ control-style(color)
     right 0
     top 0
     width 9em
+    z-index 4
 
 
     .header
@@ -521,11 +552,32 @@ control-style(color)
           font-size 2em
 
 
-    a.button#end
+    #end
       bottom 5em
-      display block
       position absolute
       width 8.5em
+      & > a.button
+        display block
+      #end-confirmation.tooltip
+        position absolute
+        right 14.5em
+        top -1.6em
+        .tooltip-inner
+          font-size 14px
+          max-width none
+          padding 1em
+          width 18em
+          .question
+            color #999
+            margin-bottom 1em
+          .button
+            display: inline-block
+            padding 0.5em
+          .not-yet
+            font-size 0.9em
+            link-color(#CCC)
+            text-decoration underline
+
 
     #cancel
       bottom 3em
@@ -550,14 +602,3 @@ control-style(color)
       .faded
         opacity 1
 
-
-
-.no-opacity
-  #photos #main #gadgets .gadget .control.hideable
-    display none
-  #photos #main #gadgets .gadget:hover .control.hideable
-    display block
-  #photos #main #gadgets .gadget .control.count .subcontrol
-    display none
-  #photos #main #gadgets .gadget .control.count:hover .subcontrol
-    display block

@@ -104,17 +104,17 @@ var gadget = (function declare_gadget () {
 		},
 		upload: function upload_start (event) {
 			this.element.addClass('uploading');
-			this.upload_bar.show().width("0%");
+			this.upload_bar.show().width("100%");
 		},
 		uploading: function upload_progress (event) {
-			var percentage = ((event.loaded / event.total) * 100);
+			var percentage = 100 - ((event.loaded / event.total) * 100);
 
 			this.upload_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
 		},
 		uploaded: function upload_complete(event) {
 			var gadget = this;
 
-			this.upload_bar.animate({width: '100%'}, 1000, 'linear', function () {
+			this.upload_bar.animate({width: '0%'}, 1000, 'linear', function () {
 				gadget.upload_bar.fadeOut(function () {
 					gadget.element.removeClass('uploading').addClass('uploaded');
 				});

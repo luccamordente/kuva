@@ -1,7 +1,38 @@
-*.unselectable {
-  -moz-user-select: -moz-none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+*.unselectable
+  -moz-user-select    -moz-none
+  -khtml-user-select  none
+  -webkit-user-select none
+  -ms-user-select     none
+  user-select         none
+
+
+display(type)
+  if type == inline-block
+    display -moz-inline-stack
+    display inline-block
+    vertical-align middle
+    *vertical-align auto
+    zoom: 1
+    *display inline
+  else
+    display type
+
+
+
+// Genericar mais:
+//  - suporte a fallback automatico
+//  - suporte a propriedades sem sufixo -color
+transparent-fallback(property, color, fallback = null)
+  if color is a "color"
+    acolor = rgb(color)
+    {property} fallback || acolor
+    if acolor != color
+      {property} color
+  else
+    {property} color
+
+background-color(color, fallback = null)
+  transparent-fallback(background-color, color, fallback)
+
+border-color(color, fallback = null)
+  transparent-fallback(border-color, color, fallback)

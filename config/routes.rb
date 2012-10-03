@@ -1,5 +1,6 @@
 Kuva::Application.routes.draw do
 
+
   namespace :admin do
     resources :orders do
       member do
@@ -12,20 +13,22 @@ Kuva::Application.routes.draw do
 
   devise_for :users, controllers: { sessions: "sessions" }
 
-  root to: "home#index"
+  root to: redirect("/users/sign_in")
 
-  resources :orders, only: [:index, :new] do
-    post :close, on: :member
-    post :cancel, on: :member
-    
-    resources :photos, only: [:create, :update] do
-      post :check, on: :collection
+
+  scope :path_names => { :new => "novo", :edit => "alterar" } do
+    resources :orders, only: [:index, :new], path: "pedidos" do
+      post :close, on: :member
+      post :cancel, on: :member
+
+      resources :photos, only: [:create, :update] do
+        post :check, on: :collection
+      end
+
+      resources :images, only: [:create]
     end
-
-    resources :images, only: [:create]
   end
 
-  resources :products
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

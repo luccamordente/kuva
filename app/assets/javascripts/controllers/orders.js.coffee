@@ -1,5 +1,10 @@
+#= require controllers/kuva
+#= require library/shims
+#= require library/framework/bus
+#= require library/framework/record/adapters/rivets
 #= require library/uploader
 #= require library/reader
+#= require bootstrap-tooltip
 #= require models/order
 #= require models/product
 #= require models/specification
@@ -198,6 +203,9 @@ initialize = ->
     # TODO figure out how get image id control.file_uploaded(event);
     gadgets[event.key].dispatch('uploaded', event)
   );
+
+  $("[rel=tooltip]").tooltip()
+
 
 
 $(initialize);

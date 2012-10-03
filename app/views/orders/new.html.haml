@@ -3,12 +3,12 @@
   %head
     %title Enviar fotos
     = stylesheet_link_tag    "application", media: "all"
-    = javascript_include_tag "application"
+    = javascript_include_tag "controllers/orders"
     = airbrake_javascript_notifier
     = csrf_meta_tags
 
   -# .normal, .sending
-  %body#photos.sending
+  %body#photos.normal
 
     #main
 
@@ -258,3 +258,9 @@
 
     / move partial to an embed tag
     = render 'flash'
+
+
+    :javascript
+      document.write(unescape("%3Cscript src='//www.snapengage.com/snapabug.js' type='text/javascript'%3E%3C/script%3E"));</script><script type="text/javascript">
+      SnapABug.setLocale("pt");
+      SnapABug.addButton("9ff774d2-ef25-42b2-b50a-3715b117bdfc","0","50%");

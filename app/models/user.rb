@@ -3,9 +3,10 @@ class User
   include Mongoid::Timestamps
 
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable,
+  # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable,
+  # REMOVIDO MANUALMENTE: :registerable, :recoverable
+  devise :database_authenticatable,
+         :rememberable, :trackable, :validatable,
          :token_authenticatable
 
   ## Database authenticatable
@@ -48,15 +49,15 @@ class User
   field :email, type: String
 
   field :anonymous, type: Boolean, default: false
-  
+
   validates :name, presence: true
 
   has_many :orders, dependent: :destroy
-  
+
   before_save :ensure_authentication_token
   after_create "generate_reset_password_token! if should_generate_reset_token?"
-  
-  
+
+
   def self.create_anonymous_user
     temp_token = SecureRandom.base64(15).tr('+/=', 'xyz')
     user = ::User.new(email: "#{temp_token}@kuva.com", password: temp_token, password_confirmation: temp_token, anonymous: true)
@@ -69,9 +70,9 @@ class User
     self.orders.each { |order| another_user.orders << order }
     another_user.save && self.reload.destroy
   end
-  
+
 private
-  
+
   def send_welcome_mail_with_password_instructions
     UserMailer.welcome_with_password_instructions(self).deliver
   end

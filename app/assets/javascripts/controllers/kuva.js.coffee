@@ -1,3 +1,7 @@
+#= require jquery
+#= require jquery_ujs
+#= require modernizr
+#= require jqote2
 #= require library/framework/record/adapters/rivets
 #= require library/framework/record/associations
 

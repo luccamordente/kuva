@@ -23,7 +23,7 @@ class Order
   # relationships
   embeds_many :photos
   belongs_to  :user  , index: true
-  has_many    :images
+  has_many    :images, dependent: :destroy
 
   # statuses
   EMPTY     = :empty     # just created
@@ -75,20 +75,20 @@ class Order
   def downloaded?
     [CATCHING, CAUGHT, READY, DELIVERED].include? status
   end
-  
-  
+
+
 
   def is_empty?; self.status == EMPTY ; end
   def closed?  ; self.status == CLOSED; end
-  
+
   def sent?
     [CLOSED, CATCHING, CAUGHT].include? status
   end
-  
+
   def canceled?
     not canceled_at.nil?
   end
-  
+
 
   # download
 

@@ -4,8 +4,8 @@ class User
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable,
-  # REMOVIDO MANUALMENTE: :registerable, :recoverable
-  devise :database_authenticatable,
+  # REMOVIDO MANUALMENTE: :registerable
+  devise :database_authenticatable, :recoverable,
          :rememberable, :trackable, :validatable,
          :token_authenticatable
 

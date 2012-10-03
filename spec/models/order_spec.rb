@@ -2,16 +2,16 @@ require 'spec_helper'
 
 describe Order do
   extend OrderMacros
-  
+
   describe "relationships" do
     it { should belong_to  :user   }
     it { should embed_many :photos }
-    it { should have_many  :images }
+    it { should have_many(:images) }
   end
-  
+
   describe "validation" do
     validate_timestamps
-    
+
     [:status].each do |attr|
       it "should not be valid without #{attr}" do
         order = Fabricate :order
@@ -20,7 +20,7 @@ describe Order do
         order.errors[attr].should_not be_nil
       end
     end
-    
+
     describe "status" do
       it "should no be valid with random status" do
         order = Fabricate.build :order, status: :randommmmmm
@@ -29,26 +29,26 @@ describe Order do
       end
     end
   end
-  
-  
+
+
   describe "notifications" do
-    
+
     context "open" do
       it "should notify the staff" do
         expect { order = Fabricate :order }.to change(ActionMailer::Base.deliveries, :count).by(1)
       end
     end
-    
+
     context "open" do
       it "should notify the staff and the user" do
         order = Fabricate :order
         expect { order.update_status Order::CLOSED }.to change(ActionMailer::Base.deliveries, :count).by(2)
       end
     end
-    
+
   end
-  
-  
+
+
   describe "status" do
     it "should be created with EMPTY status" do
       order = Fabricate :order, status: nil
@@ -58,7 +58,7 @@ describe Order do
       order = Fabricate :order, status: Order::PROGRESS
       order.status.should == Order::PROGRESS
     end
-    
+
     context "PROGRESS" do
       let(:product){ Fabricate :product }
       it "should update status to PROGRESS when the first photo is added" do
@@ -81,39 +81,39 @@ describe Order do
         order.reload.status.should == Order::PROGRESS
       end
     end
-    
-    
+
+
     context "update" do
       Order::STATUSES.each do |status|
-        
+
         context "status to #{status}" do
           subject{ Fabricate :order }
-        
+
           specify{ subject.status.should == Order::EMPTY }
           specify{ subject.send(:"#{status}_at").should be_nil }
-        
+
           context do
             before(:all) { subject.update_status status }
-        
+
             its(:status){ should == status}
             its(:"#{status}_at"){ should_not be_nil }
           end
         end
-        
-      end  
+
+      end
     end
-    
-    
+
+
     describe "promise" do
       subject { Fabricate :order }
       let!(:closed_at) { subject.closed_at }
-      
+
       before(:all) { subject.update_status Order::CLOSED }
-      
+
       its(:promised_for) { should == closed_at + 1.hour }
     end
-    
-    
+
+
     describe "sent" do
       orders_with_each_status %W{ CLOSED CATCHING CAUGHT } do |order, status|
         it "should be sent when status is #{status}" do
@@ -121,39 +121,39 @@ describe Order do
         end
       end
     end
-    
-    
+
+
   end
-  
+
   describe "downloadable" do
     orders_with_each_status %W{ EMPTY PROGRESS } do |order, status|
       it "should not be downloadable when #{status}" do
         order.should_not be_downloadable
       end
     end
-    
+
     orders_with_each_status %W{ CLOSED CATCHING CAUGHT READY DELIVERED } do |order, status|
       it "should be downloadable when #{status}" do
         order.should be_downloadable
       end
     end
   end
-  
-  
+
+
   describe "downloaded" do
     orders_with_each_status %W{ EMPTY PROGRESS CLOSED } do |order, status|
       it "should not be downloaded when #{status}" do
         order.should_not be_downloaded
       end
     end
-    
+
     orders_with_each_status %W{ CATCHING CAUGHT READY DELIVERED } do |order, status|
       it "should be downloaded when #{status}" do
         order.should be_downloaded
       end
     end
   end
-  
+
   describe "canceled" do
     orders_with_each_status %W{ CANCELED } do |order, status|
       it "should be canceled when status is #{status}" do
@@ -165,36 +165,36 @@ describe Order do
       end
     end
   end
-  
-  
-  
+
+
+
   describe "compress" do
-      
+
     let!(:product){ Fabricate :product, name: "10x15" }
     let!(:order){ Fabricate :order }
     let!(:image){ order.images.create image: image_fixture }
-    let!(:photos){[ 
+    let!(:photos){[
       order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id: image.id),
       order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
       order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
-      # photo without image that cannot fail 
+      # photo without image that cannot fail
       order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id)
     ]}
-    
+
     subject{ order.compressed }
     after{ system "rm -rf #{ order.tmp_zip_path }"}
-    
+
     it { should_not be_nil }
     its(:class){ should == File }
     its(:path) { should match /tmp.*?\.zip/ }
-    
+
     it "should delete the original dir" do
       subject
       expect{ Dir.new order.tmp_path }.to raise_error Errno::ENOENT
     end
-    
+
     it "should delete zip file"
-    
+
     it "should contain 2 dirs and include photos with image" do
       Dir.chdir Order.tmp_path
       system "unzip #{subject.path} -d . > /dev/null"
@@ -208,23 +208,23 @@ describe Order do
       end
       system "rm -r #{order.tmp_path}"
     end
-    
+
     it "should delete the original dir when anything wrong happens in between"
     it "allows photos without image, by simply not copying the image"
-    
-    
+
+
   end
-  
-  
-  
+
+
+
   describe "price" do
     let!(:order)   { Fabricate :order }
     let (:product1){ Fabricate :product, price: 1 }
     let (:product2){ Fabricate :product, price: 2 }
     let (:product3){ Fabricate :product, price: 3 }
-    
+
     specify{ order.price.should == 0 }
-    
+
     it "should increase order price when a photo is added" do
       count   = 2
       product = product1
@@ -232,7 +232,7 @@ describe Order do
         order.photos.create product_id: product.id, count: count
       }.to change(order.reload, :price).by product.price * count
     end
-    
+
     it "should increase order price when the count of a photo is increased" do
       product = product2
       count   = 1
@@ -241,7 +241,7 @@ describe Order do
         photo.update_attribute :count, photo.count + count
       }.to change(order.reload, :price).by product.price * count
     end
-    
+
     it "should decrease order price when the count of a photo is decrease" do
       product = product3
       count   = 1
@@ -250,7 +250,7 @@ describe Order do
         photo.update_attribute :count, photo.count - count
       }.to change(order.reload, :price).by product.price * (-count)
     end
-    
+
     it "should decrese order price when a photo is destroyed" do
       product = product2
       count   = 15
@@ -259,9 +259,19 @@ describe Order do
         photo.destroy
       }.to change(order.reload, :price).by product.price * (-count)
     end
-    
+
   end
 
 
-  
+  describe "destroy" do
+    let!(:order){ Fabricate :order }
+    let!(:image){ order.images.create image: image_fixture }
+
+    it "should delete associated images when order is destroyed" do
+      order.destroy
+      expect{ image.reload }.to raise_error
+    end
+  end
+
+
 end

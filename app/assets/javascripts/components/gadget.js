@@ -24,14 +24,14 @@ var gadget = (function declare_gadget () {
 		},
 		tie: function (photo_id) {
 			var photo;
-			if (this.tied) {
-				console.error('Gadget ', this.key, ' already tied');
-			}
+			if (this.tied) console.error('Gadget ', this.key, ' already tied');
+
 			photo = this.photo;
 			photo._id = photo_id;
 
 			(!photo.specification) && (photo.specification = window.specification());
 
+			// TODO better tiyng support
 			photo.tie(this.element)
 			photo.specification.tie(this.element)
 

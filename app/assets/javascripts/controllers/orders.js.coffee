@@ -10,21 +10,23 @@
 #= require models/specification
 #= require components/gadget
 #= require components/shelf
+#= require ui/modal
 
-reader = lib.reader()
-gadgets = inherit length: 0
-photos = []                     # Proposital array for automatic counting of length
-order = null
-shelf = null
-uploader = null
-product = null
+reader         = lib.reader()
+photos         = []                     # Proposital array for automatic counting of length
+gadgets        = {}
+products       = null
+order          = null
+shelf          = null
+uploader       = null
 specifications = null
 
 kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of record
-  order ||= window.order(options.order)
-  product ||= window.product(options.default_product)
-  specifications ||= window.specification(options.specifications)
+  order                    ||= window.order(options.order)
+  control.defaults.product ||= window.product(options.default_product)
+  products                 ||= options.products
+  specifications           ||= window.specification(options.specifications)
 
   uploader = window.uploader
     url: "/orders/#{order._id}/images/"
@@ -34,7 +36,7 @@ kuva.orders = (options) ->
 # TODO Move droppable to a component
 dropper =
   dragover: (event) -> false
-  droped: (event) ->
+  droped  : (event) ->
     files = event.originalEvent.dataTransfer.files
     dropper.overlay.hide();
 
@@ -47,11 +49,11 @@ dropper =
   readed: (event) ->
 
     bus.publish
-      controller: 'images'
-      action: 'uploaded'
-      destination: 'flash'
-      type: 'request'
-      file:
+      controller  : 'images'
+      action      : 'uploaded'
+      destination : 'flash'
+      type        : 'request'
+      file        :
         name: @file.name
         size: @file.size
         type: @file.type
@@ -59,7 +61,7 @@ dropper =
 
     reader.next();
   errored: (event) ->
-    console.error event.target.error
+      console.error event.target.error
   overlay:
     show: ->
       @element.fadeIn()
@@ -82,37 +84,137 @@ abort = ->
   reader.abort()
 
 control =
+  defaults:
+    photo: undefined
+    product: undefined
+  modal: undefined
   file_selected: (event) ->
     file = event.file
+    key   = event.key
+    count = 0
 
     # Create a new gadget and display it
-    gadgets[event.key] = gadget().show()
+    gadget = gadgets[key] = window.gadget().show()
+
+    # Criar uma photo para arquivo selecionado
+    gadget.photo = photo = order.photos.build
+      name       : file.name
+      count      : 1
+      product_id : control.defaults.product._id
+
+    gadget.files ||= []
+    gadget.files.push file
+
+    # Store photo for later usage
+    photos.push photo
 
     # update other interface
     # counters, order price, etc
+  files_selected: (event) ->
+    # Create default model
+    control.defaults.photo = photo = order.photos.build
+        name          : 'Foto Padrão'
+        count         : 1
+        paper         : 'glossy'
+        product_id    : control.defaults.product._id
+        specification : window.specification()
+
+
+    # TODO create a deferred
+    buttons = ['confirm => Pronto <i>Definir e continuar</i>']
+
+    assigns =
+      title   : "Você selecionou <span><b data-text=\"modal.amount\">#{event.amount}</b> fotos</span>"
+      confirm : control.selection_confirmed
+      amount  : 0
+      copies  : 'nenhuma cópia'
+      size    : photo.size || '10x15'
+      paper   : 'Brilhante'
+
+    mass = gadget '#defaults_gadget',
+      data:
+        source: kuva.service.url + '/assets/structure/generic-temporary-gadget-photo.jpg'
+
+    # Display modal and gadget
+    confirm = modal assigns, buttons, template: templates.modal.files_selected
+    mass.photo = photo
+    mass.show()
+
+    # Forward photo updates to resume
+    # TODO Add support to extended keypaths to observable
+    photo.subscribe 'count', ->
+
+      confirm.copies = if +@count
+        word = 'cópia'
+        word += 's' if +@count > 1
+        "#{@count} #{word}"
+      else
+        'nenhuma cópia'
+
+      console.log 'changing assigns to', confirm.copies
+
+    photo.specification.subscribe 'paper', ->
+      # TODO Revers key with value in hash
+      confirm.paper = name for name, value of specification.paper when specification.paper[name] is photo.specification.paper
+
+    photo.subscribe 'product_id', (product_id) ->
+      console.log 'wtf!', confirm
+      selected = product for product in products when product._id is product_id
+      confirm.size = selected.name
+
+    # Positionate and display modal and gadget
+    mass.image.size null, 250
+
+    # Bind photo to gadget
+    mass.tie()
+
+    # Confirmation animation
+    control.modal = confirm
+
+    interval = setInterval ->
+      if control.modal.amount < event.amount
+        control.modal.amount++
+      else
+        clearInterval interval
+    , 30
+
+    # Create photos records
+    control.photos.create event.amount
+
+  selection_confirmed: ->
+    # TODO Use animations only when css3 animations
+    # is not possible
+    # Animate sidebar
+    $('#aside').animate width: '9em', padding: '1em'
+    $('#main').animate padding: '0 11em 0 0'
+    $('#main-add').width 'auto'
+    control.modal.close()
+
+    # TODO change json to a getter to_json
+    defaults = control.defaults.photo.json()
+    console.log('defaults', defaults)
+
+    for photo in photos
+      for name, value of defaults
+
+        console.log('setting default', name, value)
+        # TODO make record support setting of association attributes
+        if name.indexOf('_attributes') != -1
+          association_name = name.replace '_attributes', ''
+          for attribute, value of defaults[name]
+            photo[association_name][attribute] = value
+        else
+          photo[name] = value
+
+
+    false
+
+  first_files_selection: ->
+    $('#main-add').slideUp()
+    bus.off 'files.selected', @callee
+
   thumbnailed: (event) ->
-    key   = event.key
-    files = event.files
-    count = 0
-
-    # Criar uma photo para cada arquivo selecionado
-    for file in files
-      gadget = gadgets[file.key]
-
-      # Create photos and associate with order files
-      photo = order.photos.build
-        name:       file.name
-        count:      1
-        product_id: product._id
-
-      gadget.photo = photo
-      gadget.files ||= []
-      gadget.files.push file
-
-      photos.push photo
-      count++
-
-    control.photos.create count
+    # todas miniaturas construidas
   photos:
     create: (count) ->
       $.ajax
@@ -125,7 +227,7 @@ control =
           count: count
           photo:
             count     : 1
-            product_id: product._id
+            product_id: control.defaults.product._id
             specification_attributes:
               paper: 'glossy'
 
@@ -143,8 +245,12 @@ control =
         # TODO photo.gadget().unlock()
         uploader.upload gadget.files[gadget.files.length - 1]
 
-    failed: ->
-      console.error 'control.photos.failed: Failed creating photos.'
+    failed: (xhr, status, error) ->
+      message  = "control.photos.failed: Failed creating photos. \n"
+      message += "Request Message: #{status} - #{error} \n"
+      message += "Enviroment: \n"
+      message += "order: #{JSON.stringify(order.json())}"
+      throw message
 
   file_uploaded: (event) ->
     photo = photos[event.key]
@@ -155,10 +261,20 @@ control =
     # call order model close
     # update interface for order closing
 
+
+window.domo = control
+
 # Module methods
 initialize = ->
 
   $('#abort').bind 'click', abort
+
+  # Hide sidebar
+  $('#aside').css width: 0, padding: 0
+  $('#main').css paddingRight: 0
+  $('#main-add').width '100%'
+
+
   shelf = kuva.shelf('.add-files', 'object:last')
 
   # Setup drag and drop
@@ -171,22 +287,24 @@ initialize = ->
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
   bus.listen('file.selected', control.file_selected)
+  .listen('files.selected', control.files_selected)
+  .listen('files.selected', control.first_files_selection)
   .listen('reader.loadstart', (event) ->
     gadgets[event.key].dispatch('loadstart', event)
-  ).
-  listen('reader.progress', (event) ->
+  )
+  .listen('reader.progress', (event) ->
     gadgets[event.key].dispatch('progress', event)
-  ).
-  listen('reader.loadend', (event) ->
+  )
+  .listen('reader.loadend', (event) ->
     gadgets[event.key].dispatch('loadend', event)
-  ).
-  listen('reader.abort', (event) ->
+  )
+  .listen('reader.abort', (event) ->
     gadgets[event.key].dispatch('abort', event)
-  ).
-  listen('thumbnailer.progress', (event) ->
+  )
+  .listen('thumbnailer.progress', (event) ->
     gadgets[event.key].dispatch('thumbnailing', event)
-  ).
-  listen('thumbnailer.encoding', (event) ->
+  )
+  .listen('thumbnailer.encoding', (event) ->
     gadgets[event.key].dispatch('encoding', event)
   ).
   listen('thumbnailer.thumbnailed', (event) ->
@@ -204,8 +322,32 @@ initialize = ->
     gadgets[event.key].dispatch('uploaded', event)
   );
 
+
   $("[rel=tooltip]").tooltip()
 
+templates =
+  modal:
+    files_selected: $.jqotec """
+        <div class=\"modal\">
+          <h1><*= this.title *></h1>
+          <div class=\"content\">
+            <h2>
+              <i>Como vai querer a maioria delas? </i> <br />
+              Escolha o <u>tamanho</u>, <u>tipo de papel</u> e <u>quantidade de cópias</u> abaixo: <br />
+              <small>Note que você pode altera-las individualmente depois.</small>
+            </h2>
+            <div id=\"defaults_gadget\" class=\"gadget\"></div>
+            <div>
+              <b data-text=\"modal.copies\">1</b> de cada
+              tamanho <b data-text=\"modal.size\">10x15</b>
+              papel <b data-text=\"modal.paper\">fosco</b>
+            </div>
+          </div>
 
+          <div class=\"button-group\">
+            <*= this.rendered_buttons *>
+          </div>
+        </div>
+      """
 
 $(initialize);

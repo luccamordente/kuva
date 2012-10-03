@@ -1,4 +1,4 @@
-!!!
+x!!!
 %html
   %head
     %title Enviar fotos
@@ -32,10 +32,12 @@
             products: #{raw @products.to_json},
             specifications: #{raw @specs.to_json}
           });
+
+          $.extend(specification, #{raw Specification.to_h.to_json})
         });
 
 
-      #main-add{ style: "display:none" }
+      #main-add
         #add-button.add-files
           .action
             clique aqui para

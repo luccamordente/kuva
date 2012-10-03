@@ -5,11 +5,11 @@ flash = null
 
 listener =
   listen: (type, listener) ->
-    @listeners[type] = [] if !@listeners[type]
+    @listeners[type] ||= []
     @listeners[type].push listener
     @
   mute: (type, listener) ->
-    return console.error("Listener for event of type #{type}, does not exist") if !@listeners[type]
+    throw "bus.off Listener for event of type #{type}, does not exist" if !@listeners[type]
 
     if listener
       channel = @listener[type]
@@ -36,7 +36,7 @@ publisher =
     #   listener.listen ("complete.#{event.key}", response) ->
     #     event.complete.call(event.target || event.context || event, event);
 
-    console.log('publishing[' + event.key + ']', event.type, event) if (event.type !=  'thumbnailer.progress');
+    #console.log('publishing[' + event.key + ']', event.type, event) if (event.type !=  'thumbnailer.progress');
 
     switch event.destination
       when 'flash'
@@ -80,9 +80,9 @@ errored = (event = {type: 'unknown'}) ->
 
 # Set public methods
 bus.key = publisher.key
-bus.publish = publisher.publish
-bus.listen = listener.listen
-bus.mute = listener.mute
+bus.trigger = bus.publish = publisher.publish
+bus.on = bus.listen = listener.listen
+bus.off = bus.mute = listener.mute
 bus.listeners = {}
 
 # Application wild initialization

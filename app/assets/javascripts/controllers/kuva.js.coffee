@@ -10,13 +10,15 @@ kuva = ->
 # Framework wide configuration
 model.rivets()
 model.associable()
+$.jqotetag('*')
+
 
 kuva.service =
   url: "#{document.location.protocol}//#{document.location.host}"
 
-# Application wild initialization
+# Application wide initialization
 initialize = ->
-  $.jqotetag('*')
+
 
 
 $(initialize)

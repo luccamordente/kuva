@@ -14,16 +14,16 @@ model.rivets = ->
   rivets.configure
     adapter:
       subscribe: (record, attribute_path, callback) ->
-        console.log 'subscribe', record, attribute_path
+        #console.log 'subscribe', record, attribute_path
         record.subscribe attribute_path, callback
       unsubscribe: (record, attribute_path, callback) ->
-        console.log 'unsubscribe', record, attribute_path
+        #console.log 'unsubscribe', record, attribute_path
         record.unsubscribe attribute_path, callback
       read: (record, attribute_path) ->
-        console.log 'read', record, attribute_path
+        #console.log 'read', record, attribute_path
         record[attribute_path]
       publish: (record, attribute_path, value) ->
-        console.log 'publish', record, attribute_path
+        #console.log 'publish', record, attribute_path, value
         # TODO if (value != record[attribute_path]) record.changed()
         record[attribute_path] = value
 

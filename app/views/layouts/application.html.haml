@@ -4,6 +4,7 @@
     %title Photo
     = stylesheet_link_tag    "layouts/temp", media: "all"
     = javascript_include_tag "application"
+    = airbrake_javascript_notifier
     = csrf_meta_tags
 
     - if Rails.env.production?

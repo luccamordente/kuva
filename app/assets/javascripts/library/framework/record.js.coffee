@@ -99,16 +99,20 @@ resource =
       json = {}
 
       for name, value of @ when $.type(value) isnt 'function'
+        continue unless value?  # Bypass null, and undefined values
+
         if $.type(value) == 'object'
           json["#{name}_attributes"] = value.json() for attribute in @nested_attributes when attribute == name
         else
           json[name] = value
 
+      # TODO Store reserved words in a array
       # Remove model reserved words
       delete json.resource
       delete json.route
       delete json.parent_resource
       delete json.nested_attributes
+      delete json.after_save
       delete json.element
 
       json

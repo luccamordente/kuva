@@ -2,7 +2,7 @@
 #= require models/photo
 #= require models/image
 
-order_model = model.call resource: 'order', hasMany: 'images'
+order_model = model.call resource: 'order', hasMany: 'images', rout: 'pedidos'
 
 @order = (data) ->
   # TODO improve model method support
@@ -21,7 +21,7 @@ associations = ->
     build: (data = {}) ->
       data.order = record
       data.parent_resource = "order"
-      data.route = "/orders/#{record._id}/images"
+      data.route = "/pedidos/#{record._id}/images"
       window.image(data)
     push: Array.prototype.push
 
@@ -30,7 +30,7 @@ associations = ->
     build: (data = {}) ->
       data.order = record
       data.parent_resource = "order"
-      data.route = "/orders/#{record._id}/photos"
+      data.route = "/pedidos/#{record._id}/photos"
       photo = window.photo(data)
     push: Array.prototype.push
 

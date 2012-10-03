@@ -4,11 +4,15 @@
 
 group 'views' do
   guard 'livereload' do
-    watch(%r{app/.+\.(erb|haml)})
     watch(%r{app/helpers/.+\.rb})
-    watch(%r{(public/|app/assets).+\.(css|js|html)})
-    watch(%r{(app/assets/.+\.css)\.s[ac]ss}) { |m| m[1] }
-    watch(%r{(app/assets/.+\.js)\.coffee}) { |m| m[1] }
+    watch(%r{app/.+\.(erb|haml)})
+    watch(%r{(public/).+\.(css|js|html)})
+    watch(%r{app/assets/stylesheets/(.+\.css).*$})    { |m| "assets/#{m[1]}" }
+    watch(%r{app/assets/javascripts/(.+\.js).*$})     { |m| "assets/#{m[1]}" }
+    watch(%r{lib/assets/stylesheets/(.+\.css).*$})    { |m| "assets/#{m[1]}" }
+    watch(%r{lib/assets/javascripts/(.+\.js).*$})     { |m| "assets/#{m[1]}" }
+    watch(%r{vendor/assets/stylesheets/(.+\.css).*$}) { |m| "assets/#{m[1]}" }
+    watch(%r{vendor/assets/javascripts/(.+\.js).*$})  { |m| "assets/#{m[1]}" }
     watch(%r{config/locales/.+\.yml})
   end
 end
@@ -30,7 +34,7 @@ group 'specs' do
     watch('spec/spec_helper.rb')                        { "spec" }
     watch('config/routes.rb')                           { "spec/routing" }
     watch('app/controllers/application_controller.rb')  { "spec/controllers" }
-    
+
     # Capybara request specs
     watch(%r{^app/(views|controllers)/(.+)/.*\.(erb|haml)$})          { |m| "spec/requests/#{m[1]}_spec.rb" }
     watch(%r{^app/(views|controllers)/(.+)/})                         { |m| "spec/requests/#{m[1]}_spec.rb" }

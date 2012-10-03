@@ -1,7 +1,22 @@
 @import 'nib'
 @import 'helpers'
 
-
+// @keyframes flip-paper-glossy {
+//   0% {
+//     translate: rotateY(0deg)
+//
+//   }
+//
+//   50% {
+//     translate: rotateY(180deg)
+//     background: url('glossy');
+//   }
+//
+//   100% {
+//     translate: rotateY(360deg)
+//     background: url('glossy');
+//   }
+// }
 
 control-style(color)
   background-color color
@@ -64,6 +79,7 @@ control-style(color)
 
 
     #gadgets
+      clearfix()
       border-spacing 1em
       width 100%
 
@@ -71,7 +87,7 @@ control-style(color)
         control-background-color = #111
 
         background-color #eee
-        display inline-block
+        float left
         height 250px
         margin 10px
         padding 20px
@@ -109,6 +125,69 @@ control-style(color)
               background-image image('paper-matte.png')
 
 
+        &.sizing
+          .modal-size
+            display none
+          &:hover
+            .canvas .pomp.size-pomp .dimension
+              background-color #EEE
+              background-color rgba(230,230,230,0.7)
+            .control
+              display none
+              &.size
+                display block
+            .modal-size
+              display block
+
+        .modal
+          background = #111
+          background-color background
+          background-color rgba(0,0,0,0.8)
+          border-radius 5px
+          color #999
+          font-size 11px
+          left 70px
+          top 50px
+          position absolute
+          padding 10px 0
+          width 150px
+          z-index 3
+
+          a
+            link-color(#999)
+
+          .title
+            font-weight bold
+            text-shadow 0 -1px 0 #000
+          .sizes
+            font-size 14px
+            padding 1.5em 0
+            a.size
+              color = #FFF
+              border-bottom 1px solid #FFF
+              border-color rgba(255,255,255,0.1)
+              cursor pointer
+              display block
+              link-color(color)
+              padding 0.5em 0
+              transition background-color 0.5s, border-color 0.5s
+              &.selected
+                background-color lighten(background, 10%)
+                background-color rgba(255,255,255,0.05)
+              &:hover
+                background-color lighten(background, 15%)
+                background-color rgba(255,255,255,0.1)
+                border-color lighten(background, 20%)
+                border-color rgba(255,255,255,0.2)
+              .times
+                color darken(color, 30%)
+              .unit
+                color darken(color, 60%)
+                font-size 0.8em
+          // a.back
+
+
+
         .bar
           display none
           position absolute
@@ -127,6 +206,7 @@ control-style(color)
             text-align center
             vertical-align middle
 
+
           .pomp
             position absolute
             z-index 3
@@ -136,7 +216,36 @@ control-style(color)
               right 0
               top 0
               width 76px
-            // &.size-pomp
+
+            &.size-pomp
+              font-size 0.5em
+              left -23px
+              text-shadow 0 1px #FFF
+              top -21px
+
+              .dimension
+                background-color #FFF
+                background-color rgba(255,255,255,0.7)
+                border-radius 100px
+                color #666
+                line-height 1.3em
+                position absolute
+
+                &.height
+                  height auto
+                  left 2px
+                  top 20px
+                  padding 4px 2px
+                  width 13px
+                &.width
+                  height 13px
+                  left 22px
+                  line-height 13px
+                  padding 2px 4px
+                  top 0px
+                  white-space nowrap
+                .unit
+                  color #CCC
 
 
           .control

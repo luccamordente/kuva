@@ -29,7 +29,7 @@ kuva.orders = (options) ->
   specifications           ||= window.specification(options.specifications)
 
   uploader = window.uploader
-    url: "/orders/#{order._id}/images/"
+    url: "/pedidos/#{order._id}/images/"
     data:
       order_id: order._id
 
@@ -151,14 +151,11 @@ control =
       else
         'nenhuma cópia'
 
-      console.log 'changing assigns to', confirm.copies
-
     photo.specification.subscribe 'paper', ->
       # TODO Revers key with value in hash
       confirm.paper = name for name, value of specification.paper when specification.paper[name] is photo.specification.paper
 
     photo.subscribe 'product_id', (product_id) ->
-      console.log 'wtf!', confirm
       selected = product for product in products when product._id is product_id
       confirm.size = selected.name
 
@@ -218,7 +215,7 @@ control =
   photos:
     create: (count) ->
       $.ajax
-        url      : "/orders/#{order._id}/photos"
+        url      : "/pedidos/#{order._id}/photos"
         type     : 'post'
         dataType : 'json'
         error    : @failed

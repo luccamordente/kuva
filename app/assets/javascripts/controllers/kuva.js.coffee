@@ -16,6 +16,14 @@ $.jqotetag('*')
 kuva.service =
   url: "#{document.location.protocol}//#{document.location.host}"
 
+
+kuva.fn =
+  sorts:
+    numerical:
+      asc:  (a,b) -> a - b
+      desc: (a,b) -> b - a
+
+
 # Application wide initialization
 initialize = ->
 

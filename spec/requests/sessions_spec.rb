@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Sessions" do
-  
+
   describe "sign in" do
     context "with no orders" do
       it "takes the user to a new order" do
@@ -9,9 +9,9 @@ describe "Sessions" do
         page.current_path.should == new_order_path
       end
     end
-    
+
     context "with at least one order" do
-      it " takes the user to orders list" do
+      it "takes the user to orders list" do
         login_user_now do |user|
           user.orders << Fabricate(:order)
         end
@@ -19,5 +19,5 @@ describe "Sessions" do
       end
     end
   end
-  
+
 end

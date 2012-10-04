@@ -10,12 +10,12 @@
 
       if current_setter
         setter = (value) ->
-          current_setter.call @, value
           callback.call @, value
+          current_setter.call @, value
       else
         setter = (value) ->
-          @["_#{keypath}"] = value
           callback.call @, value
+          @["_#{keypath}"] = value
 
       # TODO onpropertychange
       Object.defineProperty @, keypath,

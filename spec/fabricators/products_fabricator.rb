@@ -4,4 +4,5 @@ Fabricator :product do
   name "10x15"
   description "MyString"
   price 1
+  dimensions [10,15]
 end

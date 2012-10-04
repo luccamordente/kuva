@@ -1,1 +1,3 @@
-@product = model.call resource: 'product'
+@product = model.call
+  resource: 'product'
+

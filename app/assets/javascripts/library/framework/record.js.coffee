@@ -47,6 +47,17 @@ resource =
     create: (mixed) ->
       # if mixed == array
       #  bulk create multiple itens
+    find: (id) ->
+      @where id: id, true
+    where: (conditions, first = false) ->
+      results = []
+      conditions.id = [conditions.id] if $.type(conditions.id) != 'array'
+      for record in @cache when conditions.id.indexOf(record._id) isnt -1
+        if first
+          return record
+        else
+          results.push record
+      results
 
   initialize_record = (data = {resource: @resource, parent_resource: @parent_resource}) ->
     data.resource          ||= @resource

@@ -244,16 +244,44 @@ x!!!
     %script#gadget{ type: "text/x-jqote-template" }
       :plain
         <![CDATA[
-          <div id="gadget-<*= this.id *>" class="gadget">
-            #{ select :spec, :paper, Specification::PAPERS, {}, data: {value: 'specification.paper'} }
-            #{ collection_select :photo, :product_id, @products, :id, :name, {}, data: {value: 'photo.product_id'} }
-            #{ text_field_tag :count, 0, type: :number, data: {value: 'photo.count'} }
-            <span data-text="photo.count"></span>
-            <div class="upload bar"></div>
-            <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
-            <div class="thumbnail bar"></div>
-          <div>
+
+
+          <div id="gadget-<*= this.id *>" class="gadget ruler-pomp">
+            <div class="canvas">
+              <div class="image">
+                <img class="thumbnail" src="<*= this.source *>" title="<*= this.name *>" />
+              </div>
+              <div class="pomp size-pomp">
+                <div class="dimension height">
+                  <span class="count"></span>
+                  <span class="unit">cm</span>
+                </div>
+                <div class="dimension width">
+                  <span class="count"></span>
+                  <span class="unit">cm</span>
+                </div>
+              </div>
+              <div class="pomp paper-pomp"></div>
+              <div class="control hideable size" rel="tooltip" data-original-title="Alterar tamanho"></div>
+              <div class="control hideable paper" rel="tooltip" data-original-title="Papel brilhante&lt;br /&gt;&lt;small&gt;clique para alterar&lt;/small&gt;"></div>
+              <div class="control hideable duplicate" data-html="" data-placement="right" rel="tooltip" data-original-title="Duplicar esta foto&lt;br /&gt;&lt;small&gt;para impressão, em&lt;br /&gt;outro tamanho ou&lt;br /&gt;papel, da mesma foto&lt;/small&gt;"></div>
+              <div class="control hideable count" data-placement="bottom" rel="tooltip" data-original-title="Quantidade">
+                <div class="control subcontrol minus">-</div>
+                <div class="pomp"><span class="times">×</span><span class="number" data-text="photo.count"></span>
+                </div>
+                <div class="control subcontrol plus">+</div>
+              </div>
+              <div class="thumbnail bar"></div>
+              <div class="upload bar"></div>
+            </div>
+            <div style="position: absolute; bottom: 50px; z-index: 1001;">
+              #{ select :spec, :paper, Specification::PAPERS, {}, data: {value: 'specification.paper'} }
+              #{ collection_select :photo, :product_id, @products, :id, :name, {}, data: {value: 'photo.product_id'} }
+              #{ text_field_tag :count, 0, type: :number, data: {value: 'photo.count'} }
+            </div>
+          </div>
         ]]>
+
 
 
     #overlay.gadgets

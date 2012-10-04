@@ -25,8 +25,9 @@ kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of record
   order                    ||= window.order(options.order)
   control.defaults.product ||= window.product(options.default_product)
-  products                 ||= options.products
   specifications           ||= window.specification(options.specifications)
+  kuva.orders.products       = products = window.product.cache = options.products
+
 
   uploader = window.uploader
     url: "/pedidos/#{order._id}/images/"
@@ -100,6 +101,7 @@ control =
     gadget.photo = photo = order.photos.build
       name       : file.name
       count      : 1
+      product    : control.defaults.product
       product_id : control.defaults.product._id
 
     gadget.files ||= []
@@ -116,6 +118,7 @@ control =
         name          : 'Foto Padrão'
         count         : 1
         paper         : 'glossy'
+        product       : control.defaults.product
         product_id    : control.defaults.product._id
         specification : window.specification()
 
@@ -156,8 +159,7 @@ control =
       confirm.paper = name for name, value of specification.paper when specification.paper[name] is photo.specification.paper
 
     photo.subscribe 'product_id', (product_id) ->
-      selected = product for product in products when product._id is product_id
-      confirm.size = selected.name
+      confirm.size = product.find(product._id).name
 
     # Positionate and display modal and gadget
     mass.image.size null, 250

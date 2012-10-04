@@ -12,14 +12,14 @@ class Orderizer
     place_photos_to base_directory
     file = compress base_directory
 
-    yield file if block_given?
+    if block_given?
+      yield file
+      delete_compressed
+    end
 
     file
   rescue
-    delete_base_directory
     raise
-  ensure
-    delete_compressed if file
   end
 
 private
@@ -27,6 +27,7 @@ private
   def compress directory
     Dir.chdir Order.tmp_path
     system "zip -r #{@order.tmp_zip_identifier} #{@order.tmp_identifier} > /dev/null"
+    delete_base_directory
     File.open @order.tmp_zip_path
   end
 

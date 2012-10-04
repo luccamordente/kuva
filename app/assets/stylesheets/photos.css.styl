@@ -127,12 +127,12 @@ control-style(color)
 
 
         sizes      = "10x15", "15x21"
-        directions = "horizontal", "vertical"
+        orientations = "horizontal", "vertical"
 
-        for direction in directions
+        for orientation in orientations
           for size in sizes
-            composition = size + "-" + direction
-            &.size-{size}.{direction}
+            composition = size + "-" + orientation
+            &.size-{size}.{orientation}
               &.ruler-pomp
                 background-image image("size-" + composition + ".png")
 
@@ -163,6 +163,17 @@ control-style(color)
                 display block
             .modal-size
               display block
+
+
+        &.zero
+          .canvas .image
+            opacity 0.3
+          .control
+            display none
+            &.count, &.count .subcontrol
+              display block
+              &.minus
+                display none
 
         .modal
           background = #111
@@ -219,13 +230,20 @@ control-style(color)
         .canvas
 
           display inline-block
-          position relative
+          position absolute
+          transition width 0.5s, height 0.5s, top 0.5s, left 0.5s
 
-          img
-            position relative
-            z-index 2
-            text-align center
-            vertical-align middle
+          .image
+            overflow hidden
+            box-shadow 1px 1px 4px #777
+            transition width 0.5s, height 0.5s
+
+            img
+              position relative
+              text-align center
+              vertical-align middle
+              z-index 2
+              transition top 0.5s, left 0.5s
 
 
           .pomp
@@ -285,6 +303,7 @@ control-style(color)
 
             &.hideable
               opacity 0
+
               .no-opacity &
                 display none
 
@@ -375,8 +394,6 @@ control-style(color)
         &.loading
           width 10em
           height 10em
-          background-color #eee
-          background image('jla.gif') center center no-repeat
 
           img
             width 25px
@@ -387,8 +404,6 @@ control-style(color)
         &.thumbnailing
           width 10em
           height 10em
-          outline 1px solid #eee
-          background-color #bbb
 
           .thumbnail.bar
             display block
@@ -407,7 +422,6 @@ control-style(color)
           background-color transparent
 
           img
-            box-shadow 1px 1px 4px #777
             transition opacity 1s ease-in
 
 
@@ -438,8 +452,7 @@ control-style(color)
             height .2em
 
 
-          img
-            border 3px solid lightBlue
+          // .canvas
 
 
 

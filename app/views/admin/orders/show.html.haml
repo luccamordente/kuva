@@ -38,8 +38,8 @@
 %p
   %b Entregue em:
   = l @order.delivered_at, format: :medium  if @order.delivered_at
-  
-  
+
+
 %br
 
 
@@ -54,6 +54,26 @@
 - if @order.downloadable?
   %p= link_to 'Download', download_admin_order_path(@order), class: 'btn btn-primary'
   %br
+
+
+
+- unless @order.photos.empty?
+  %table.table.table-striped
+    %tr
+      %th Imagem
+      %th Tamanho
+      %th Quantidade
+      %th Preço unitário
+      %th Preço total
+
+    - @order.photos.each do |photo|
+      %tr
+        %td= photo.image.name if photo.image.present?
+        %td= photo.product.name
+        %td= photo.count
+        %td= number_to_currency photo.product.price
+        %td= number_to_currency photo.product.price * photo.count
+
 
 
 = link_to 'Voltar', admin_orders_path

@@ -36,7 +36,7 @@ publisher =
     #   listener.listen ("complete.#{event.key}", response) ->
     #     event.complete.call(event.target || event.context || event, event);
 
-    #console.log('publishing[' + event.key + ']', event.type, event) if (event.type !=  'thumbnailer.progress');
+    console.log('publishing[' + event.key + ']', event.type, event) if (event.type !=  'thumbnailer.progress');
 
     switch event.destination
       when 'flash'

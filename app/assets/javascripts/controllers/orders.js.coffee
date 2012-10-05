@@ -367,6 +367,7 @@ initialize = ->
   .on('upload.start'             , (event) -> gadgets[event.key].dispatch('upload'      , event))
   .on('upload.progress'          , (event) -> gadgets[event.key].dispatch('uploading'   , event))
   .on('upload.complete.data'     , (event) ->
+    # TODO figure out how get image id control.file_uploaded(event);
     control.file_uploaded event
     gadgets[event.key].dispatch 'uploaded', event
   )

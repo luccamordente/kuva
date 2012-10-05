@@ -1,7 +1,6 @@
 //= require library/image
 
 var gadget = (function declare_gadget (sorts) {
-
   var that = function initialize_photo(parent, options) {
     options = options || {};
     options.parent = parent || '#gadgets';
@@ -9,12 +8,12 @@ var gadget = (function declare_gadget (sorts) {
     return $.extend(options, inherit(gadget));
   }, id = 0,
   gadget = {
-    show: function () {
+    show: function() {
       !this.element && control.create.call(this);
       this.element.css(configuration.size).fadeIn();
       return this;
     },
-    dispatch: function (name, event) {
+    dispatch: function(name, event) {
       handlers[name] && handlers[name].call(this, event);
       return this;
     },
@@ -59,7 +58,7 @@ var gadget = (function declare_gadget (sorts) {
       this.tied = true;
     },
     crop: function() {
-      var dimensions   = this.photo.product[this.orientation + "_dimensions"],
+        var dimensions   = this.photo.product[this.orientation + "_dimensions"],
           photo_height = this.photo.height,
           photo_width  = this.photo.width,
           canvas_scale = Math.min(250 / dimensions.width, 250 / dimensions.height),

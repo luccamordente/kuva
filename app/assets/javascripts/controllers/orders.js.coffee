@@ -10,6 +10,7 @@
 #= require models/specification
 #= require components/gadget
 #= require components/shelf
+#= require components/aside
 #= require ui/modal
 
 reader         = lib.reader()
@@ -27,7 +28,7 @@ kuva.orders = (options) ->
   control.defaults.product ||= window.product(options.default_product)
   specifications           ||= window.specification(options.specifications)
   kuva.orders.products       = products = window.product.cache = options.products
-
+  kuva.order = order
 
   uploader = window.uploader
     url: "/pedidos/#{order._id}/images/"
@@ -184,19 +185,27 @@ control =
     # TODO Use animations only when css3 animations
     # is not possible
     # Animate sidebar
-    $('#aside').animate width: '9em', padding: '1em'
-    $('#main').animate padding: '0 11em 0 0'
-    $('#main-add').width 'auto'
+    $('#aside').animate width: '9em', padding: '1em' # TODO Move to aside component
+    # aside.initialize('#aside', order.photos);
+
+
+
+    main = $ '#main'
+    main.animate padding: '0 11em 0 0'
+    setTimeout ->
+      main.css 'width', main.width() - 10
+      setTimeout ->
+          main.width 'auto'
+      , 20
+    , 100
+
     control.modal.close()
 
     # TODO change json to a getter to_json
     defaults = control.defaults.photo.json()
-    console.log('defaults', defaults)
 
     for photo in photos
       for name, value of defaults
-
-        console.log('setting default', name, value)
         # TODO make record support setting of association attributes
         if name.indexOf('_attributes') != -1
           association_name = name.replace '_attributes', ''
@@ -252,10 +261,10 @@ control =
       throw message
 
   file_uploaded: (event) ->
-    photo = photos[event.key]
+    photo = gadgets[event.key].photo
 
     # associate and save image
-    photo.images.create(_id: event.image_id)
+    photo.images.create(_id: event.data.id)
   closed: ->
     # call order model close
     # update interface for order closing
@@ -269,9 +278,10 @@ initialize = ->
   $('#abort').bind 'click', abort
 
   # Hide sidebar
-  $('#aside').css width: 0, padding: 0
-  $('#main').css paddingRight: 0
-  $('#main-add').width '100%'
+  $('#aside').css width: '9em', padding: '1em'  # TODO Move to aside component
+
+  # $('#main').css paddingRight: 0
+  # $('#main-add').width '100%'
 
 
   shelf = kuva.shelf('.add-files', 'object:last')
@@ -308,17 +318,18 @@ initialize = ->
   ).
   listen('thumbnailer.thumbnailed', (event) ->
     gadgets[event.key].dispatch('thumbnailed', event)
-  ).
-  listen('thumbnailer.finished', control.thumbnailed).
-  listen('upload.start', (event) ->
+  )
+  .listen('thumbnailer.finished', control.thumbnailed)
+  .listen('upload.start', (event) ->
     gadgets[event.key].dispatch('upload', event)
-  ).
-  listen('upload.progress', (event) ->
+  )
+  .listen('upload.progress', (event) ->
     gadgets[event.key].dispatch('uploading', event)
-  ).
-  listen('upload.complete', (event) ->
+  )
+  .listen('upload.complete.data', (event) ->
     # TODO figure out how get image id control.file_uploaded(event);
-    gadgets[event.key].dispatch('uploaded', event)
+    control.file_uploaded event
+    gadgets[event.key].dispatch 'uploaded', event
   );
 
 

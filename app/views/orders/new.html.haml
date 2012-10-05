@@ -151,3 +151,19 @@
       document.write(unescape("%3Cscript src='//www.snapengage.com/snapabug.js' type='text/javascript'%3E%3C/script%3E"));</script><script type="text/javascript">
       SnapABug.setLocale("pt");
       SnapABug.addButton("9ff774d2-ef25-42b2-b50a-3715b117bdfc","0","50%");
+
+
+    #modal-0.simplemodal-container{:style => "position: fixed; z-index: 1002; height: 500px; width: 600px; left: 416.5px; top: 100px; display: block; "}
+      .simplemodal-wrap{:style => "height: 100%; outline: 0px; width: 100%; overflow: visible; ", :tabindex => "-1"}
+        #sent-modal.modal.simplemodal-data{:style => "display: block; "}
+          %h1
+            %img{:src => "/assets/structure/modal-summary-checkmark.png"}
+            Suas fotos foram enviadas e já estão conosco!
+          .content
+            %h2 Em até 24 horas suas fotos estarão prontas para você buscar, aqui no Pedro Cine Foto.
+            .note
+              %b Lembre-se:
+              o pagamento só será feito quando você vier buscá-las.
+          .button-group
+            %a.button.confirm.success{"data-on-click" => "modal.confirm"}
+              CONCLUIR

@@ -78,16 +78,22 @@ var gadget = (function declare_gadget (sorts) {
         return gadget;
     },
     crop: function() {
-        var dimensions   = this.photo.product[this.orientation + "_dimensions"],
-          photo_height = this.photo.height,
-          photo_width  = this.photo.width,
-          canvas_scale = Math.min(250 / dimensions.width, 250 / dimensions.height),
-          img_scale    = Math.min(250 / photo_width, 250 / photo_height),
-          canvas       = this.element.find('.canvas'),
-          image        = canvas.find('.image'),
-          img          = image.find('img'),
-          left         = 0,
-          top          = 0,
+      var dimensions    = this.photo.product[this.orientation + "_dimensions"],
+          photo_height  = this.photo.height,
+          photo_width   = this.photo.width,
+          canvas_ratio  = dimensions.width / dimensions.height,
+          canvas_scale  = Math.min(250 / dimensions.width, 250 / dimensions.height),
+          canvas_width  = canvas_scale * dimensions.width,
+          canvas_height = canvas_scale * dimensions.height,
+          img_ratio     = photo_width / photo_height,
+          img_scale     = img_ratio > canvas_ratio ?
+                            Math.min(250 / photo_width, 250 / photo_height) :
+                            Math.max(canvas_width / photo_width, canvas_height / photo_height),
+          canvas        = this.element.find('.canvas'),
+          image         = canvas.find('.image'),
+          img           = image.find('img'),
+          left          = 0,
+          top           = 0,
           cropped_height,
           cropped_width,
           canvas_height,
@@ -100,16 +106,12 @@ var gadget = (function declare_gadget (sorts) {
           img_top,
           product_dimensions;
 
-      canvas_width  = canvas_scale * dimensions.width;
-      canvas_height = canvas_scale * dimensions.height;
 
       img_width  = img_scale * photo_width;
       img_height = img_scale * photo_height;
 
-      if (this.orientation === "vertical")
-        img_left = (canvas_width - img_width) / 2;
-      else
-        img_top  = (canvas_height - img_height) / 2;
+      img_left = (canvas_width - img_width) / 2;
+      img_top  = (canvas_height - img_height) / 2;
 
       canvas_left = (this.element.innerWidth()  - canvas_width ) / 2;
       canvas_top  = (this.element.innerHeight() - canvas_height) / 2;
@@ -117,7 +119,7 @@ var gadget = (function declare_gadget (sorts) {
       canvas.css({width: canvas_width, height: canvas_height});
       canvas.css({top: canvas_top, left: canvas_left});
       image.css({width: canvas_width, height: canvas_height});
-      img.css({left: img_left, top: img_top});
+      img.css({left: img_left, top: img_top, height: img_height, width: img_width});
 
       product_dimensions = this.element.find(".dimension");
       product_dimensions.filter(".height").children(".count").html(dimensions.height);
@@ -154,7 +156,7 @@ var gadget = (function declare_gadget (sorts) {
 
       this.crop();
       this.element.removeClass('reading').addClass('thumbnailing ' + this.orientation);
-      this.image.title(event.file.name);
+      event.file && this.image.title(event.file.name);
     },
     thumbnailing: function thumbnailer_thumbnailing (event) {
       var percentage = ((event.parsed / event.total) * 100), now = (new Date()).getTime();
@@ -253,7 +255,7 @@ var gadget = (function declare_gadget (sorts) {
       this.photo.count++;
     },
     paperize: function() {
-      var control = this.element.children(".canvas .control.paper");
+      var control = this.element.find(".canvas .control.paper");
       for ( paper in specification.paper )
         if (this.photo.specification.paper != paper ) {
           control.tooltip("hide");
@@ -270,6 +272,8 @@ var gadget = (function declare_gadget (sorts) {
             element.children(".modal").remove();
             element.removeClass("sizing");
           };
+
+      if (element.children(".modal").length) return false;
 
       element.addClass("sizing");
       element.append(templates.modal);

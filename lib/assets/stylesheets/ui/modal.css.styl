@@ -4,6 +4,7 @@
 .simplemodal-container
   .close
     color white
+    display none
     float right
     position relative
     top .5em
@@ -11,27 +12,27 @@
 
 
 .modal
-  box-shadow 0px 5px 5px rgba(0, 0, 0, 0.5)
-  border-radius 6px
-  width 560px
   background-color #333
+  box-shadow 0px 5px 5px rgba(0, 0, 0, 0.5)
+  border-radius 5px
   display none
 
 
   h1
     color lighten(success-color, 10%)
-    padding .5em 1em
-    font-size 1.5em
+    padding 1em 1.5em
+    font-size 1.4em
 
   .content
     clearfix()
-    padding 1em
-    margin .3em
     background-color white
+    border-radius 5px
+    margin 0 .7em
+    padding 1em
 
   .button-group
     text-align right
-    padding .5em
+    padding 1em 0.6em
 
-  button
+  a.button, button
     display inline-block

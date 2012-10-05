@@ -81,9 +81,6 @@ dropper =
         dropper.overlay.hide()
      ).bind('dragover', @dragover).bind('drop', @droped)
 
-# Setup commands
-abort = ->
-  reader.abort()
 
 control =
   defaults:
@@ -131,45 +128,46 @@ control =
     control.defaults.photo = photo = order.photos.build
         name          : 'Foto Padrão'
         count         : 1
-        paper         : 'glossy'
         product       : control.defaults.product
         product_id    : control.defaults.product._id
-        specification : window.specification()
+        specification : window.specification({ paper: 'glossy' })
+        width         : 320
+        height        : 480
 
 
     # TODO create a deferred
-    buttons = ['confirm => Pronto <i>Definir e continuar</i>']
+    buttons = ['confirm.success => Pronto <i>Definir e continuar</i>']
 
     assigns =
-      title   : "Você selecionou <span><b data-text=\"modal.amount\">#{event.amount}</b> fotos</span>"
-      confirm : control.selection_confirmed
-      amount  : 0
-      copies  : 'nenhuma cópia'
-      size    : photo.size || '10x15'
-      paper   : 'Brilhante'
+      title       : "Você selecionou <span class=\"amount\"><b data-text=\"modal.amount\">#{event.amount}</b> <span data-text=\"modal.amount_label\">foto</span></span>"
+      confirm     : control.selection_confirmed
+      amount      : 1
+      copies      : '1 cópia'
+      size        : photo.size || '10x15'
+      paper       : 'Brilhante'
 
-    mass = gadget '#defaults_gadget',
+    mass = gadget '#defaults-gadget',
       data:
         source: kuva.service.url + '/assets/structure/generic-temporary-gadget-photo.jpg'
 
     # Display modal and gadget
-    confirm = modal assigns, buttons, template: templates.modal.files_selected
+    confirm = modal assigns, buttons, template: templates.modal.files_selected, minWidth: 780, minHeight: 500
     mass.photo = photo
     mass.show()
+    mass.dispatch 'loadend', photo
 
     # Forward photo updates to resume
     # TODO Add support to extended keypaths to observable
-    photo.subscribe 'count', ->
+    photo.subscribe 'count', (count) ->
 
-      confirm.copies = if +@count
+      confirm.copies = if +count
         word = 'cópia'
-        word += 's' if +@count > 1
-        "#{@count} #{word}"
+        word += 's' if +count > 1
+        "#{count} #{word}"
       else
         'nenhuma cópia'
 
     photo.specification.subscribe 'paper', ->
-      # TODO Revers key with value in hash
       confirm.paper = specification.paper[photo.specification.paper]
 
     photo.subscribe 'product_id', (product_id) ->
@@ -181,6 +179,12 @@ control =
     # Bind photo to gadget
     mass.tie()
 
+    # TODO check why binding is not working when instantiated
+    # Note: this is not a programming error
+    photo.specification.paper = photo.specification.paper
+    photo.product_id          = photo.product_id
+    photo.count               = photo.count
+
     # Confirmation animation
     control.modal = confirm
 
@@ -189,6 +193,8 @@ control =
         control.modal.amount++
       else
         clearInterval interval
+      if control.modal.amount <= 2
+        control.modal.amount_label = if control.modal.amount == 1 then "foto" else "fotos"
     , 30
 
     # Create photos records
@@ -215,6 +221,9 @@ control =
 
     # TODO change json to a getter to_json
     defaults = control.defaults.photo.json()
+
+    delete defaults.width
+    delete defaults.height
 
     for photo in photos
       for name, value of defaults
@@ -288,8 +297,6 @@ window.domo = control
 # Module methods
 initialize = ->
 
-  $('#abort').bind 'click', abort
-
   # Hide sidebar
   $('#aside').css width: '9em', padding: '1em'  # TODO Move to aside component
 
@@ -308,62 +315,41 @@ initialize = ->
 
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
-  bus.listen('file.selected', control.file_selected)
-     .listen('files.selected', control.files_selected)
-  .listen('files.selected', control.first_files_selection)
-  .listen('reader.loadstart', (event) ->
-    gadgets[event.key].dispatch('loadstart', event)
-  )
-  .listen('reader.progress', (event) ->
-    gadgets[event.key].dispatch('progress', event)
-  )
-  .listen('reader.loadend', (event) ->
-    gadgets[event.key].dispatch('loadend', event)
-  )
-  .listen('reader.abort', (event) ->
-    gadgets[event.key].dispatch('abort', event)
-  )
-  .listen('thumbnailer.progress', (event) ->
-    gadgets[event.key].dispatch('thumbnailing', event)
-  )
-  .listen('thumbnailer.encoding', (event) ->
-    gadgets[event.key].dispatch('encoding', event)
-  ).
-  listen('thumbnailer.thumbnailed', (event) ->
-    gadgets[event.key].dispatch('thumbnailed', event)
-  )
-  .listen('thumbnailer.finished', control.thumbnailed)
-  .listen('upload.start', (event) ->
-    gadgets[event.key].dispatch('upload', event)
-  )
-  .listen('upload.progress', (event) ->
-    gadgets[event.key].dispatch('uploading', event)
-  )
-  .listen('upload.complete.data', (event) ->
-    # TODO figure out how get image id control.file_uploaded(event);
+  bus.listen('file.selected'       , control.file_selected                                        )
+  .listen('files.selected'         , control.files_selected                                       )
+  .listen('files.selected'         , control.first_files_selection                                )
+  .listen('reader.loadstart'       , (event) -> gadgets[event.key].dispatch('loadstart'   , event))
+  .listen('reader.progress'        , (event) -> gadgets[event.key].dispatch('progress'    , event))
+  .listen('reader.loadend'         , (event) -> gadgets[event.key].dispatch('loadend'     , event))
+  .listen('reader.abort'           , (event) -> gadgets[event.key].dispatch('abort'       , event))
+  .listen('thumbnailer.progress'   , (event) -> gadgets[event.key].dispatch('thumbnailing', event))
+  .listen('thumbnailer.encoding'   , (event) -> gadgets[event.key].dispatch('encoding'    , event))
+  .listen('thumbnailer.thumbnailed', (event) -> gadgets[event.key].dispatch('thumbnailed' , event))
+  .listen('thumbnailer.finished'   , control.thumbnailed                                          )
+  .listen('upload.start'           , (event) -> gadgets[event.key].dispatch('upload'      , event))
+  .listen('upload.progress'        , (event) -> gadgets[event.key].dispatch('uploading'   , event))
+  .listen('upload.complete.data'   , (event) ->
     control.file_uploaded event
     gadgets[event.key].dispatch 'uploaded', event
-  );
+  )
 
-
-  $("[rel=tooltip]").tooltip()
 
 templates =
   modal:
     files_selected: $.jqotec """
-        <div class=\"modal\">
-          <h1><*= this.title *></h1>
+        <div class=\"modal\" id=\"selected-modal\">
+          <h1><img src="/assets/structure/modal-summary-checkmark.png" /> <*= this.title *></h1>
           <div class=\"content\">
             <h2>
-              <i>Como vai querer a maioria delas? </i> <br />
-              Escolha o <u>tamanho</u>, <u>tipo de papel</u> e <u>quantidade de cópias</u> abaixo: <br />
-              <small>Note que você pode altera-las individualmente depois.</small>
+              <div class="call">Como vai querer a maioria delas?</div>
+              <div class="choose">Escolha o <u>tamanho</u>, <u>tipo de papel</u> e <u>quantidade de cópias</u> abaixo:</div>
+              <div class="note">Note que você pode altera-las individualmente depois.</div>
             </h2>
-            <div id=\"defaults_gadget\"></div>
-            <div>
-              <b data-text=\"modal.copies\">1</b> de cada
-              tamanho <b data-text=\"modal.size\">10x15</b>
-              papel <b data-text=\"modal.paper\">fosco</b>
+            <div id=\"defaults-gadget\"></div>
+            <div class=\"summary\">
+              <img src="/assets/structure/modal-summary-small-checkmark.png" /> <b data-text=\"modal.copies\">1</b> de cada<br />
+              <img src="/assets/structure/modal-summary-small-checkmark.png" /> tamanho <b data-text=\"modal.size\">10x15</b><br />
+              <img src="/assets/structure/modal-summary-small-checkmark.png" /> papel <b data-text=\"modal.paper\">fosco</b><br />
             </div>
           </div>
 

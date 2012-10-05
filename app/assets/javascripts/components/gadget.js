@@ -37,9 +37,19 @@ var gadget = (function declare_gadget (sorts) {
       photo.subscribe("count", view.subscriptions.count);
       photo.gadget = photo.specification.gadget = this;
 
-      // TODO better tiyng support
-      photo.tie(this.element);
-      photo.specification.tie(this.element);
+
+      // TODO Better proxy binding on event bindints
+      bound = {}
+      for (property in view) {
+        if ($.type(view[property]) == 'function')
+          bound[property] = $.proxy(view[property], this);
+      }
+
+      rivets.bind(this.element, {
+          photo: photo,
+          specification: photo.specification,
+          gadget: observable.call(bound)
+      });
 
       // Save changes when relavant data changes
       // TODO better change event support on record
@@ -103,8 +113,10 @@ var gadget = (function declare_gadget (sorts) {
         title: 'Sumonando imagem'
       }, this.data);
 
-      $(this.parent).jqoteapp(template, this.data);
+      $(this.parent).jqoteapp(templates.gadget, this.data);
+
       this.element = $('#gadget-' + this.data.id);
+      this.element.find("[rel=tooltip]").tooltip();
       this.image = library.image(this.element.find('img'), this.data.title);
       this.upload_bar = this.element.find('.upload.bar');
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
@@ -183,24 +195,29 @@ var gadget = (function declare_gadget (sorts) {
 
         var element = this.gadget.element;
 
-        if (value == 1) element.find(".control.count:first").addClass("hideable");
-        else            element.find(".control.count:first").removeClass("hideable");
+        if (value == 1) element.find(".canvas .control.count:first").addClass   ("hideable");
+        else            element.find(".canvas .control.count:first").removeClass("hideable");
 
-        if (value == 0) element.addClass("zero");
+        if (value == 0) element.addClass   ("zero");
         else            element.removeClass("zero");
 
-        if (value == 1)      element.find(".control.count .subcontrol.minus").html("&times;");
-        if (this.count == 1) element.find(".control.count .subcontrol.minus").html("-");
+        if (this.count == 1) element.find(".canvas .control.count .subcontrol.minus").html("-");
+        if (value      == 1) element.find(".canvas .control.count .subcontrol.minus")
+                               .html("<span style='font-size: 0.7em; position:relative; top: -2px;'>&times;</span>");
       },
       paper: function specification_paper (value) {
+        this.gadget.element.find(".canvas .control.paper").attr("data-original-title","Papel "+specification.paper[value]+"<br /><small>clique para alterar</small>");
         this.gadget.element.removeClass("paper-" + this.paper).addClass("paper-" + value);
       },
       size: function photo_product_id (value) {
         var selected, current, width, height,
-          gadget = this.gadget;
+            gadget = this.gadget;
 
         products = window.product.where({id: [value, this.product_id]});
-        if ( products[0]._id !== this.product_id ) products.reverse();
+
+        if ( products[0]._id !== this.product_id )
+          products.reverse();
+
         current  = products.shift();
         selected = products.shift() || current;
         this.product = selected;
@@ -209,8 +226,53 @@ var gadget = (function declare_gadget (sorts) {
 
         gadget.crop();
       }
-    }
+    },
+    decrement: function() {
+      this.photo.count--;
+    },
+    increment: function() {
+      this.photo.count++;
+    },
+    paperize: function() {
+      var control = this.element.children(".canvas .control.paper");
+      for ( paper in specification.paper )
+        if (this.photo.specification.paper != paper ) {
+          control.tooltip("hide");
+          this.photo.specification.paper = paper;
+          control.tooltip("show");
+          return;
+        }
+    },
+    sizeize: function() {
+      var element = this.element,
+          photo   = this.photo,
+          close   = function() {
+            element.children(".modal").remove();
+            element.removeClass("sizing");
+          };
+
+      element.addClass("sizing");
+      element.append(templates.modal);
+
+      rivets.bind(this.element, { size: observable.call({
+        change: function(event) {
+          photo.product_id = $(event.currentTarget).data("product-id");
+          close();
+        },
+        close: close,
+        products: _.map(product.all(),function(product){
+          // TODO stop creating products and do not reobserve
+          return observable.call($.extend({}, product, {
+            option: function() {
+              return product.vertical_dimensions.width+"<span class=\"times\">×</span>"+product.vertical_dimensions.height+"<span class=\"unit\">cm</span>";
+            }
+          }));
+        })
+      })});
+    },
   },
+
+
 
   configuration = {
     size: { height: 250, width: 250 }
@@ -224,13 +286,27 @@ var gadget = (function declare_gadget (sorts) {
      }
    }, resizer = image(null, configuration.resizer); */
 
-  var template = null;
+  var templates = {
+    gadget: null,
+    modal : null
+  };
 
   function initialize() {
-    template = $.jqotec('#gadget');
-  }
+    templates.gadget = $.jqotec('#gadget');
+    templates.modal  = $.jqotec("                                                                                                        \
+      <div class=\"modal modal-size\">                                                                                                   \
+        <div class=\"title\">Escolha um tamanho:</div>                                                                                   \
+        <div class=\"sizes\">                                                                                                            \
+          <div data-each-product=\"size.products\">                                                                                      \
+            <a class=\"size selected\" href=\"javascript:void(0);\" data-data-product-id=\"product.id\" data-on-click=\"size.change\" data-html=\"product.option\"></a>                                                                                                        \
+          </div>                                                                                                                         \
+        </div>                                                                                                                           \
+        <a class=\"back\" href=\"javascript:void(0);\" data-on-click=\"size.close\">← voltar</a>                                         \
+      </div>                                                                                                                             \
+    ");
+  };
 
-  $(initialize)
+  $(initialize);
 
   return that;
 }).call(kuva, kuva.fn.sorts);

@@ -47,6 +47,8 @@ resource =
     create: (mixed) ->
       # if mixed == array
       #  bulk create multiple itens
+    all: ->
+      @cache
     find: (id) ->
       @where id: id, true
     where: (conditions, first = false) ->

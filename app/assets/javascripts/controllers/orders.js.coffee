@@ -156,7 +156,7 @@ control =
 
     photo.specification.subscribe 'paper', ->
       # TODO Revers key with value in hash
-      confirm.paper = name for name, value of specification.paper when specification.paper[name] is photo.specification.paper
+      confirm.paper = specification.paper[photo.specification.paper]
 
     photo.subscribe 'product_id', (product_id) ->
       confirm.size = product.find(product._id).name
@@ -335,7 +335,7 @@ templates =
               Escolha o <u>tamanho</u>, <u>tipo de papel</u> e <u>quantidade de cópias</u> abaixo: <br />
               <small>Note que você pode altera-las individualmente depois.</small>
             </h2>
-            <div id=\"defaults_gadget\" class=\"gadget\"></div>
+            <div id=\"defaults_gadget\"></div>
             <div>
               <b data-text=\"modal.copies\">1</b> de cada
               tamanho <b data-text=\"modal.size\">10x15</b>

@@ -130,7 +130,7 @@ modal =
     dialog.container.fadeOut ->
       dialog.container.remove()
       $.modal.close()
-      $('.modal').remove()
+      $('body').children('.modal').remove()
       dialog.view && dialog.view.unbind()
   positionate: (dialog) ->
     container = (@_simple or @dialog or dialog).container

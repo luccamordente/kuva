@@ -99,6 +99,353 @@ control-style(color)
 
 
 
+  .gadget
+    control-background-color = #111
+
+    float left
+    height 250px
+    margin 10px
+    padding 20px
+    position relative
+    text-align center
+    width @height
+
+
+    .modal
+      background = #111
+      background-color rgba(#000,0.8), background
+      border-radius 5px
+      color #999
+      font-size 11px
+      left 70px
+      top 50px
+      position absolute
+      padding 10px 0
+      width 150px
+      z-index 3
+
+      a
+        link-color(#999)
+
+      .title
+        font-weight bold
+        text-shadow 0 -1px 0 #000
+      .sizes
+        font-size 14px
+        padding 1.5em 0
+        a.size
+          color = #FFF
+          border-bottom 1px solid color
+          border-color rgba(color,0.1), lighten(background, 15%)
+          cursor pointer
+          display block
+          link-color(color)
+          padding 0.5em 0
+          transition background-color 0.5s, border-color 0.5s
+          &.selected
+            background-color rgba(255,255,255,0.05), lighten(background, 10%)
+          &:hover
+            background-color rgba(255,255,255,0.1), lighten(background, 15%)
+            border-color rgba(255,255,255,0.2), lighten(background, 20%)
+          .times
+            color darken(color, 30%)
+          .unit
+            color darken(color, 60%)
+            font-size 0.8em
+      // a.back
+
+
+
+    .bar
+      display none
+      position absolute
+      top 0em
+      z-index 1
+
+
+    .canvas
+
+      display inline-block
+      position absolute
+      transition width 0.5s, height 0.5s, top 0.5s, left 0.5s
+
+      .image
+        overflow hidden
+        box-shadow 1px 1px 4px #777
+        transition width 0.5s, height 0.5s, opacity 1s
+
+        img
+          position relative
+          text-align center
+          vertical-align middle
+          z-index 2
+          transition top 0.5s, left 0.5s
+
+
+      .pomp
+        position absolute
+        z-index 3
+
+        &.paper-pomp
+          height 77px
+          right 0
+          top 0
+          width 76px
+
+        &.size-pomp
+          font-size 0.5em
+          left -23px
+          text-shadow 0 1px #FFF
+          top -21px
+
+          .dimension
+            background-color #FFF
+            background-color rgba(255,255,255,0.7)
+            border-radius 100px
+            color #666
+            line-height 1.3em
+            position absolute
+
+            &.height
+              height auto
+              left 2px
+              top 20px
+              padding 4px 2px
+              width 13px
+            &.width
+              height 13px
+              left 22px
+              line-height 13px
+              padding 2px 4px
+              top 0px
+              white-space nowrap
+            .unit
+              color #CCC
+
+
+      .control
+        size = 28px
+        control-style(control-background-color)
+        border-radius 100px
+        color #FFF
+        cursor pointer
+        transition opacity 0.5s
+        height size
+        line-height @height
+        min-width @height
+        position absolute
+        width @height
+        z-index 3
+
+        &.hideable
+          opacity 0
+
+          .no-opacity &
+            display none
+
+        &.size
+          background-image image('control-icon-size.png')
+          background-position 0 0
+          background-repeat no-repeat
+          left -(size + 5px)
+          top @left
+
+        &.paper
+          right 6px
+          top 6px
+
+        &.duplicate
+          background-image image('control-icon-duplicate.png')
+          margin-top -(size / 2)
+          right @margin-top
+          top 50%
+
+        &.count
+          background-color #EEE
+          background-color rgba(255,255,255,0.8)
+          background-image none
+          bottom -( size / 2)
+          color #000
+          cursor default
+          font-size 0.9em
+          right 20px
+          text-align center
+          width size
+          transition all 0.5s, right 0.25s, width 0.25s
+
+          &:hover
+            right -6px
+            width 80px
+            .subcontrol
+              opacity 1
+
+          .pomp
+            display inline-block
+            position relative
+            .times
+              color #999
+              font-size 0.8em
+          .subcontrol
+            min-width auto
+            opacity 0
+            position absolute
+            transition opacity 0.5s
+            .no-opacity &
+              display none
+            &.minus
+              control-style(#F33)
+              height 14px
+              font-size 1.5em
+              left 7px
+              line-height @height - 3px
+              top @left
+              width @height
+            &.plus
+              control-style(#6F6)
+              color black
+              font-size 1.7em
+              height 22px
+              line-height @height - 1px
+              right 3px
+              top @right
+              width @height
+
+
+
+
+    &.ruler-pomp
+      background-position -8px -8px
+
+
+    sizes      = "10x15", "15x21"
+    orientations = "horizontal", "vertical"
+
+    for orientation in orientations
+      for size in sizes
+        composition = size + "-" + orientation
+        &.size-{size}.{orientation}
+          &.ruler-pomp
+            background-image image("size-" + composition + ".png")
+
+
+
+    &:hover, &.over
+      .canvas
+        .control, .control.hideable
+          opacity 1
+          &.count
+            background-image none
+            background-color control-background-color
+            color #FFF
+
+
+    &.paper-glossy
+      .canvas
+        .control.paper
+          background-image image('control-icon-paper-glossy.png')
+        .pomp.paper-pomp
+          background-image image('paper-glossy.png')
+    &.paper-matte
+      .canvas
+        .control.paper
+          background-image image('control-icon-paper-matte.png')
+        .pomp.paper-pomp
+          background-image image('paper-matte.png')
+
+
+    &.sizing
+      .modal-size
+        display none
+      &:hover
+        .canvas .pomp.size-pomp .dimension
+          background-color rgba(230,230,230,0.7), #EEE
+        .control, .control.hideable
+          opacity 0
+          &.size
+            opacity 1
+        .modal-size
+          display block
+
+
+    &.zero
+      .canvas
+        .image
+          opacity 0.3
+          transition opacity 2s
+        .control, .control.hideable
+          opacity 0
+          &.count
+            opacity 1
+            .subcontrol
+              display block
+            .subcontrol.minus
+              display none
+
+
+
+    &.loading
+      width 10em
+      height 10em
+
+      img
+        width 25px
+        height 25px
+
+
+
+    &.thumbnailing
+      width 10em
+      height 10em
+
+      .thumbnail.bar
+        display block
+        height 100%
+        background white
+
+
+      img
+        width 100%
+        height 100%
+        background image('la.gif') center center no-repeat
+
+
+
+    &.loaded
+      background-color transparent
+
+      img
+        transition opacity 1s ease-in
+
+
+      .thumbnail.bar
+        display none
+
+
+
+    &.uploading
+      background none !important
+      .control, .pomp
+        display none
+
+      .upload.bar
+        background-color rgba(#FFF,0.65)
+        display block
+        height 100%
+        right 0
+        width 100%
+        z-index 3
+
+
+
+    &.uploaded
+      background-color transparent
+
+      .upload.bar
+        height .2em
+
+
+      // .canvas
+
 
   #main
     padding-right 11em
@@ -108,351 +455,6 @@ control-style(color)
       clearfix()
       border-spacing 1em
       width 100%
-
-      .gadget
-        control-background-color = #111
-
-        background-color #eee
-        float left
-        height 250px
-        margin 10px
-        padding 20px
-        position relative
-        text-align center
-        width @height
-
-
-        &.ruler-pomp
-          background-position -8px -8px
-
-
-        sizes      = "10x15", "15x21"
-        orientations = "horizontal", "vertical"
-
-        for orientation in orientations
-          for size in sizes
-            composition = size + "-" + orientation
-            &.size-{size}.{orientation}
-              &.ruler-pomp
-                background-image image("size-" + composition + ".png")
-
-
-        &.paper-glossy
-          .canvas
-            .control.paper
-              background-image image('control-icon-paper-glossy.png')
-            .pomp.paper-pomp
-              background-image image('paper-glossy.png')
-        &.paper-matte
-          .canvas
-            .control.paper
-              background-image image('control-icon-paper-matte.png')
-            .pomp.paper-pomp
-              background-image image('paper-matte.png')
-
-
-        &.sizing
-          .modal-size
-            display none
-          &:hover
-            .canvas .pomp.size-pomp .dimension
-              background-color rgba(230,230,230,0.7), #EEE
-            .control
-              display none
-              &.size
-                display block
-            .modal-size
-              display block
-
-
-        &.zero
-          .canvas .image
-            opacity 0.3
-          .control
-            display none
-            &.count, &.count .subcontrol
-              display block
-              &.minus
-                display none
-
-        .modal
-          background = #111
-          background-color rgba(#000,0.8), background
-          border-radius 5px
-          color #999
-          font-size 11px
-          left 70px
-          top 50px
-          position absolute
-          padding 10px 0
-          width 150px
-          z-index 3
-
-          a
-            link-color(#999)
-
-          .title
-            font-weight bold
-            text-shadow 0 -1px 0 #000
-          .sizes
-            font-size 14px
-            padding 1.5em 0
-            a.size
-              color = #FFF
-              border-bottom 1px solid color
-              border-color rgba(color,0.1), lighten(background, 15%)
-              cursor pointer
-              display block
-              link-color(color)
-              padding 0.5em 0
-              transition background-color 0.5s, border-color 0.5s
-              &.selected
-                background-color rgba(255,255,255,0.05), lighten(background, 10%)
-              &:hover
-                background-color rgba(255,255,255,0.1), lighten(background, 15%)
-                border-color rgba(255,255,255,0.2), lighten(background, 20%)
-              .times
-                color darken(color, 30%)
-              .unit
-                color darken(color, 60%)
-                font-size 0.8em
-          // a.back
-
-
-
-        .bar
-          display none
-          position absolute
-          top 0em
-          z-index 1
-
-
-        .canvas
-
-          display inline-block
-          position absolute
-          transition width 0.5s, height 0.5s, top 0.5s, left 0.5s
-
-          .image
-            overflow hidden
-            box-shadow 1px 1px 4px #777
-            transition width 0.5s, height 0.5s
-
-            img
-              position relative
-              text-align center
-              vertical-align middle
-              z-index 2
-              transition top 0.5s, left 0.5s
-
-
-          .pomp
-            position absolute
-            z-index 3
-
-            &.paper-pomp
-              height 77px
-              right 0
-              top 0
-              width 76px
-
-            &.size-pomp
-              font-size 0.5em
-              left -23px
-              text-shadow 0 1px #FFF
-              top -21px
-
-              .dimension
-                background-color #FFF
-                background-color rgba(255,255,255,0.7)
-                border-radius 100px
-                color #666
-                line-height 1.3em
-                position absolute
-
-                &.height
-                  height auto
-                  left 2px
-                  top 20px
-                  padding 4px 2px
-                  width 13px
-                &.width
-                  height 13px
-                  left 22px
-                  line-height 13px
-                  padding 2px 4px
-                  top 0px
-                  white-space nowrap
-                .unit
-                  color #CCC
-
-
-          .control
-            size = 28px
-            control-style(control-background-color)
-            border-radius 100px
-            color #FFF
-            cursor pointer
-            transition opacity 0.5s
-            height size
-            line-height @height
-            min-width @height
-            position absolute
-            width @height
-            z-index 3
-
-            &.hideable
-              opacity 0
-
-              .no-opacity &
-                display none
-
-            &.size
-              background-image image('control-icon-size.png')
-              background-position 0 0
-              background-repeat no-repeat
-              left -(size + 5px)
-              top @left
-
-            &.paper
-              right 6px
-              top 6px
-
-            &.duplicate
-              background-image image('control-icon-duplicate.png')
-              margin-top -(size / 2)
-              right @margin-top
-              top 50%
-
-            &.count
-              background-color #EEE
-              background-color rgba(255,255,255,0.8)
-              background-image none
-              bottom -( size / 2)
-              color #000
-              cursor default
-              font-size 0.9em
-              right 20px
-              text-align center
-              width size
-              transition all 0.5s, right 0.25s, width 0.25s
-
-              &:hover
-                right -6px
-                width 80px
-                .subcontrol
-                  opacity 1
-                  .no-opacity
-                    display block
-
-              .pomp
-                display inline-block
-                position relative
-                .times
-                  color #999
-                  font-size 0.8em
-              .subcontrol
-                min-width auto
-                opacity 0
-                position absolute
-                transition opacity 0.5s
-                .no-opacity &
-                  display none
-                &.minus
-                  control-style(#F33)
-                  height 14px
-                  font-size 1.5em
-                  left 7px
-                  line-height @height - 1px
-                  top @left
-                  width @height
-                &.plus
-                  control-style(#6F6)
-                  color black
-                  font-size 1.7em
-                  height 22px
-                  line-height @height - 1px
-                  right 3px
-                  top @right
-                  width @height
-
-
-
-        &:hover, &.over
-          .canvas
-            .control
-              opacity 1
-              &.hideable
-                .no-opacity &
-                  display block
-              &.count
-                background-image none
-                background-color control-background-color
-                color #FFF
-
-
-        &.loading
-          width 10em
-          height 10em
-
-          img
-            width 25px
-            height 25px
-
-
-
-        &.thumbnailing
-          width 10em
-          height 10em
-
-          .thumbnail.bar
-            display block
-            height 100%
-            background white
-
-
-          img
-            width 100%
-            height 100%
-            background image('la.gif') center center no-repeat
-
-
-
-        &.loaded
-          background-color transparent
-
-          img
-            transition opacity 1s ease-in
-
-
-          .thumbnail.bar
-            display none
-
-
-
-        &.uploading
-          background none !important
-          .control, .pomp
-            display none
-
-          .upload.bar
-            background-color rgba(#FFF,0.65)
-            display block
-            height 100%
-            right 0
-            width 100%
-            z-index 3
-
-
-
-        &.uploaded
-          background-color transparent
-
-          .upload.bar
-            height .2em
-
-
-          // .canvas
 
 
 

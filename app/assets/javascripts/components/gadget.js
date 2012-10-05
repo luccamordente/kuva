@@ -136,7 +136,7 @@ var gadget = (function declare_gadget (sorts) {
 
       this.crop();
       this.element.removeClass('reading').addClass('thumbnailing ' + this.orientation);
-      this.image.title(event.file.name);
+      event.file && this.image.title(event.file.name);
     },
     thumbnailing: function thumbnailer_thumbnailing (event) {
       var percentage = ((event.parsed / event.total) * 100), now = (new Date()).getTime();
@@ -235,7 +235,7 @@ var gadget = (function declare_gadget (sorts) {
       this.photo.count++;
     },
     paperize: function() {
-      var control = this.element.children(".canvas .control.paper");
+      var control = this.element.find(".canvas .control.paper");
       for ( paper in specification.paper )
         if (this.photo.specification.paper != paper ) {
           control.tooltip("hide");

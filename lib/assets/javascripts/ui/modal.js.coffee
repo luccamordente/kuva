@@ -69,17 +69,20 @@ that = (params...) ->
 builder =
   buttongroup:
     parse  : (string) ->
-      [action, name] = string.split /\s+=>\s+/
-      action: action, name: name, act: @[action]
+      [action, name ] = string.split /\s+=>\s+/
+      [action, klass] = action.split '.'
+      action: action, class: klass || '', name: name, act: @[action]
     buttons:
       # cancel: '.cancel => Cancel'
       cancel:
         action : 'cancel'
+        class  : ''
         name   : 'Cancelar'
         act    : -> @close()
       # confirm: '.confirm => Confirm'
       confirm:
         action : 'confirm'
+        class  : ''
         name   : 'Confirmar'
         act    : -> @close()
 
@@ -150,7 +153,7 @@ Object.defineProperty modal, 'position',
 
 templates =
   button  : $.jqotec """
-    <button class=\"<*= this.action *>\" data-on-click=\"modal.<*= this.action *>\"> <*= this.name *> </button>
+    <a class=\"button <*= this.action *> <*= this.class *>\" data-on-click=\"modal.<*= this.action *>\"> <*= this.name *> </a>
   """
   default: $.jqotec """
     <div class=\"modal\">

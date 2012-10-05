@@ -98,6 +98,9 @@ control-style(color)
 
 
 
+  #defaults-gadget .gadget .canvas .control.hideable.duplicate
+    display none
+
 
   .gadget
     control-background-color = #111
@@ -658,3 +661,68 @@ control-style(color)
       .faded
         opacity 1
 
+
+
+  #sent-modal
+    h1
+      img
+        vertical-align -0.3em
+    .content
+      padding 2em
+      h2
+        color #000
+        font-size 1.1em
+      .note
+        color #999
+        font-size 0.8em
+        margin-top 1em
+
+
+
+
+  #selected-modal
+    h1
+      img
+        vertical-align -0.3em
+      .amount
+        font-size 1.5em
+
+    .content
+      padding 0
+      position relative
+      h2
+        background-color #EEE
+        display block
+        line-height 1.2em
+        padding 1.4em
+        font-size 1.4em
+        .call
+          color #999
+          font-size 0.9em
+        .choose
+          color #333
+          font-size 1em
+        .note
+          color #666
+          font-size 0.65em
+      #defaults-gadget
+        clearfix()
+        padding 3em 0 3em
+        .gadget
+          display block
+          float none
+          margin auto
+          position relative
+      .summary
+        background-color #FCFCDF
+        bottom 0
+        box-shadow 2px 2px 2px rgba(#000, 0.1)
+        color #666
+        font-size 0.7em
+        padding 1.5em
+        position absolute
+        right 3em
+        vertical-align center
+        width 9em
+        b
+          color #000

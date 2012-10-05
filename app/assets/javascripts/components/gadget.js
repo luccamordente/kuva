@@ -83,8 +83,8 @@ var gadget = (function declare_gadget (sorts) {
           photo_width   = this.photo.width,
           canvas_ratio  = dimensions.width / dimensions.height,
           canvas_scale  = Math.min(250 / dimensions.width, 250 / dimensions.height),
-          canvas_width  = canvas_scale * dimensions.width,
-          canvas_height = canvas_scale * dimensions.height,
+          canvas_width  = Math.round(canvas_scale * dimensions.width ),
+          canvas_height = Math.round(canvas_scale * dimensions.height),
           img_ratio     = photo_width / photo_height,
           img_scale     = img_ratio > canvas_ratio ?
                             Math.min(250 / photo_width, 250 / photo_height) :
@@ -107,8 +107,8 @@ var gadget = (function declare_gadget (sorts) {
           product_dimensions;
 
 
-      img_width  = img_scale * photo_width;
-      img_height = img_scale * photo_height;
+      img_width  = Math.round(img_scale * photo_width );
+      img_height = Math.round(img_scale * photo_height);
 
       img_left = (canvas_width - img_width) / 2;
       img_top  = (canvas_height - img_height) / 2;

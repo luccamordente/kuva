@@ -1,42 +1,41 @@
-input = flash = null
+do (parent = kuva, overlay = kuva.overlay) ->
 
-that = (selector, flash_selector) ->
-  input = input || $(selector)
-  flash = flash || $(flash_selector);
-  initialize()
-
-configuration =
-  flash:
-    css:
-      position: 'absolute'
-
-overlay =
-  for: (element) ->
-    offset = element.offset()
-    return {
-      width: element.width()
-      height: element.height()
-      top: offset.top
-      left: offset.left
-    }
-  button: ->
-    flash.css @for input
-  page: ->
-    flash.css @for $ document.body
-
-initialize = ->
-  input.attr 'disabled', true
-  console.error "shelf: Flash for shelf not found" unless flash.length
-  # TODO kuva.listen('interface.initialized', -> )
-  $ ready
+  inputzin = input = flash = null
 
 
-ready = ->
-  input.attr 'disabled', false
-  overlay.button()
-  flash.css configuration.flash.css
+  that = (selectorzin, selector, flash_selector) ->
+    inputzin = inputzin || $(selectorzin)
+    input = input || $(selector)
+    flash = flash || $(flash_selector);
+    initialize()
+    that
+
+  configuration =
+    flash:
+      css:
+        position: 'absolute'
+
+  shelf =
+    buttonzin: ->
+      overlay(flash).at inputzin
+    button: ->
+      overlay(flash).at input
+    page: ->
+      overlay(flash).at document.body
+
+  initialize = ->
+    input.attr 'disabled', true
+    console.error "shelf: Flash for shelf not found" unless flash.length
+    # TODO kuva.listen('interface.initialized', -> )
+    $ ready
 
 
-that.overlay = overlay
+  ready = ->
+    input.attr 'disabled', false
+    shelf.button()
+    flash.css configuration.flash.css
 
-kuva.shelf = that
+
+  that.overlay = shelf
+
+  parent.shelf = that

@@ -30,6 +30,7 @@ publisher =
     return event.key.toString().substring(0, 8) if event.key
     return @key.increment++
   publish: (event, acknowledge) ->
+    event = type: event unless event.type
     event.key = publisher.key(event)
 
     # if event.complete

@@ -1,4 +1,6 @@
 #= require controllers/kuva
+#= require ui/modal
+#= require ui/overlay
 #= require library/shims
 #= require library/framework/bus
 #= require library/framework/record/adapters/rivets
@@ -11,7 +13,6 @@
 #= require components/gadget
 #= require components/shelf
 #= require components/aside
-#= require ui/modal
 
 reader         = lib.reader()
 photos         = []                     # Proposital array for automatic counting of length
@@ -82,6 +83,27 @@ dropper =
      ).bind('dragover', @dragover).bind('drop', @droped)
 
 
+
+
+
+send =
+  clicked: ->
+    kuva.overlay().at(document.body)
+    $('#end-confirmation').fadeIn()
+  ignored: ->
+    kuva.overlay().close()
+    $('#end-confirmation').fadeOut()
+  confirmed: ->
+    $(document.body).addClass('sending').removeClass('normal')
+    $('#gadgets .gadget').addClass('uploading')
+    send.ignored()
+    # rivets.bind $('#aside .sending'), upload: observable.call
+    #   count: 10,
+    #   total: 100
+
+
+
+
 control =
   defaults:
     photo: undefined
@@ -140,7 +162,7 @@ control =
 
     assigns =
       title       : "Você selecionou <span class=\"amount\"><b data-text=\"modal.amount\">#{event.amount}</b> <span data-text=\"modal.amount_label\">foto</span></span>"
-      confirm     : control.selection_confirmed
+      confirm     : -> bus.publish 'files.selection_confirmed'
       amount      : 1
       copies      : '1 cópia'
       size        : photo.size || '10x15'
@@ -238,6 +260,10 @@ control =
 
     false
 
+  first_selection_confirmed: ->
+    shelf.overlay.buttonzin()
+    bus.off 'files.selection_confirmed', @callee
+
   first_files_selection: ->
     $('#main-add').slideUp()
     bus.off 'files.selected', @callee
@@ -292,10 +318,20 @@ control =
     # update interface for order closing
 
 
+  send_clicked  : send.clicked
+  send_ignored  : send.ignored
+  send_confirmed: send.confirmed
+
+
 window.domo = control
 
 # Module methods
 initialize = ->
+
+  $('#send-button' ).bind 'click', control.send_clicked
+  $('#ignore-send' ).bind 'click', control.send_ignored
+  $('#confirm-send').bind 'click', control.send_confirmed
+
 
   # Hide sidebar
   $('#aside').css width: '9em', padding: '1em'  # TODO Move to aside component
@@ -304,7 +340,7 @@ initialize = ->
   # $('#main-add').width '100%'
 
 
-  shelf = kuva.shelf('.add-files', 'object:last')
+  shelf = kuva.shelf('#add-more','#add-button', 'object:last')
 
   # Setup drag and drop
   dropper.overlay.element = $('#overlay')
@@ -315,20 +351,22 @@ initialize = ->
 
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
-  bus.listen('file.selected'       , control.file_selected                                        )
-  .listen('files.selected'         , control.files_selected                                       )
-  .listen('files.selected'         , control.first_files_selection                                )
-  .listen('reader.loadstart'       , (event) -> gadgets[event.key].dispatch('loadstart'   , event))
-  .listen('reader.progress'        , (event) -> gadgets[event.key].dispatch('progress'    , event))
-  .listen('reader.loadend'         , (event) -> gadgets[event.key].dispatch('loadend'     , event))
-  .listen('reader.abort'           , (event) -> gadgets[event.key].dispatch('abort'       , event))
-  .listen('thumbnailer.progress'   , (event) -> gadgets[event.key].dispatch('thumbnailing', event))
-  .listen('thumbnailer.encoding'   , (event) -> gadgets[event.key].dispatch('encoding'    , event))
-  .listen('thumbnailer.thumbnailed', (event) -> gadgets[event.key].dispatch('thumbnailed' , event))
-  .listen('thumbnailer.finished'   , control.thumbnailed                                          )
-  .listen('upload.start'           , (event) -> gadgets[event.key].dispatch('upload'      , event))
-  .listen('upload.progress'        , (event) -> gadgets[event.key].dispatch('uploading'   , event))
-  .listen('upload.complete.data'   , (event) ->
+  bus.on('file.selected'         , control.file_selected                                        )
+  .on('files.selected'           , control.files_selected                                       )
+  .on('files.selected'           , control.first_files_selection                                )
+  .on('files.selection_confirmed', control.selection_confirmed                                  )
+  .on('files.selection_confirmed', control.first_selection_confirmed                            )
+  .on('reader.loadstart'         , (event) -> gadgets[event.key].dispatch('loadstart'   , event))
+  .on('reader.progress'          , (event) -> gadgets[event.key].dispatch('progress'    , event))
+  .on('reader.loadend'           , (event) -> gadgets[event.key].dispatch('loadend'     , event))
+  .on('reader.abort'             , (event) -> gadgets[event.key].dispatch('abort'       , event))
+  .on('thumbnailer.progress'     , (event) -> gadgets[event.key].dispatch('thumbnailing', event))
+  .on('thumbnailer.encoding'     , (event) -> gadgets[event.key].dispatch('encoding'    , event))
+  .on('thumbnailer.thumbnailed'  , (event) -> gadgets[event.key].dispatch('thumbnailed' , event))
+  .on('thumbnailer.finished'     , control.thumbnailed                                          )
+  .on('upload.start'             , (event) -> gadgets[event.key].dispatch('upload'      , event))
+  .on('upload.progress'          , (event) -> gadgets[event.key].dispatch('uploading'   , event))
+  .on('upload.complete.data'     , (event) ->
     control.file_uploaded event
     gadgets[event.key].dispatch 'uploaded', event
   )

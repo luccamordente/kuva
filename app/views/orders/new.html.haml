@@ -63,29 +63,29 @@
       .sending
         .title Enviando fotos...
         .progress.progress-striped.active
-          .bar{ style: "width: 40%" }
+          .bar{ style: "width: 0%" }
         .counter
           .numbers
-            %span.done 2
+            %span.done{ 'data-text' => 'upload.count' } 0
             de
-            %span.total 8
+            %span.total{ 'data-text' => 'upload.total' } 0
         .caution
           %b Atenção:
           mantenha a página aberta até que o envio seja concluído.
 
       .normal
         .header
-          .add-files Adicionar mais fotos
+          #add-more.add-files Adicionar mais fotos
 
         #end
           #end-confirmation.tooltip.left.in
             .tooltip-inner
               .question Está tudo certo para enviar suas fotos?
-              %a.button.success{ :href => "javascript:void(0);" } Sim, enviar
+              %a#confirm-send.button.success{ :href => "javascript:void(0);" } Sim, enviar
               &nbsp;
-              %a.not-yet{ :href => "javascript:void(0);" } Ainda não, quero voltar
+              %a#ignore-send.not-yet{ :href => "javascript:void(0);" } Ainda não, quero voltar
             .tooltip-arrow
-          %a.button.success.faded{ :href => "javascript:void(0);" }
+          %a#send-button.button.success.faded{ :href => "javascript:void(0);" }
             Enviar fotos
             %br
             %small e fechar pedido
@@ -153,6 +153,7 @@
       SnapABug.addButton("9ff774d2-ef25-42b2-b50a-3715b117bdfc","0","50%");
 
 
+<<<<<<< Updated upstream
     #modal-0.simplemodal-container{:style => "position: fixed; z-index: 1002; height: 500px; width: 600px; left: 416.5px; top: 100px; display: block; "}
       .simplemodal-wrap{:style => "height: 100%; outline: 0px; width: 100%; overflow: visible; ", :tabindex => "-1"}
         #sent-modal.modal.simplemodal-data{:style => "display: block; "}
@@ -167,3 +168,22 @@
           .button-group
             %a.button.confirm.success{"data-on-click" => "modal.confirm"}
               CONCLUIR
+=======
+    -# #modal-0.simplemodal-container{:style => "position: fixed; z-index: 1002; height: 500px; width: 600px; left: 416.5px; top: 100px; display: block; "}
+    -#   .simplemodal-wrap{:style => "height: 100%; outline: 0px; width: 100%; overflow: visible; ", :tabindex => "-1"}
+    -#     #sent-modal.modal.simplemodal-data{:style => "display: block; "}
+    -#       %h1
+    -#         %img{:src => "/assets/structure/modal-summary-checkmark.png"}
+    -#         Suas fotos foram enviadas e já estão conosco!
+    -#       .content
+    -#         %h2 Em até 24 horas suas fotos estarão prontas para você buscar, aqui no Pedro Cine Foto.
+    -#         .note
+    -#           %b Lembre-se:
+    -#           o pagamento só será feito quando você vier buscá-las.
+    -#       .button-group
+    -#         %span.help
+    -#           Tem alguma dúvida?
+    -#           %a{ href: "javascript:SnapABug.startLink();" } Clique aqui para falar com a gente.
+    -#         %a.button.confirm.success{"data-on-click" => "modal.confirm"}
+    -#           CONCLUIR
+>>>>>>> Stashed changes

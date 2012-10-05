@@ -95,27 +95,16 @@ associable =
       if options.has_many
         options.has_many = [options.has_many] unless $.type(options.has_many) == 'array'
 
-<<<<<<< Updated upstream
-        # Create association attribute
-=======
-        # Update association attribute
-        @after_save.push callbacks.has_many.update_association
-
->>>>>>> Stashed changes
         for resource in options.has_many
           # TODO Remember to cleaer association proxy when object is destroied
           association_proxy = resource: resource, parent_resource: @resource, parent: @
           @[model.pluralize resource] = $.extend association_proxy, has_many
-<<<<<<< Updated upstream
 
         # Update association attribute
         @after_save.push callbacks.has_many.update_association
 
         # Forward nested attributes
         callbacks.has_many.nest_attributes.call @
-
-=======
->>>>>>> Stashed changes
 
       if options.has_one
         options.has_one = [options.has_one] unless $.type(options.has_one) == 'array'

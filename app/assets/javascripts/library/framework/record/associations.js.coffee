@@ -5,12 +5,29 @@ model.associable = ->
     modelable.after_initialize.unshift associable.model
     modelable.record.after_initialize.unshift associable.record
 
+# TODO Better association segregation
 associable =
+  # @ = model
   model: (options) ->
     console.error 'resource must be defined in order to associate' unless @resource?
 
     callbacks =
+      # Forward association nested attributes
       has_many:
+        nest_attributes: ->
+          association_names = model[@resource].has_many
+          if association_names
+            for association_name in association_names
+              if @["#{association_name}_attributes"]
+                association = @[model.pluralize association_name]
+
+                unless association
+                  message = "has_many.nest_attributes: Association not found for #{association_name}. \n"
+                  message += "did you set it on model declaration? \n  has_many: #{association_name} "
+                  throw message
+
+                association.add @["#{association_name}_attributes"]
+
         # TODO Update route after setting the id
         # TODO Update route association only once for each associated record
         update_association: (data) ->
@@ -65,19 +82,31 @@ associable =
     # TODO autosave
     # @after_save.push ->
     #   model[@resource] =
+    #
+    @has_many = [@has_many] unless $.type(@has_many) == 'array'
+    @has_one = [@has_one] unless $.type(@has_one) == 'array'
+    @belongs_to = [@belongs_to] unless $.type(@belongs_to) == 'array'
 
-    @create_association_methods = ->
+
+    # inside this function: @ = record (running on after_initialize)
+    @create_association = ->
       # Create association methods
+      # Setup one to many association in model
       if options.has_many
         options.has_many = [options.has_many] unless $.type(options.has_many) == 'array'
 
-        # Update association attribute
-        @after_save.push callbacks.has_many.update_association
-
+        # Create association attribute
         for resource in options.has_many
           # TODO Remember to cleaer association proxy when object is destroied
           association_proxy = resource: resource, parent_resource: @resource, parent: @
           @[model.pluralize resource] = $.extend association_proxy, has_many
+
+        # Update association attribute
+        @after_save.push callbacks.has_many.update_association
+
+        # Forward nested attributes
+        callbacks.has_many.nest_attributes.call @
+
 
       if options.has_one
         options.has_one = [options.has_one] unless $.type(options.has_one) == 'array'
@@ -101,6 +130,7 @@ associable =
           @["build_#{resource}" ] = $.proxy singular.build , association_proxy
           @["create_#{resource}"] = $.proxy singular.create, association_proxy
 
+  # @ = record
   record: (options) ->
     console.error 'resource must be defined in order to associate' unless @resource?
-    model[@resource].create_association_methods.call @
+    model[@resource].create_association.call @

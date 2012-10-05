@@ -77,31 +77,6 @@
         .header
           .add-files Adicionar mais fotos
 
-        -# #summary.faded
-        -#   .item
-        -#     .block.count 15
-        -#     .block.times &times;
-        -#     .block.product
-        -#       .thumb= image_tag "generic-temporary-small-photo-pile.png"
-        -#       .name 10&times;15
-        -#   .item
-        -#     .block.count 7
-        -#     .block.times &times;
-        -#     .block.product
-        -#       .thumb= image_tag "generic-temporary-small-photo-pile.png"
-        -#       .name 15&times;21
-        -#   .item
-        -#     .block.count 2
-        -#     .block.times &times;
-        -#     .block.product
-        -#       .thumb= image_tag "generic-temporary-small-photo-pile.png"
-        -#       .name 20&times;30
-        -#   .divisor
-        -#   .total
-        -#     %span.unit  R$
-        -#     %span.count 20,76
-
-
         #end
           #end-confirmation.tooltip.left.in
             .tooltip-inner
@@ -146,7 +121,7 @@
               <div class="pomp paper-pomp"></div>
               <div class="control hideable size" rel="tooltip" data-title="Alterar tamanho" data-on-click="gadget.sizeize"></div>
               <div class="control hideable paper" rel="tooltip" data-on-click="gadget.paperize"></div>
-              <div class="control hideable duplicate" data-title="Duplicar esta foto<br /><small>para impressão, em<br />outro tamanho ou<br />papel, da mesma foto</small>" data-placement="right" rel="tooltip"></div>
+              <div class="control hideable duplicate" data-on-click="gadget.duplicate" data-title="Duplicar esta foto<br /><small>para impressão, em<br />outro tamanho ou<br />papel, da mesma foto</small>" data-placement="right" rel="tooltip"></div>
               <div class="control hideable count" data-placement="bottom" rel="tooltip" data-title="Quantidade">
                 <div class="control subcontrol minus" data-on-click="gadget.decrement">-</div>
                 <div class="pomp"><span class="times">×</span><span class="number" data-text="photo.count"></span>

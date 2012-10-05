@@ -45,20 +45,24 @@ resource =
       after_save      : []
       after_initialize: []
     all: ->
+      # TODO transform model in a array like object and store cache in root
       @cache
     create: (params...) ->
       @(attributes).save for attributes in params
+    # TODO better find support
     find: (id) ->
       @where id: id, true
     where: (conditions, first = false) ->
       results = []
       conditions.id = [conditions.id] if $.type(conditions.id) != 'array'
+      # TODO transform model in a array like object and store cache in root
       for record in @cache when conditions.id.indexOf(record._id) isnt -1
         if first
           return record
         else
           results.push record
-      results
+
+      if first then null else results
 
   initialize_record = (data = {resource: @resource, parent_resource: @parent_resource}) ->
     data.resource          ||= @resource
@@ -68,7 +72,7 @@ resource =
 
     instance = record.call $.extend data, @record # TODO remove @record from outside scop
 
-    # Remove used callbacks
+    # Call and remove used callbacks
     callback.call instance, instance for callback in instance.after_initialize
     delete instance.after_initialize
 
@@ -114,6 +118,7 @@ resource =
         continue unless value?  # Bypass null, and undefined values
 
         if $.type(value) == 'object'
+          # TODO move nested attributes to model definition
           json["#{name}_attributes"] = value.json() for attribute in @nested_attributes when attribute == name
         else
           json[name] = value

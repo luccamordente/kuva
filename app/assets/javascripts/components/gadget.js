@@ -18,7 +18,8 @@ var gadget = (function declare_gadget (sorts) {
       return this;
     },
     listen: function (name, callback) {
-      this[name] = callback;
+      if (handlers.name) throw 'Listener already defined for ' + name
+      handlers[name] = callback;
       return this;
     },
     tie: function (photo_id) {
@@ -56,6 +57,25 @@ var gadget = (function declare_gadget (sorts) {
       photo.specification.subscribe('paper', $.proxy(photo.save, photo));
 
       this.tied = true;
+    },
+    duplicate: function () {
+        var gadget = that(null, this), photo = this.photo.json();
+
+		// Create a brand new model
+		photo._id = null
+        delete photo._id
+		gadget.photo = window.photo(photo)
+
+		// Do not select an old element
+		gadget.data.id = null
+		delete gadget.data.id
+
+		// Force new element criation
+		gadget.element = null
+		delete gadget.element
+
+        this.dispatch('duplicated', gadget);
+        return gadget;
     },
     crop: function() {
         var dimensions   = this.photo.product[this.orientation + "_dimensions"],
@@ -242,6 +262,7 @@ var gadget = (function declare_gadget (sorts) {
           return;
         }
     },
+    duplicate: gadget.duplicate,
     sizeize: function() {
       var element = this.element,
           photo   = this.photo,

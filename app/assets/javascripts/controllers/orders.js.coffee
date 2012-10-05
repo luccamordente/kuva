@@ -90,6 +90,17 @@ control =
     photo: undefined
     product: undefined
   modal: undefined
+  duplicated: (copy) ->
+    photo = copy.photo
+
+    # TODO automatcally eager load
+    # product when product_id is set
+    photo.product = product.find photo.product_id unless photo.product
+
+    aside.summary.add copy.photo
+    aside.summary.calculate_total()
+
+    copy.show()
   file_selected: (event) ->
     file = event.file
     key   = event.key
@@ -97,6 +108,8 @@ control =
 
     # Create a new gadget and display it
     gadget = gadgets[key] = window.gadget().show()
+
+    gadget.listen 'duplicated', control.duplicated
 
     # Criar uma photo para arquivo selecionado
     gadget.photo = photo = order.photos.build
@@ -181,14 +194,13 @@ control =
     # Create photos records
     control.photos.create event.amount
 
+    aside('#aside', photos);
+
   selection_confirmed: ->
     # TODO Use animations only when css3 animations
     # is not possible
     # Animate sidebar
     $('#aside').animate width: '9em', padding: '1em' # TODO Move to aside component
-    # aside.initialize('#aside', order.photos);
-
-
 
     main = $ '#main'
     main.animate padding: '0 11em 0 0'
@@ -297,7 +309,7 @@ initialize = ->
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
   bus.listen('file.selected', control.file_selected)
-  .listen('files.selected', control.files_selected)
+     .listen('files.selected', control.files_selected)
   .listen('files.selected', control.first_files_selection)
   .listen('reader.loadstart', (event) ->
     gadgets[event.key].dispatch('loadstart', event)

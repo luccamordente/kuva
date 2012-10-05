@@ -11,6 +11,7 @@ model.rivets = ->
         lasso[@resource] = @
         rivets.bind element, lasso
 
+  # TODO add support to subscriptions in arrays
   rivets.configure
     adapter:
       subscribe: (record, attribute_path, callback) ->

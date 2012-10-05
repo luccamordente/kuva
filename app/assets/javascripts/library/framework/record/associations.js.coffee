@@ -1,3 +1,5 @@
+model = window.model
+
 model.associable = ->
   model.mix (modelable) ->
     modelable.after_initialize.unshift associable.model
@@ -9,19 +11,51 @@ associable =
 
     callbacks =
       has_many:
+        # TODO Update route after setting the id
+        # TODO Update route association only once for each associated record
+        update_association: (data) ->
+          id = @_id || data._id || data.id
+
+          # Keep trying until we have a id
+          return unless id
+
+          for association_name in model[@resource].has_many
+            pluralized_association = model.pluralize association_name
+            association = @[pluralized_association]
+
+
+            # TODO setter of association.route
+            # to automatically update associated records
+            unless association.route
+              association.route = "/#{@resource}/#{id}/#{association.resource}"
+
+              for associated in association
+                if not associated.route and associated.parent?
+                  associated.route = "/#{@resource}/#{id}/#{association.resource}"
+
+          true
         autosave: ->
           @save()
 
     # Store association methods
+    # TODO Implement setter for route
     has_many =
-      add  : (record)    -> @push @build @
+      add   : (params...) -> @push @build attributes for attributes in params
+      create: (params...) ->
+        for attributes in params
+          record = @build attributes
+          @push record
+          record.save()
       build: (data = {}) ->
         data.parent_resource = @parent_resource
 
         # TODO Setup a before save callback to generate rout when there is no id
-        data.route = "/#{@parent_resource}/#{@_id}/#{data.resource}" if @_id?
+        data.route ||= "/#{@parent_resource}/#{@parent._id}/#{@resource}" if @parent?
+        throw "associable.has_many: cannot redefine route of association #{@parent_resource}.#{@resource} from #{@route} to #{data.route}" if @route isnt data.route and @route
+
         model[@parent_resource] data
       push : Array.prototype.push
+      length : 0
       # TODO throught:
 
     singular =
@@ -29,7 +63,7 @@ associable =
       build : (data) -> model[@resource]        $.extend {}, @, data
 
     # TODO autosave
-    # @record.after_save ->
+    # @after_save.push ->
     #   model[@resource] =
 
     @create_association_methods = ->
@@ -37,8 +71,13 @@ associable =
       if options.has_many
         options.has_many = [options.has_many] unless $.type(options.has_many) == 'array'
 
+        # Update association attribute
+        @after_save.push callbacks.has_many.update_association
+
         for resource in options.has_many
-          @[model.pluralize resource] = $.extend resource: resource, parent_resource: @resource, has_many
+          # TODO Remember to cleaer association proxy when object is destroied
+          association_proxy = resource: resource, parent_resource: @resource, parent: @
+          @[model.pluralize resource] = $.extend association_proxy, has_many
 
       if options.has_one
         options.has_one = [options.has_one] unless $.type(options.has_one) == 'array'

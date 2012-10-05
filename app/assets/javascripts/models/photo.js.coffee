@@ -1,6 +1,7 @@
 @photo = model.call
   resource: 'photo',
   nested_attributes: ['specification']
+  has_many: 'image'
   # TODO Extract connection layer from the record.js
   # record:
   #   file: (file) ->

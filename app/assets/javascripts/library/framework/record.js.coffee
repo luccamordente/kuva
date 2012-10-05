@@ -44,11 +44,10 @@ resource =
     record:
       after_save      : []
       after_initialize: []
-    create: (mixed) ->
-      # if mixed == array
-      #  bulk create multiple itens
     all: ->
       @cache
+    create: (params...) ->
+      @(attributes).save for attributes in params
     find: (id) ->
       @where id: id, true
     where: (conditions, first = false) ->
@@ -102,12 +101,12 @@ resource =
     save: ->
       # TODO Execute before save callbacks
       rest[if @_id then 'put' else 'post'].call @
-    saved: ->
+    saved: (data) ->
       # parsear resposta do servidor e popular dados no modelo atual
       # tinha pensado em botar as propriedades no modelo mermo, sem criar um "data"
       # dispatchar evento de registro salvo, usando o nome do resource
-
-      callback.call @, @ for callback in model[@resource].record.after_save
+      @_id ||= data._id || data.id || data[@resource].id
+      callback.call @, data for callback in model[@resource].record.after_save
     json: ->
       json = {}
 

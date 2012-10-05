@@ -117,10 +117,11 @@ control =
     control.defaults.photo = photo = order.photos.build
         name          : 'Foto Padrão'
         count         : 1
-        paper         : 'glossy'
         product       : control.defaults.product
         product_id    : control.defaults.product._id
-        specification : window.specification()
+        specification : window.specification({ paper: 'glossy' })
+        width         : 320
+        height        : 480
 
 
     # TODO create a deferred
@@ -129,8 +130,8 @@ control =
     assigns =
       title   : "Você selecionou <span><b data-text=\"modal.amount\">#{event.amount}</b> fotos</span>"
       confirm : control.selection_confirmed
-      amount  : 0
-      copies  : 'nenhuma cópia'
+      amount  : 1
+      copies  : '1 cópia'
       size    : photo.size || '10x15'
       paper   : 'Brilhante'
 
@@ -145,12 +146,12 @@ control =
 
     # Forward photo updates to resume
     # TODO Add support to extended keypaths to observable
-    photo.subscribe 'count', ->
+    photo.subscribe 'count', (count) ->
 
-      confirm.copies = if +@count
+      confirm.copies = if +count
         word = 'cópia'
-        word += 's' if +@count > 1
-        "#{@count} #{word}"
+        word += 's' if +count > 1
+        "#{count} #{word}"
       else
         'nenhuma cópia'
 
@@ -166,6 +167,12 @@ control =
 
     # Bind photo to gadget
     mass.tie()
+
+    # TODO check why binding is not working when instantiated
+    # Note: this is not a programming error
+    photo.specification.paper = photo.specification.paper
+    photo.product_id          = photo.product_id
+    photo.count               = photo.count
 
     # Confirmation animation
     control.modal = confirm

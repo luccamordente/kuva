@@ -6,7 +6,7 @@ class Product
   field :price      , type: Float , default: 0
   field :description, type: String
   field :image      , type: String
-  field :dimensions , type: Hash
+  field :dimensions , type: Array
 
   validates :name, :price, :dimensions, :presence => true
 

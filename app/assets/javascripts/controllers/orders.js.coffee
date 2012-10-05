@@ -264,7 +264,8 @@ control =
     photo = gadgets[event.key].photo
 
     # associate and save image
-    photo.images.create(_id: event.data.id)
+    photo.image_id = event.data.id
+    photo.save()
   closed: ->
     # call order model close
     # update interface for order closing

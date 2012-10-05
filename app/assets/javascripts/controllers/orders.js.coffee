@@ -229,6 +229,12 @@ control =
     # is not possible
     # Animate sidebar
     $('#aside').animate width: '9em', padding: '1em' # TODO Move to aside component
+<<<<<<< Updated upstream
+=======
+    # aside.initialize('#aside', order.photos);
+
+
+>>>>>>> Stashed changes
 
     main = $ '#main'
     main.animate padding: '0 11em 0 0'
@@ -243,9 +249,12 @@ control =
 
     # TODO change json to a getter to_json
     defaults = control.defaults.photo.json()
+<<<<<<< Updated upstream
 
     delete defaults.width
     delete defaults.height
+=======
+>>>>>>> Stashed changes
 
     for photo in photos
       for name, value of defaults
@@ -311,8 +320,12 @@ control =
     photo = gadgets[event.key].photo
 
     # associate and save image
+<<<<<<< Updated upstream
     photo.image_id = event.data.id
     photo.save()
+=======
+    photo.images.create(_id: event.data.id)
+>>>>>>> Stashed changes
   closed: ->
     # call order model close
     # update interface for order closing
@@ -335,6 +348,12 @@ initialize = ->
 
   # Hide sidebar
   $('#aside').css width: '9em', padding: '1em'  # TODO Move to aside component
+<<<<<<< Updated upstream
+=======
+
+  # $('#main').css paddingRight: 0
+  # $('#main-add').width '100%'
+>>>>>>> Stashed changes
 
   # $('#main').css paddingRight: 0
   # $('#main-add').width '100%'
@@ -351,6 +370,7 @@ initialize = ->
 
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
+<<<<<<< Updated upstream
   bus.on('file.selected'         , control.file_selected                                        )
   .on('files.selected'           , control.files_selected                                       )
   .on('files.selected'           , control.first_files_selection                                )
@@ -371,6 +391,45 @@ initialize = ->
     control.file_uploaded event
     gadgets[event.key].dispatch 'uploaded', event
   )
+=======
+  bus.listen('file.selected', control.file_selected)
+  .listen('files.selected', control.files_selected)
+  .listen('files.selected', control.first_files_selection)
+  .listen('reader.loadstart', (event) ->
+    gadgets[event.key].dispatch('loadstart', event)
+  )
+  .listen('reader.progress', (event) ->
+    gadgets[event.key].dispatch('progress', event)
+  )
+  .listen('reader.loadend', (event) ->
+    gadgets[event.key].dispatch('loadend', event)
+  )
+  .listen('reader.abort', (event) ->
+    gadgets[event.key].dispatch('abort', event)
+  )
+  .listen('thumbnailer.progress', (event) ->
+    gadgets[event.key].dispatch('thumbnailing', event)
+  )
+  .listen('thumbnailer.encoding', (event) ->
+    gadgets[event.key].dispatch('encoding', event)
+  ).
+  listen('thumbnailer.thumbnailed', (event) ->
+    gadgets[event.key].dispatch('thumbnailed', event)
+  )
+  .listen('thumbnailer.finished', control.thumbnailed)
+  .listen('upload.start', (event) ->
+    gadgets[event.key].dispatch('upload', event)
+  )
+  .listen('upload.progress', (event) ->
+    gadgets[event.key].dispatch('uploading', event)
+  )
+  .listen('upload.complete.data', (event) ->
+    # TODO figure out how get image id control.file_uploaded(event);
+    control.file_uploaded event
+    gadgets[event.key].dispatch 'uploaded', event
+  );
+
+>>>>>>> Stashed changes
 
 
 templates =

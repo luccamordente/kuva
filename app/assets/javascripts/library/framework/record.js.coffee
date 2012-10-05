@@ -47,9 +47,9 @@ resource =
     all: ->
       # TODO transform model in a array like object and store cache in root
       @cache
+    # TODO better find support
     create: (params...) ->
       @(attributes).save for attributes in params
-    # TODO better find support
     find: (id) ->
       @where id: id, true
     where: (conditions, first = false) ->
@@ -109,7 +109,11 @@ resource =
       # parsear resposta do servidor e popular dados no modelo atual
       # tinha pensado em botar as propriedades no modelo mermo, sem criar um "data"
       # dispatchar evento de registro salvo, usando o nome do resource
+<<<<<<< Updated upstream
       @_id ||= data._id || data.id || data[@resource] && data[@resource].id
+=======
+      @_id ||= data._id || data.id || data[@resource].id
+>>>>>>> Stashed changes
       callback.call @, data for callback in model[@resource].record.after_save
     json: ->
       json = {}

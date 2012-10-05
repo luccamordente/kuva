@@ -193,7 +193,7 @@ control =
       confirm.paper = specification.paper[photo.specification.paper]
 
     photo.subscribe 'product_id', (product_id) ->
-      confirm.size = product.find(product._id).name
+      confirm.size = product.find(product_id).name
 
     # Positionate and display modal and gadget
     mass.image.size null, 250

@@ -23,7 +23,7 @@ var gadget = (function declare_gadget (sorts) {
       return this;
     },
     tie: function (photo_id) {
-      var photo;
+      var photo, subscription;
       if (this.tied) console.error('Gadget ', this.key, ' already tied');
 
       photo = this.photo;
@@ -53,8 +53,10 @@ var gadget = (function declare_gadget (sorts) {
 
       // Save changes when relavant data changes
       // TODO better change event support on record
-      photo.subscribe('product_id', $.proxy(photo.save, photo));
-      photo.specification.subscribe('paper', $.proxy(photo.save, photo));
+      subscription = function(){ setTimeout(function(){ photo.save(); }, 500); };
+      photo.subscribe('product_id', subscription);
+      photo.subscribe('count', subscription);
+      photo.specification.subscribe('paper', subscription);
 
       this.tied = true;
     },
@@ -159,7 +161,7 @@ var gadget = (function declare_gadget (sorts) {
       event.file && this.image.title(event.file.name);
     },
     thumbnailing: function thumbnailer_thumbnailing (event) {
-      var percentage = ((event.parsed / event.total) * 100), now = (new Date()).getTime();
+      var percentage = Math.round(100 - (event.parsed / event.total) * 100), now = (new Date()).getTime();
 
       if (now - this.thumbnail_bar.updated > 200) {
         this.thumbnail_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
@@ -167,12 +169,12 @@ var gadget = (function declare_gadget (sorts) {
       }
     },
     encoding: function thumbnailer_encoding (event) {
-      this.thumbnail_bar.animate({width: '100%'});
+      this.thumbnail_bar.animate({width: '0%'});
     },
     thumbnailed: function thumbnailer_thumbnailed (event) {
       var gadget = this;
 
-      this.thumbnail_bar.animate({width: '100%'}, 1000, 'linear', function () {
+      this.thumbnail_bar.animate({width: '0%'}, 1000, 'linear', function () {
         gadget.image.hide();
 
         // TODO Fix in a better way the hide bug on webkit browsers
@@ -191,11 +193,11 @@ var gadget = (function declare_gadget (sorts) {
 
     },
     upload: function upload_start (event) {
+      this.uploading = true
       this.element.addClass('uploading');
-      this.upload_bar.show().width("100%");
     },
     uploading: function upload_progress (event) {
-      var percentage = 100 - ((event.loaded / event.total) * 100);
+      var percentage = Math.round(100 - ((event.loaded / event.total) * 100));
 
       this.upload_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
     },
@@ -203,9 +205,7 @@ var gadget = (function declare_gadget (sorts) {
       var gadget = this;
 
       this.upload_bar.animate({width: '0%'}, 1000, 'linear', function () {
-        gadget.upload_bar.fadeOut(function () {
-          gadget.element.removeClass('uploading').addClass('uploaded');
-        });
+        gadget.element.removeClass('uploading').addClass('uploaded');
       });
     }
   },

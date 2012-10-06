@@ -264,6 +264,7 @@ control-style(color)
 
         &.duplicate
           background-image image('control-icon-duplicate.png')
+          display none
           margin-top -(size / 2)
           right @margin-top
           top 50%
@@ -408,7 +409,6 @@ control-style(color)
       .thumbnail.bar
         display block
         height 100%
-        background white
 
 
       img
@@ -424,30 +424,20 @@ control-style(color)
       img
         transition opacity 1s ease-in
 
+      .canvas
+        .control, .control.hideable
+          &.duplicate
+            display block
 
       .thumbnail.bar
         display none
 
 
 
-    &.uploading
-      background none !important
-      .control, .pomp
-        display none
-
-      .upload.bar
-        display block
-
-
-
     &.uploaded
       background-color transparent
 
-      // .upload.bar
-      //   height .2em
 
-
-      // .canvas
 
 
 
@@ -457,6 +447,15 @@ control-style(color)
       background none !important
       .control, .pomp
         display none
+
+
+      &.uploading
+        background none !important
+        .control, .pomp
+          display none
+
+        .upload.bar
+          display block
 
 
   #main
@@ -685,6 +684,9 @@ control-style(color)
         color #999
         font-size 0.8em
         margin-top 1em
+        .observations
+          color #AAA
+          font-size 0.8em
     .button-group .help
       color #999
       font-size 0.7em

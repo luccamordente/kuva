@@ -94,12 +94,27 @@ send =
     kuva.overlay().close()
     $('#end-confirmation').fadeOut()
   confirmed: ->
+    progress = aside.progress
+    progress.confirmed = true
+
+    bus.on('upload.start'   , (event) -> gadgets[event.key].dispatch('upload'   , event))
+      .on('upload.progress', (event) ->
+        gadget = gadgets[event.key]
+        gadget.dispatch('upload', event) unless gadget.uploading
+        gadget.dispatch('uploading', event)
+      )
+
+    rivets.bind $('#aside .sending'), progress: observable.call progress.status
+    progress.status.subscribe 'count', progress.change
+    progress.status.count = progress.status.count
+
     $(document.body).addClass('sending').removeClass('normal')
     $('#gadgets .gadget').addClass('uploading')
+    $('#flash').remove()
+
     send.ignored()
-    # rivets.bind $('#aside .sending'), upload: observable.call
-    #   count: 10,
-    #   total: 100
+  completed: ->
+    order.close()
 
 
 
@@ -146,6 +161,8 @@ control =
     # update other interface
     # counters, order price, etc
   files_selected: (event) ->
+    aside.progress.status.total += event.amount
+
     # Create default model
     control.defaults.photo = photo = order.photos.build
         name          : 'Foto Padrão'
@@ -162,7 +179,7 @@ control =
 
     assigns =
       title       : "Você selecionou <span class=\"amount\"><b data-text=\"modal.amount\">#{event.amount}</b> <span data-text=\"modal.amount_label\">foto</span></span>"
-      confirm     : -> bus.publish 'files.selection_confirmed'
+      confirm     : -> bus.publish 'files.selection_confirmed'; kuva.overlay().close()
       amount      : 1
       copies      : '1 cópia'
       size        : photo.size || '10x15'
@@ -173,6 +190,7 @@ control =
         source: kuva.service.url + '/assets/structure/generic-temporary-gadget-photo.jpg'
 
     # Display modal and gadget
+    kuva.overlay().at(document.body)
     confirm = modal assigns, buttons, template: templates.modal.files_selected, minWidth: 780, minHeight: 500
     mass.photo = photo
     mass.show()
@@ -309,14 +327,19 @@ control =
       throw message
 
   file_uploaded: (event) ->
+    aside.progress.status.count++
+
     photo = gadgets[event.key].photo
 
     # associate and save image
     photo.image_id = event.data.id
     photo.save()
   closed: ->
-    # call order model close
-    # update interface for order closing
+    kuva.overlay().at(document.body)
+    modal
+      confirm: -> document.location = document.location,
+      ['confirm.success => Concluir'],
+      template: templates.modal.order_closed, minWidth: 510, minHeight: 500
 
 
   send_clicked  : send.clicked
@@ -364,13 +387,13 @@ initialize = ->
   .on('thumbnailer.encoding'     , (event) -> gadgets[event.key].dispatch('encoding'    , event))
   .on('thumbnailer.thumbnailed'  , (event) -> gadgets[event.key].dispatch('thumbnailed' , event))
   .on('thumbnailer.finished'     , control.thumbnailed                                          )
-  .on('upload.start'             , (event) -> gadgets[event.key].dispatch('upload'      , event))
-  .on('upload.progress'          , (event) -> gadgets[event.key].dispatch('uploading'   , event))
   .on('upload.complete.data'     , (event) ->
     # TODO figure out how get image id control.file_uploaded(event);
     control.file_uploaded event
     gadgets[event.key].dispatch 'uploaded', event
   )
+  .on('send.completed'           , send.completed                                               )
+  .on('order.closed'             , control.closed                                               )
 
 
 templates =
@@ -394,6 +417,34 @@ templates =
 
           <div class=\"button-group\">
             <*= this.rendered_buttons *>
+          </div>
+        </div>
+      """
+    order_closed: $.jqotec """
+        <div class=\"modal simplemodal-data\" id=\"sent-modal\" style=\"display: block; \">
+          <h1>
+            <img src=\"/assets/structure/modal-summary-checkmark.png\">
+            Suas fotos foram enviadas e já estão conosco!
+          </h1>
+          <div class=\"content\" style=\"width: 510px;\">
+            <h2>Em até 1 hora* suas fotos estarão prontas para você buscar, aqui no Pedro Cine Foto.</h2>
+            <div class=\"note\">
+              <b>Lembre-se:</b>
+              o pagamento só será feito quando você vier buscá-las.
+              <br /><br />
+              <span class=\"observations\">
+                * O prazo de 1 hora para prepararmos suas fotos só é válido para o horário comercial (segunda a sexta de 8:00 às 19:00 e sábado de 8:00 às 13:00).Caso seu pedido tenha sido fechado fora desse horário, este ficará pronto às 10:00 do próximo dia comercial.
+              </span>
+            </div>
+          </div>
+          <div class=\"button-group\">
+            <span class=\"help\">
+              Tem alguma dúvida?
+              <a href=\"javascript:SnapABug.startLink();\">Clique aqui para falar com a gente.</a>
+            </span>
+            <a class=\"button confirm success\" data-on-click=\"modal.confirm\">
+              CONCLUIR
+            </a>
           </div>
         </div>
       """

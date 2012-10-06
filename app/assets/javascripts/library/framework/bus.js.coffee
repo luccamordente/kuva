@@ -55,7 +55,8 @@ publisher =
           while(i--)
             listeners[i].call(event.target || event.context || event, event)
         catch e
-          console.error(e.message, e, 'on listener', listeners[i])
+          console.error "#{e.message} #{e} on listener #{listeners[i]}\n #{e.stack}"
+          throw "#{e.message} #{e} on listener #{listeners[i]}\n #{e.stack}"
           return false
 
     event.key

@@ -2,11 +2,11 @@
 #= require models/photo
 #= require models/image
 
-order_model = model.call resource: 'order', hasMany: 'images', rout: 'pedidos'
+order_model = model.call resource: 'order', has_many: 'images', route: 'pedidos'
 
 @order = (data) ->
   # TODO improve model method support
-  associations.call order_model(data)
+  closeable.call associations.call order_model(data)
 
 # TODO Make association a generic method
 associations = ->
@@ -47,5 +47,32 @@ opened = ->
 errored = ->
   # dispachar evento de falha na abertura de ordem, bus.publish(order.opened)
 
-# close, closed
-  # o método close é bem ligado com a interface, melhor fazer depois
+closeable = ->
+  @close = (response) ->
+    $.ajax
+      url: "#{@route}/#{@_id}/close"
+      type: "POST"
+      success: closed
+      statusCode:
+        422: unprocessable
+        500: error
+      context: @
+
+  closed = (response) ->
+    bus.publish 'order.closed'
+
+  unprocessable = (xhr, status) ->
+    alert "Erro ao fechar pedido"
+    throw "order.unprocessable: {id: #{@_id}} Error '#{status}' processing request"
+
+  error = (xhr, status) ->
+    alert "Erro ao accessar o servidor."
+    throw "order.error: {id: #{@_id}} Error '#{status}' processing request"
+
+  @
+
+closed = ->
+
+cancel = ->
+
+canceled = ->

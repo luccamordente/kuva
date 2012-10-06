@@ -17,6 +17,20 @@
       else
         throw "aside.item.remove: Photo '#{photo}' not found to remove in #{@photos} of item #{@product.name}"
 
+  progress =
+
+    status: observable.call
+      count: 0
+      total: 0
+    change: ->
+      if progress.confirmed and progress.status.count == progress.status.total
+        bus.publish 'send.completed'
+
+      $('#send-progress .bar').css width: (progress.status.count / progress.status.total * 100) + '%'
+
+
+
+
   summary = observable.call
     group: (product) ->
 
@@ -108,5 +122,6 @@
       </div>
       """
 
-  aside.summary = summary
+  aside.summary  = summary
+  aside.progress = progress
   aside

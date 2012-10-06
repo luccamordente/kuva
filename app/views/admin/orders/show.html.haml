@@ -60,7 +60,6 @@
 - unless @order.photos.empty?
   %table.table.table-striped
     %tr
-      %th Imagem
       %th Tamanho
       %th Quantidade
       %th Preço unitário
@@ -68,7 +67,6 @@
 
     - @order.photos.each do |photo|
       %tr
-        %td= photo.image.name if photo.image.present?
         %td= photo.product.name
         %td= photo.count
         %td= number_to_currency photo.product.price

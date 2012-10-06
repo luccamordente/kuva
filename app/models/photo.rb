@@ -28,12 +28,7 @@ class Photo
 private
 
   def update_order_price
-    if self.destroyed?
-      difference = - count.to_i
-    else
-      difference = count.to_i - count_was.to_i
-    end
-    order.delta_update_price difference * product.price
+    order.update_price
   end
 
 end

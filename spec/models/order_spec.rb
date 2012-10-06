@@ -227,37 +227,41 @@ describe Order do
 
     it "should increase order price when a photo is added" do
       count   = 2
-      product = product1
       expect {
-        order.photos.create product_id: product.id, count: count
-      }.to change(order.reload, :price).by product.price * count
+        order.photos.create product_id: product1.id, count: count
+      }.to change(order, :price).by product1.price * count
+    end
+
+    it "should increase order price when a second photo is added" do
+      count   = 2
+      order.photos.create product_id: product1.id, count: count
+      expect {
+        order.photos.create product_id: product2.id, count: count
+      }.to change(order, :price).by product2.price * count
     end
 
     it "should increase order price when the count of a photo is increased" do
-      product = product2
-      count   = 1
-      photo   = order.photos.create product_id: product.id, count: 1
+      count   = 2
+      photo   = order.photos.create product_id: product2.id, count: 1
       expect {
-        photo.update_attribute :count, photo.count + count
-      }.to change(order.reload, :price).by product.price * count
+        photo.update_attribute :count, count
+      }.to change(order, :price).by product2.price * 1
     end
 
     it "should decrease order price when the count of a photo is decrease" do
-      product = product3
-      count   = 1
-      photo   = order.photos.create product_id: product.id, count: 3
+      count   = 2
+      photo   = order.photos.create product_id: product3.id, count: 3
       expect {
-        photo.update_attribute :count, photo.count - count
-      }.to change(order.reload, :price).by product.price * (-count)
+        photo.update_attribute :count, count
+      }.to change(order, :price).by product3.price * -1
     end
 
     it "should decrese order price when a photo is destroyed" do
-      product = product2
       count   = 15
-      photo   = order.photos.create product_id: product.id, count: count
+      photo   = order.photos.create product_id: product2.id, count: count
       expect {
         photo.destroy
-      }.to change(order.reload, :price).by product.price * (-count)
+      }.to change(order, :price).by product2.price * -count
     end
 
   end

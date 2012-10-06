@@ -317,7 +317,6 @@ control =
         gadget.tie ids.shift()
 
         # TODO photo.gadget().unlock()
-        uploader.upload gadget.files[gadget.files.length - 1]
 
     failed: (xhr, status, error) ->
       message  = "control.photos.failed: Failed creating photos. \n"
@@ -385,7 +384,11 @@ initialize = ->
   .on('reader.abort'             , (event) -> gadgets[event.key].dispatch('abort'       , event))
   .on('thumbnailer.progress'     , (event) -> gadgets[event.key].dispatch('thumbnailing', event))
   .on('thumbnailer.encoding'     , (event) -> gadgets[event.key].dispatch('encoding'    , event))
-  .on('thumbnailer.thumbnailed'  , (event) -> gadgets[event.key].dispatch('thumbnailed' , event))
+  .on('thumbnailer.thumbnailed'  , (event) ->
+    gadget = gadgets[event.key]
+    uploader.upload gadget.files[gadget.files.length - 1]
+    gadget.dispatch('thumbnailed' , event)
+  )
   .on('thumbnailer.finished'     , control.thumbnailed                                          )
   .on('upload.complete.data'     , (event) ->
     # TODO figure out how get image id control.file_uploaded(event);

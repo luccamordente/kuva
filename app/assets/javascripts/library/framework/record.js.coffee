@@ -42,8 +42,8 @@ resource =
   modelable =
     after_initialize: []
     record:
-      after_save      : []
-      after_initialize: []
+      after_save                : []
+      after_initialize          : []
     all: ->
       # TODO transform model in a array like object and store cache in root
       @cache
@@ -101,14 +101,29 @@ resource =
   mixer
 
 @record = do -> # mixin
+  temporary_callbacks = (record, callbacks) ->
+      callbacks = Array.prototype.slice.call(callbacks, 0) unless $.type(callbacks) == 'array'
+
+      callbacks.push ->
+        # This code assumes that all bound callbacks in the same slice!
+        index = record.after_save.indexOf(callbacks[0])
+        record.after_save.splice(index, callbacks.length)
+
+      record.after_save = record.after_save.concat callbacks
+
   mixin =
-    save: ->
+    save: () ->
+      # Bind one time save callbacks
+      temporary_callbacks  @, arguments if arguments.length and $.type(arguments[0]) is 'function'
+
       # TODO Execute before save callbacks
       rest[if @_id then 'put' else 'post'].call @
     saved: (data) ->
       # parsear resposta do servidor e popular dados no modelo atual
-      # tinha pensado em botar as propriedades no modelo mermo, sem criar um "data"
       # dispatchar evento de registro salvo, usando o nome do resource
+      callback.call @, data for callback in @after_save
+    failed: ->
+      throw "#{@resource}.save: Failed to save record: #{@}\n"
     json: ->
       json = {}
 

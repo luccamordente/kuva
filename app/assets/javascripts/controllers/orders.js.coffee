@@ -16,7 +16,8 @@
 
 reader         = lib.reader()
 photos         = []                     # Proposital array for automatic counting of length
-gadgets        = {}
+
+
 products       = null
 order          = null
 shelf          = null
@@ -29,7 +30,7 @@ kuva.orders = (options) ->
   control.defaults.product ||= window.product(options.default_product)
   specifications           ||= window.specification(options.specifications)
   kuva.orders.products       = products = window.product.cache = options.products
-  kuva.order = order
+  window.gadgets = gadgets
 
   uploader = window.uploader
     url: "/pedidos/#{order._id}/images/"
@@ -70,6 +71,7 @@ dropper =
       @element.fadeIn()
     hide: ->
       @element.fadeOut()
+
   bind: ->
 
     $(window).bind('dragenter', (event) ->
@@ -82,10 +84,6 @@ dropper =
         dropper.overlay.hide()
      ).bind('dragover', @dragover).bind('drop', @droped)
 
-
-
-
-
 send =
   clicked: ->
     kuva.overlay().at(document.body)
@@ -97,9 +95,9 @@ send =
     progress = aside.progress
     progress.confirmed = true
 
-    bus.on('upload.start'   , (event) -> gadgets[event.key].dispatch('upload'   , event))
+    bus.on('upload.start'   , (event) -> gadgets(event.key).dispatch('upload'   , event))
       .on('upload.progress', (event) ->
-        gadget = gadgets[event.key]
+        gadget = gadgets event.key
         gadget.dispatch('upload', event) unless gadget.uploading
         gadget.dispatch('uploading', event)
       )
@@ -116,34 +114,52 @@ send =
   completed: ->
     order.close()
 
+# module
+gadgets = do ->
+  that = (key, options) ->
+    instances[key] ||= gadget(options)
+
+  instances = {}
+
+  multiton =
+    id: 0
+    key: -> multiton.id++
+    all: instances
+    duplicated: (copy) ->
+      instances[multiton.key()] = copy
+      photo = copy.photo
+
+      # TODO automatcally eager load
+      # product when product_id is set
+      photo.product = product.find photo.product_id unless photo.product
+
+      # Create next photo
+      control.photos.create(1)
+      copy.show()
+
+      # Display fotos in summary
+      aside.summary.add photo
 
 
+  $.extend that, multiton
+  that
 
 control =
   defaults:
     photo: undefined
     product: undefined
   modal: undefined
-  duplicated: (copy) ->
-    photo = copy.photo
 
-    # TODO automatcally eager load
-    # product when product_id is set
-    photo.product = product.find photo.product_id unless photo.product
 
-    aside.summary.add copy.photo
-    aside.summary.calculate_total()
-
-    copy.show()
   file_selected: (event) ->
     file = event.file
     key   = event.key
     count = 0
 
     # Create a new gadget and display it
-    gadget = gadgets[key] = window.gadget().show()
+    gadget = gadgets(key).show()
 
-    gadget.listen 'duplicated', control.duplicated
+    gadget.listen 'duplicated', gadgets.duplicated
 
     # Criar uma photo para arquivo selecionado
     gadget.photo = photo = order.photos.build
@@ -309,7 +325,7 @@ control =
     created: (response) ->
       ids = response.photo_ids
 
-      for key, gadget of gadgets
+      for key, gadget of gadgets.all
         photo = gadget.photo
 
         continue if photo._id?
@@ -317,6 +333,7 @@ control =
         gadget.tie ids.shift()
 
         # TODO photo.gadget().unlock()
+
 
     failed: (xhr, status, error) ->
       message  = "control.photos.failed: Failed creating photos. \n"
@@ -328,7 +345,7 @@ control =
   file_uploaded: (event) ->
     aside.progress.status.count++
 
-    photo = gadgets[event.key].photo
+    photo = gadgets(event.key).photo
 
     # associate and save image
     photo.image_id = event.data.id
@@ -345,8 +362,6 @@ control =
   send_ignored  : send.ignored
   send_confirmed: send.confirmed
 
-
-window.domo = control
 
 # Module methods
 initialize = ->
@@ -378,22 +393,22 @@ initialize = ->
   .on('files.selected'           , control.first_files_selection                                )
   .on('files.selection_confirmed', control.selection_confirmed                                  )
   .on('files.selection_confirmed', control.first_selection_confirmed                            )
-  .on('reader.loadstart'         , (event) -> gadgets[event.key].dispatch('loadstart'   , event))
-  .on('reader.progress'          , (event) -> gadgets[event.key].dispatch('progress'    , event))
-  .on('reader.loadend'           , (event) -> gadgets[event.key].dispatch('loadend'     , event))
-  .on('reader.abort'             , (event) -> gadgets[event.key].dispatch('abort'       , event))
-  .on('thumbnailer.progress'     , (event) -> gadgets[event.key].dispatch('thumbnailing', event))
-  .on('thumbnailer.encoding'     , (event) -> gadgets[event.key].dispatch('encoding'    , event))
+  .on('reader.loadstart'         , (event) -> gadgets(event.key).dispatch('loadstart'   , event))
+  .on('reader.progress'          , (event) -> gadgets(event.key).dispatch('progress'    , event))
+  .on('reader.loadend'           , (event) -> gadgets(event.key).dispatch('loadend'     , event))
+  .on('reader.abort'             , (event) -> gadgets(event.key).dispatch('abort'       , event))
+  .on('thumbnailer.progress'     , (event) -> gadgets(event.key).dispatch('thumbnailing', event))
+  .on('thumbnailer.encoding'     , (event) -> gadgets(event.key).dispatch('encoding'    , event))
   .on('thumbnailer.thumbnailed'  , (event) ->
-    gadget = gadgets[event.key]
-    uploader.upload gadget.files[gadget.files.length - 1]
-    gadget.dispatch('thumbnailed' , event)
+    gadget = gadgets event.key
+    gadget.files and uploader.upload gadget.files[gadget.files.length - 1]
+    gadget.dispatch 'thumbnailed', event
   )
   .on('thumbnailer.finished'     , control.thumbnailed                                          )
   .on('upload.complete.data'     , (event) ->
     # TODO figure out how get image id control.file_uploaded(event);
     control.file_uploaded event
-    gadgets[event.key].dispatch 'uploaded', event
+    gadgets(event.key).dispatch 'uploaded', event
   )
   .on('send.completed'           , send.completed                                               )
   .on('order.closed'             , control.closed                                               )

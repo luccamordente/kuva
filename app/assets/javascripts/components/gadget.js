@@ -3,6 +3,7 @@
 var gadget = (function declare_gadget (sorts) {
   var that = function initialize_photo(parent, options) {
     options = options || {};
+    // TODO bettar duplication and sparated rendering support
     options.parent = parent || '#gadgets';
     options.data = options.data || {};
     return $.extend(options, inherit(gadget));
@@ -45,7 +46,7 @@ var gadget = (function declare_gadget (sorts) {
           bound[property] = $.proxy(view[property], this);
       }
 
-      rivets.bind(this.element, {
+	  this.view = rivets.bind(this.element, {
           photo: photo,
           specification: photo.specification,
           gadget: observable.call(bound)
@@ -58,23 +59,49 @@ var gadget = (function declare_gadget (sorts) {
       photo.subscribe('count', subscription);
       photo.specification.subscribe('paper', subscription);
 
+	  // TODO Make rivets view.sync work!
+	  this.update();
+
       this.tied = true;
     },
+	// TODO Make rivets view.sync work!
+	update: function () {
+		var photo = this.photo
+		photo.count = photo.count
+		photo.product_id = photo.product_id
+		photo.specification && (photo.specification.paper = photo.specification.paper)
+	},
     duplicate: function () {
-        var gadget = that(null, this), photo = this.photo.json();
+		// TODO less memory leaking copy
+        var options = {
+			data: {
+				source: this.image.source()},
+			    orientation: this.orientation,
+                parent: this.element,
+			    render: function (template) {
+					this.element = $($.jqote(template, this.data));
+					this.parent.after(this.element);
+					this.element.addClass(this.orientation);
+			    }
+		    },
+			gadget = that(this.element, options), photo = this.photo.json();
 
 		// Create a brand new model
+		gadget.photo = window.photo(photo)
 		photo._id = null
         delete photo._id
-		gadget.photo = window.photo(photo)
 
-		// Do not select an old element
-		gadget.data.id = null
-		delete gadget.data.id
+		console.log(photo)
+
+		gadget.photo.route = this.photo.route
+		gadget.photo.width = this.photo.width
+		gadget.photo.height = this.photo.height
 
 		// Force new element criation
 		gadget.element = null
 		delete gadget.element
+
+		gadget.tied = false
 
         this.dispatch('duplicated', gadget);
         return gadget;
@@ -136,15 +163,21 @@ var gadget = (function declare_gadget (sorts) {
         title: 'Sumonando imagem'
       }, this.data);
 
-      $(this.parent).jqoteapp(templates.gadget, this.data);
+	  (this.render) || (this.render = control.render)
+	  this.parent && this.render(templates.gadget);
 
       this.element = $('#gadget-' + this.data.id);
       this.element.find("[rel=tooltip]").tooltip();
       this.image = library.image(this.element.find('img'), this.data.title);
       this.upload_bar = this.element.find('.upload.bar');
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
-      this.orientation = "vertical";
-    }
+      this.orientation || (this.orientation = "vertical");
+
+      delete this.render
+    },
+	render: function (template) {
+      $(this.parent).jqoteapp(templates.gadget, this.data);
+	}
   },
   handlers = {
     loadstart: function reader_loadstart (event) {
@@ -158,7 +191,10 @@ var gadget = (function declare_gadget (sorts) {
 
       this.crop();
       this.element.removeClass('reading').addClass('thumbnailing ' + this.orientation);
-      event.file && this.image.title(event.file.name);
+      if (event.file) {
+	    this.image.title(event.file.name);
+		this.data.title = event.file.name;
+	  }
     },
     thumbnailing: function thumbnailer_thumbnailing (event) {
       var percentage = Math.round(100 - (event.parsed / event.total) * 100), now = (new Date()).getTime();

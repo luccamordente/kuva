@@ -445,17 +445,30 @@ control-style(color)
 
     .gadget
       background none !important
-      .control, .pomp
-        display none
+
+      .canvas
+
+        .control, .pomp
+          display none
 
 
       &.uploading
         background none !important
-        .control, .pomp
-          display none
 
-        .upload.bar
-          display block
+        .canvas
+          .control, .pomp
+            display none
+
+          .upload.bar
+            display block
+
+
+      &.loaded
+
+        .canvas
+          .control, .control.hideable
+            &.duplicate
+              display none
 
 
   #main

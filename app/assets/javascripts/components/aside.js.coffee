@@ -54,7 +54,7 @@
     items: []
     total: 0
     initialize: (photos) ->
-      @add.apply photos
+      @add.apply @, photos
 
       # Render element
       aside.element.children('.normal').jqoteapp summary.template, summary

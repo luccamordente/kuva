@@ -45,8 +45,6 @@
 			return this;
 		},
 		source: function (source, store) {
-			console.log('sourceando ', source.substring(source.length, source.length - 10));
-
 			if (!arguments.length) return this.element.getAttribute('src');
 			if (!store) {
 				// When there is no source and we're erazing source, do nothing

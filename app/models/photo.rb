@@ -2,6 +2,8 @@ class Photo
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  attr_accessible :name, :count, :product_id, :image_id, :specification_attributes
+
   field :name , type: String
   field :count, type: Integer, default: 0
 

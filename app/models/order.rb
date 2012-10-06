@@ -5,6 +5,7 @@ class Order
   EXECUTION_TIME = 1.hour
 
   # attrs
+  attr_accessible :price, :observations, :user_id
   attr_protected :status
 
   # fields

@@ -259,10 +259,7 @@ control =
     aside('#aside', photos);
 
   selection_confirmed: ->
-    # TODO Use animations only when css3 animations
-    # is not possible
-    # Animate sidebar
-    $('#aside').animate width: '9em', padding: '1em' # TODO Move to aside component
+    aside.show()
 
     main = $ '#main'
     main.animate padding: '0 11em 0 0'
@@ -370,12 +367,8 @@ initialize = ->
   $('#ignore-send' ).bind 'click', control.send_ignored
   $('#confirm-send').bind 'click', control.send_confirmed
 
-
   # Hide sidebar
-  $('#aside').css width: '9em', padding: '1em'  # TODO Move to aside component
-  # $('#main').css paddingRight: 0
-  # $('#main-add').width '100%'
-
+  aside.hide()
 
   shelf = kuva.shelf('#add-more','#add-button', 'object:last')
 

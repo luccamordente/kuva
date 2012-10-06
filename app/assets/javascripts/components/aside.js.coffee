@@ -122,6 +122,18 @@
       </div>
       """
 
+  aside.show = ->
+    # TODO Use animations only when css3 animations
+    # is not possible
+    # Animate sidebar
+    $('#aside').animate width: '9em', padding: '1em' # TODO Move to aside component
+
+  aside.hide = ->
+
+    $('#aside').css width: '0', padding: '0'  # TODO Move to aside component
+    $('#main').css paddingRight: 0
+    $('#main-add').width '100%'
+
   aside.summary  = summary
   aside.progress = progress
   aside

@@ -16,17 +16,29 @@ do (parent = kuva, overlay = kuva.overlay) ->
         position: 'absolute'
 
   shelf =
+    overlaying: null
+    mouse_enter: ->
+      shelf.overlaying.addClass('over');
+    mouse_leave: ->
+      shelf.overlaying.removeClass('over');
     buttonzin: ->
+      @overlaying = inputzin
       overlay(flash).at inputzin
     button: ->
+      @overlaying = input
       overlay(flash).at input
     page: ->
+      @overlaying = $ document.body
       overlay(flash).at document.body
 
   initialize = ->
     input.attr 'disabled', true
     console.error "shelf: Flash for shelf not found" unless flash.length
-    # TODO kuva.listen('interface.initialized', -> )
+
+    bus.on('mouse.enter', shelf.mouse_enter)
+    .on('mouse.leave', shelf.mouse_leave)
+
+    # TODO bus.on('interface.initialized', -> )
     $ ready
 
 

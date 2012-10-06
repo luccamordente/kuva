@@ -305,6 +305,9 @@ control =
 
   thumbnailed: (event) ->
     # todas miniaturas construidas
+    for key, gadget of gadgets.all
+      break
+    gadget.files && uploader.upload gadget.files[gadget.files.length - 1]
   photos:
     create: (count) ->
       $.ajax
@@ -345,7 +348,7 @@ control =
   file_uploaded: (event) ->
     aside.progress.status.count++
 
-    photo = gadgets[event.key].photo
+    photo = gadgets(event.key).photo
 
     # associate and save image
     photo.image_id = event.data.id
@@ -401,7 +404,6 @@ initialize = ->
   .on('thumbnailer.encoding'     , (event) -> gadgets(event.key).dispatch('encoding'    , event))
   .on('thumbnailer.thumbnailed'  , (event) ->
     gadget = gadgets event.key
-    gadget.files and uploader.upload gadget.files[gadget.files.length - 1]
     gadget.dispatch 'thumbnailed', event
   )
   .on('thumbnailer.finished'     , control.thumbnailed                                          )

@@ -5,6 +5,7 @@ class Order
   EXECUTION_TIME = 1.hour
 
   # attrs
+  attr_accessible :price, :observations, :user_id
   attr_protected :status
 
   # fields
@@ -49,6 +50,10 @@ class Order
   before_save   :admin_notify_closed, if: :closed?
   before_save   :user_notify_closed , if: :closed?
 
+
+  def update_price
+    update_attribute :price, photos.map { |photo| photo.product.price * photo.count }.sum
+  end
 
   def delta_update_price difference
     update_attribute :price, price + difference

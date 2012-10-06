@@ -95,9 +95,9 @@ send =
     progress = aside.progress
     progress.confirmed = true
 
-    bus.on('upload.start'   , (event) -> gadgets[event.key].dispatch('upload'   , event))
+    bus.on('upload.start'   , (event) -> gadgets(event.key).dispatch('upload'   , event))
       .on('upload.progress', (event) ->
-        gadget = gadgets[event.key]
+        gadget = gadgets event.key
         gadget.dispatch('upload', event) unless gadget.uploading
         gadget.dispatch('uploading', event)
       )

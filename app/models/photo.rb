@@ -2,6 +2,8 @@ class Photo
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  attr_accessible :name, :count, :product_id, :image_id, :specification_attributes
+
   field :name , type: String
   field :count, type: Integer, default: 0
 
@@ -28,12 +30,7 @@ class Photo
 private
 
   def update_order_price
-    if self.destroyed?
-      difference = - count.to_i
-    else
-      difference = count.to_i - count_was.to_i
-    end
-    order.delta_update_price difference * product.price
+    order.update_price
   end
 
 end

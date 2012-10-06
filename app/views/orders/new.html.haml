@@ -12,15 +12,12 @@
 
     #main
 
-      %nav
-        %ul
-          %li= link_to "Cancelar envio", cancel_order_path(@order), confirm: "Tem certeza?", method: "post"
-
-      - if user_signed_in?
-        - if current_user.anonymous?
-          = "Usuário anonimo (#{link_to "login", new_user_session_path})"
-        - else
-          =raw "#{current_user.email} (#{link_to "sair", destroy_user_session_path, method: "delete"})"
+      #header
+        - if user_signed_in?
+          - if current_user.anonymous?
+            = "Usuário anonimo (#{link_to "login", new_user_session_path})"
+          - else
+            =raw "#{current_user.email} #{link_to "sair", destroy_user_session_path, method: "delete", confirm: "Seu pedido será cancelado. Deseja sair?"}"
 
 
       :javascript
@@ -90,7 +87,7 @@
             %small e fechar pedido
 
         #cancel.faded
-          %a{ :href => "javascript:void(0);" }
+          = link_to new_order_path, confirm: "Deseja cancelar seu pedido?" do
             = image_tag "x.png"
             cancelar pedido
 

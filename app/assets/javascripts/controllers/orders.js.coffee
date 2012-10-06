@@ -108,7 +108,6 @@ send =
 
     $(document.body).addClass('sending').removeClass('normal')
     $('#gadgets .gadget').addClass('uploading')
-    $('#flash').remove()
 
     send.ignored()
   completed: ->

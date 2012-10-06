@@ -110,11 +110,11 @@ var gadget = (function declare_gadget (sorts) {
       var dimensions    = this.photo.product[this.orientation + "_dimensions"],
           photo_height  = this.photo.height,
           photo_width   = this.photo.width,
-          canvas_ratio  = dimensions.width / dimensions.height,
+          canvas_ratio  = this.orientation == "vertical" ? dimensions.width / dimensions.height : dimensions.height / dimensions.width, // inverso deixa borda
           canvas_scale  = Math.min(250 / dimensions.width, 250 / dimensions.height),
           canvas_width  = Math.round(canvas_scale * dimensions.width ),
           canvas_height = Math.round(canvas_scale * dimensions.height),
-          img_ratio     = photo_width / photo_height,
+          img_ratio     = this.orientation == "vertical" ? photo_width / photo_height : photo_height / photo_width, // inverso deixa borda
           img_scale     = img_ratio > canvas_ratio ?
                             Math.min(250 / photo_width, 250 / photo_height) :
                             Math.max(canvas_width / photo_width, canvas_height / photo_height),

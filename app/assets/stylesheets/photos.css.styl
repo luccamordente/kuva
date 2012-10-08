@@ -1,5 +1,6 @@
 @import 'nib'
 @import 'helpers'
+@import 'bootstrap/component-animations'
 @import 'bootstrap/tooltip'
 @import 'bootstrap/progress-bars'
 
@@ -71,7 +72,7 @@ control-style(color)
 
   #overlay
     // background image('bla.gif') center center rgba(0,0,0,0.4) no-repeat
-    background rgba(238,238,238,0.7)
+    background rgba(128,128,128,0.7)
     height 100%
     position fixed
     top 0px
@@ -338,7 +339,7 @@ control-style(color)
 
 
 
-    &:hover, &.over
+    &:hover, &.controlable
       .canvas
         .control, .control.hideable
           opacity 1
@@ -749,7 +750,7 @@ control-style(color)
           font-size 0.65em
       #defaults-gadget
         clearfix()
-        padding 3em 0 3em
+        padding 3em 0 4.5em
         .gadget
           display block
           float none

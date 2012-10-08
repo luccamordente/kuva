@@ -6,7 +6,7 @@ var gadget = (function declare_gadget (sorts) {
     // TODO bettar duplication and sparated rendering support
     options.parent = parent || '#gadgets';
     options.data = options.data || {};
-    return $.extend(options, inherit(gadget));
+    return observable.call($.extend(options, inherit(gadget)));
   }, id = 0,
   gadget = {
     show: function() {
@@ -32,21 +32,20 @@ var gadget = (function declare_gadget (sorts) {
 
       (!photo.specification) && (photo.specification = window.specification());
 
-      // add view functionality to model
-      photo.specification.subscribe("paper", view.subscriptions.paper);
-      photo.subscribe("product_id", view.subscriptions.size);
-      photo.subscribe("count", view.subscriptions.count);
+      photo.specification.subscribe('paper', view.subscriptions.paper);
+      photo.subscribe('product_id', view.subscriptions.size );
+      photo.subscribe('count'     , view.subscriptions.count);
       photo.gadget = photo.specification.gadget = this;
 
 
-      // TODO Better proxy binding on event bindints
+      // TODO Better proxy binding on event bindings
       bound = {}
       for (property in view) {
         if ($.type(view[property]) == 'function')
           bound[property] = $.proxy(view[property], this);
       }
 
-	  this.view = rivets.bind(this.element, {
+      this.view = rivets.bind(this.element, {
           photo: photo,
           specification: photo.specification,
           gadget: observable.call(bound)
@@ -163,8 +162,8 @@ var gadget = (function declare_gadget (sorts) {
         title: 'Sumonando imagem'
       }, this.data);
 
-	  (this.render) || (this.render = control.render)
-	  this.parent && this.render(templates.gadget);
+      (this.render) || (this.render = control.render);
+      this.parent && this.render(templates.gadget);
 
       this.element = $('#gadget-' + this.data.id);
       this.element.find("[rel=tooltip]").tooltip();
@@ -173,11 +172,45 @@ var gadget = (function declare_gadget (sorts) {
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
       this.orientation || (this.orientation = "vertical");
 
-      delete this.render
+      delete this.render;
     },
-	render: function (template) {
+    render: function (template) {
       $(this.parent).jqoteapp(templates.gadget, this.data);
-	}
+    },
+    defaultize: function() {
+      var element  = this.element,
+          photo    = this.photo,
+          controls = element.find('.control'),
+          paper;
+
+      element.addClass('controlable');
+
+      setTimeout(function(){
+
+        controls.tooltip('destroy');
+
+        controls.filter('.size')
+          .data('title','<h1>TAMANHO<h1><small>Selecione o tamanho<br />da impressão final<br />que você deseja.</small>')
+          .data('placement', 'left');
+
+        paper = specification.paper[photo.specification.paper].toUpperCase();
+        controls.filter('.paper')
+          .data('title','<h1>PAPEL ' + paper + '<h1><small>Você pode escolher<br />entre as opções<br />FOSCO e BRILHANTE.</small>')
+          .data('placement', 'right');
+
+        controls.filter('.count')
+          .data('title','<h1>QUANTIDADE<h1><small>Escolha quantas cópias de cada<br />foto que você quer revelar.</small>')
+          .data('placement', 'bottom');
+
+        controls.tooltip({animation: true, trigger: 'manual'});
+
+        setTimeout(function(){ controls.filter('.size' ).tooltip('show'); }, 0   );
+        setTimeout(function(){ controls.filter('.paper').tooltip('show'); }, 700 );
+        setTimeout(function(){ controls.filter('.count').tooltip('show'); }, 1400);
+
+      },700);
+
+    }
   },
   handlers = {
     loadstart: function reader_loadstart (event) {
@@ -190,11 +223,17 @@ var gadget = (function declare_gadget (sorts) {
       this.photo.width  = event.width;
 
       this.crop();
-      this.element.removeClass('reading').addClass('thumbnailing ' + this.orientation);
+      this.element.addClass(this.orientation);
+
+      if (event.default)
+        control.defaultize.call(this);
+      else
+        this.element.removeClass('reading').addClass('thumbnailing');
+
       if (event.file) {
-	    this.image.title(event.file.name);
-		this.data.title = event.file.name;
-	  }
+        this.image.title(event.file.name);
+        this.data.title = event.file.name;
+      }
     },
     thumbnailing: function thumbnailer_thumbnailing (event) {
       var percentage = Math.round(100 - (event.parsed / event.total) * 100), now = (new Date()).getTime();
@@ -229,7 +268,9 @@ var gadget = (function declare_gadget (sorts) {
 
     },
     upload: function upload_start (event) {
-      this.uploading = true
+      // TODO rivetize
+      this.uploading = true;
+      // TODO when rivetized, this can be removed
       this.element.addClass('uploading');
     },
     uploading: function upload_progress (event) {
@@ -240,7 +281,12 @@ var gadget = (function declare_gadget (sorts) {
     uploaded: function upload_complete(event) {
       var gadget = this;
 
+      // TODO rivetize
+      gadget.uploading = false;
+      gadget.uploaded  = true;
+
       this.upload_bar.animate({width: '0%'}, 1000, 'linear', function () {
+        // TODO when rivetized, this can be removed
         gadget.element.removeClass('uploading').addClass('uploaded');
       });
     }
@@ -263,7 +309,7 @@ var gadget = (function declare_gadget (sorts) {
                                .html("<span style='font-size: 0.7em; position:relative; top: -2px;'>&times;</span>");
       },
       paper: function specification_paper (value) {
-        this.gadget.element.find(".canvas .control.paper").attr("data-original-title","Papel "+specification.paper[value]+"<br /><small>clique para alterar</small>");
+        this.gadget.element.find(".canvas .control.paper").data('title',"Papel "+specification.paper[value]+"<br /><small>clique para alterar</small>").tooltip('destroy').tooltip();
         this.gadget.element.removeClass("paper-" + this.paper).addClass("paper-" + value);
       },
       size: function photo_product_id (value) {
@@ -284,17 +330,13 @@ var gadget = (function declare_gadget (sorts) {
         gadget.crop();
       }
     },
-    decrement: function() {
-      this.photo.count--;
-    },
-    increment: function() {
-      this.photo.count++;
-    },
+    decrement: function() { this.photo.count--; },
+    increment: function() { this.photo.count++; },
     paperize: function() {
       var control = this.element.find(".canvas .control.paper");
       for ( paper in specification.paper )
         if (this.photo.specification.paper != paper ) {
-          control.tooltip("hide");
+          control.tooltip("destroy")
           this.photo.specification.paper = paper;
           control.tooltip("show");
           return;
@@ -309,7 +351,12 @@ var gadget = (function declare_gadget (sorts) {
             element.removeClass("sizing");
           };
 
-      if (element.children(".modal").length) return false;
+
+      if (element.children(".modal").length) {
+        photo.product_id = photo.product_id;
+        close();
+        return;
+      }
 
       element.addClass("sizing");
       element.append(templates.modal);
@@ -324,12 +371,15 @@ var gadget = (function declare_gadget (sorts) {
           // TODO stop creating products and do not reobserve
           return observable.call($.extend({}, product, {
             option: function() {
-              return product.vertical_dimensions.width+"<span class=\"times\">×</span>"+product.vertical_dimensions.height+"<span class=\"unit\">cm</span>";
+              return product.vertical_dimensions.width    +
+                     "<span class=\"times\">×</span>"     +
+                       product.vertical_dimensions.height +
+                     "<span class=\"unit\">cm</span>"     ;
             }
           }));
         })
       })});
-    },
+    }
   },
 
 

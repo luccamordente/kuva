@@ -182,6 +182,7 @@ control =
     control.defaults.photo = photo = order.photos.build
         name          : 'Foto Padrão'
         count         : 1
+        default       : true
         product       : control.defaults.product
         product_id    : control.defaults.product._id
         specification : window.specification({ paper: 'glossy' })
@@ -190,23 +191,27 @@ control =
 
 
     # TODO create a deferred
-    buttons = ['confirm.success => Pronto <i>Definir e continuar</i>']
+    buttons = ['confirm.success => Próxima etapa: <small>alteração individual</small>']
+
+    mass = gadget '#defaults-gadget',
+      data:
+        source: kuva.service.url + '/assets/structure/generic-temporary-gadget-photo.jpg'
+        title : "Foto de exemplo"
 
     assigns =
       title       : "Você selecionou <span class=\"amount\"><b data-text=\"modal.amount\">#{event.amount}</b> <span data-text=\"modal.amount_label\">foto</span></span>"
-      confirm     : -> bus.publish 'files.selection_confirmed'; kuva.overlay().close()
+      confirm     : ->
+        bus.publish 'files.selection_confirmed'
+        kuva.overlay().close()
+        mass.element.find('[rel=tooltip]').tooltip('destroy')
       amount      : 1
       copies      : '1 cópia'
       size        : photo.size || '10x15'
       paper       : 'Brilhante'
 
-    mass = gadget '#defaults-gadget',
-      data:
-        source: kuva.service.url + '/assets/structure/generic-temporary-gadget-photo.jpg'
-
     # Display modal and gadget
     kuva.overlay().at(document.body)
-    confirm = modal assigns, buttons, template: templates.modal.files_selected, minWidth: 780, minHeight: 500
+    confirm = modal assigns, buttons, template: templates.modal.files_selected, minWidth: 780, minHeight: 680
     mass.photo = photo
     mass.show()
     mass.dispatch 'loadend', photo
@@ -222,8 +227,8 @@ control =
       else
         'nenhuma cópia'
 
-    photo.specification.subscribe 'paper', ->
-      confirm.paper = specification.paper[photo.specification.paper]
+    photo.specification.subscribe 'paper', (paper) ->
+      confirm.paper = specification.paper[paper]
 
     photo.subscribe 'product_id', (product_id) ->
       confirm.size = product.find(product_id).name
@@ -292,7 +297,7 @@ control =
     false
 
   first_selection_confirmed: ->
-    shelf.overlay.buttonzin()
+    # shelf.overlay.buttonzin()
     bus.off 'files.selection_confirmed', @callee
 
   first_files_selection: ->
@@ -411,23 +416,24 @@ initialize = ->
 templates =
   modal:
     files_selected: $.jqotec """
-        <div class=\"modal\" id=\"selected-modal\">
+        <div class="modal" id="selected-modal">
           <h1><img src="/assets/structure/modal-summary-checkmark.png" /> <*= this.title *></h1>
-          <div class=\"content\">
+          <div class="content">
             <h2>
-              <div class="call">Como vai querer a maioria delas?</div>
-              <div class="choose">Escolha o <u>tamanho</u>, <u>tipo de papel</u> e <u>quantidade de cópias</u> abaixo:</div>
-              <div class="note">Note que você pode altera-las individualmente depois.</div>
+              <!--div class="call">Como vai querer a maioria delas?</div-->
+              <div class="choose">Escolha o tamanho, tipo de papel e quantidade de cópias abaixo para todas as fotos. </div>
+              <div class="note">Na etapa seguinte você poderá fazer alterações individuais.</div>
+              <!--div class="note">Na próxima etapa você poderá fazer alterações individuais.</div-->
             </h2>
-            <div id=\"defaults-gadget\"></div>
-            <div class=\"summary\">
-              <img src="/assets/structure/modal-summary-small-checkmark.png" /> <b data-text=\"modal.copies\">1</b> de cada<br />
-              <img src="/assets/structure/modal-summary-small-checkmark.png" /> tamanho <b data-text=\"modal.size\">10x15</b><br />
-              <img src="/assets/structure/modal-summary-small-checkmark.png" /> papel <b data-text=\"modal.paper\">fosco</b><br />
+            <div id="defaults-gadget"></div>
+            <div class="summary">
+              <img src="/assets/structure/modal-summary-small-checkmark.png" /> <b data-text="modal.copies">1</b> de cada<br />
+              <img src="/assets/structure/modal-summary-small-checkmark.png" /> tamanho <b data-text="modal.size">10x15</b><br />
+              <img src="/assets/structure/modal-summary-small-checkmark.png" /> papel <b data-text="modal.paper">fosco</b><br />
             </div>
           </div>
 
-          <div class=\"button-group\">
+          <div class="button-group">
             <*= this.rendered_buttons *>
           </div>
         </div>

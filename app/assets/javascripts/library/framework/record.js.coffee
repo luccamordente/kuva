@@ -115,9 +115,13 @@ resource =
     save: () ->
       # Bind one time save callbacks
       temporary_callbacks  @, arguments if arguments.length and $.type(arguments[0]) is 'function'
+      self = @
 
       # TODO Execute before save callbacks
-      rest[if @_id then 'put' else 'post'].call @
+      @delay && clearTimeout @delay
+      @delay = setTimeout ->
+        rest[if self._id then 'put' else 'post'].call self
+      , 2000
     saved: (data) ->
       # parsear resposta do servidor e popular dados no modelo atual
       # dispatchar evento de registro salvo, usando o nome do resource

@@ -1,4 +1,4 @@
-require File.expand_path("../../lib/deploy/helpers",__FILE__)
+# require File.expand_path("../../lib/deploy/helpers",__FILE__)
 
 set :application, 'guga'
 
@@ -84,7 +84,7 @@ namespace :deploy do
   end
 
   task :copy_files  do
-    run "ln -nfs #{shared_path}/Gemfile.lock #{release_path}/Gemfile.lock"
+    # run "ln -nfs #{shared_path}/Gemfile.lock #{release_path}/Gemfile.lock"
     # run "cp #{shared_path}/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/assets #{release_path}/public/assets"
     # run "ln -nfs #{shared_path}/bundle #{release_path}/vendor/bundle"

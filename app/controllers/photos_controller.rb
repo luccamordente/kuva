@@ -17,10 +17,10 @@ class PhotosController < ApplicationController
       photos << @photo
     end
 
-    photos.each do |photo|
-      photo.save
-      ids << photo.id
-    end
+    ids = photos.map(&:id)
+
+    order.save
+    order.update_price
 
     success photo_ids: ids
   rescue Mongoid::Errors::Validations => exception

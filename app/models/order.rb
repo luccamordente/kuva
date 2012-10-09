@@ -47,12 +47,14 @@ class Order
   before_validation :set_empty_status, on: :create
   # notifications
   before_create :admin_notify_opened
-  before_save   :admin_notify_closed, if: :closed?
-  before_save   :user_notify_closed , if: :closed?
+  before_save   :admin_notify_closed, if: lambda{ closed? and not was_closed? }
+  before_save   :user_notify_closed , if: lambda{ closed? and not was_closed? }
 
 
   def update_price
-    update_attribute :price, photos.map { |photo| photo.product.price * photo.count }.sum
+    new_price = photos.map { |photo| photo.product.price * photo.count }.sum
+    return if new_price == self.price
+    update_attribute :price, new_price
   end
 
   def delta_update_price difference
@@ -85,6 +87,8 @@ class Order
 
   def is_empty?; self.status == EMPTY ; end
   def closed?  ; self.status == CLOSED; end
+
+  def was_closed?; status_was == self.class::CLOSED end
 
   def sent?
     [CLOSED, CATCHING, CAUGHT].include? status

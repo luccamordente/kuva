@@ -75,6 +75,16 @@ before "deploy:cleanup", "deploy:fix_permissions"
 after "deploy:cleanup", "deploy:restart"
 
 
+def create_unless_exist type, path
+  case type.to_s
+    when 'f'
+      run "if [ ! -f  #{path} ]; then; touch #{path}; fi;"
+    when
+      run "if [ ! -d  #{path} ]; then; mkdir -p #{path}; fi;"
+  end
+end
+
+
 namespace :deploy do
 
   namespace :bundle do
@@ -84,11 +94,20 @@ namespace :deploy do
   end
 
   task :copy_files  do
-    # run "ln -nfs #{shared_path}/Gemfile.lock #{release_path}/Gemfile.lock"
-    # run "cp #{shared_path}/database.yml #{release_path}/config/database.yml"
+    create_unless_exist :f, "#{shared_path}/Gemfile.lock"
+    run "ln -nfs #{shared_path}/Gemfile.lock #{release_path}/Gemfile.lock"
+
+    create_unless_exist :d, "#{shared_path}/mongoid.yml"
+    run "cp #{shared_path}/mongoid.yml #{release_path}/config/mongoid.yml"
+
+    create_unless_exist :d, "#{shared_path}/assets"
     run "ln -nfs #{shared_path}/assets #{release_path}/public/assets"
-    # run "ln -nfs #{shared_path}/bundle #{release_path}/vendor/bundle"
-    # run "ln -nfs #{shared_path}/public/uploads #{release_path}/public/uploads"
+
+    create_unless_exist :d, "#{shared_path}/bundle"
+    run "ln -nfs #{shared_path}/bundle #{release_path}/vendor/bundle"
+
+    # create_unless_exist :d, "#{shared_path}/uploads"
+    # run "ln -nfs #{shared_path}/uploads #{release_path}/public/uploads"
   end
 
   task :fix_permissions do

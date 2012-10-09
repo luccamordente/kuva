@@ -58,7 +58,7 @@ group :development, :test do
   gem 'launchy'
   gem 'database_cleaner'
   gem 'fabrication', '~> 1.2.0'
-  gem 'rb-fsevent'#, require: false if RUBY_PLATFORM =~ /darwin/i
+  gem 'rb-fsevent', require: false #if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'guard-livereload'
   # gem 'rails_best_practices'

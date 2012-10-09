@@ -17,15 +17,10 @@
           callback.call @, value
           @["_#{keypath}"] = value
 
-
-      # domo = @[keypath]
-
       # TODO onpropertychange
       Object.defineProperty @, keypath,
         get: current_getter || -> @["_#{keypath}"]
         set: setter
-
-      # @["_#{keypath}"] = domo
 
     unsubscribe: (object, keypath, callback) ->
 

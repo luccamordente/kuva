@@ -2,7 +2,7 @@
 
 (function () {
     var that = function (element, options) {
-	var element = (element && element[0] || element) || new Image()
+	var element = (element && element[0] || element) || new Image(),
 	    instance = {
 	    element: element
 	};

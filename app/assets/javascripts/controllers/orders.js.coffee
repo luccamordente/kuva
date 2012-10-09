@@ -319,7 +319,7 @@ control =
     false
 
   first_selection_confirmed: ->
-    # shelf.overlay.buttonzin()
+    shelf.overlay.buttonzin()
     bus.off 'files.selection_confirmed', @callee
 
   first_files_selection: ->

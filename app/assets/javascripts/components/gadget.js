@@ -58,52 +58,55 @@ var gadget = (function declare_gadget (sorts) {
       photo.subscribe('count', subscription);
       photo.specification.subscribe('paper', subscription);
 
-	  // TODO Make rivets view.sync work!
-	  this.update();
+      // TODO Make rivets view.sync work!
+      this.update();
 
       this.tied = true;
     },
-	// TODO Make rivets view.sync work!
-	update: function () {
-		var photo = this.photo
-		photo.count = photo.count
-		photo.product_id = photo.product_id
-		photo.specification && (photo.specification.paper = photo.specification.paper)
-	},
+    // TODO Make rivets view.sync work!
+    update: function () {
+      var photo = this.photo
+      photo.count = photo.count
+      photo.product_id = photo.product_id
+      photo.specification && (photo.specification.paper = photo.specification.paper)
+    },
     duplicate: function () {
-		// TODO less memory leaking copy
-        var options = {
-			data: {
-				source: this.image.source()},
-			    orientation: this.orientation,
-                parent: this.element,
-			    render: function (template) {
-					this.element = $($.jqote(template, this.data));
-					this.parent.after(this.element);
-					this.element.addClass(this.orientation);
-			    }
-		    },
-			gadget = that(this.element, options), photo = this.photo.json();
+      // TODO less memory leaking copy
+      var options = {
+          data: {
+            source: this.image.source(),
+            title : this.data.title
+          },
+          orientation: this.orientation,
+          parent: this.element,
+          render: function (template) {
+            this.element = $($.jqote(template, this.data));
+            this.parent.after(this.element);
+            this.element.addClass(this.orientation + " loaded");
+          }
+        },
+        gadget = that(this.element, options), photo = this.photo.json();
 
-		// Create a brand new model
-		gadget.photo = window.photo(photo)
-		photo._id = null
-        delete photo._id
+      // Create a brand new model
+      gadget.photo = window.photo(photo);
+      // TODO copy automatically (implement nested attributes for has_one)
+      gadget.photo.specification = window.specification(this.photo.specification.json());
 
-		console.log(photo)
+      photo._id = null;
+      delete photo._id;
 
-		gadget.photo.route = this.photo.route
-		gadget.photo.width = this.photo.width
-		gadget.photo.height = this.photo.height
+      gadget.photo.route = this.photo.route;
+      gadget.photo.width = this.photo.width;
+      gadget.photo.height = this.photo.height;
 
-		// Force new element criation
-		gadget.element = null
-		delete gadget.element
+      // Force new element criation
+      gadget.element = null;
+      delete gadget.element;
 
-		gadget.tied = false
+      gadget.tied = false;
 
-        this.dispatch('duplicated', gadget);
-        return gadget;
+      this.dispatch('duplicated', gadget);
+      return gadget;
     },
     crop: function() {
       var dimensions    = this.photo.product[this.orientation + "_dimensions"],
@@ -185,8 +188,8 @@ var gadget = (function declare_gadget (sorts) {
 
       element.addClass('controlable');
 
+      // TODO clear timeouts upon confirmation
       setTimeout(function(){
-
         controls.tooltip('destroy');
 
         controls.filter('.size')
@@ -204,11 +207,10 @@ var gadget = (function declare_gadget (sorts) {
 
         controls.tooltip({animation: true, trigger: 'manual'});
 
-        setTimeout(function(){ controls.filter('.size' ).tooltip('show'); }, 0   );
-        setTimeout(function(){ controls.filter('.paper').tooltip('show'); }, 700 );
+        setTimeout(function(){ controls.filter('.size' ).tooltip('show'); },    0);
+        setTimeout(function(){ controls.filter('.paper').tooltip('show'); },  700);
         setTimeout(function(){ controls.filter('.count').tooltip('show'); }, 1400);
-
-      },700);
+      }, 700);
 
     }
   },

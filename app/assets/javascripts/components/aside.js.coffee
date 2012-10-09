@@ -7,7 +7,7 @@
 
   item_prototype =
     add: (photo) ->
-      throw "aside.item.add: Photo #{photo} already in item #{@product.name}." if photo in photos
+      throw "aside.item.add: Photo #{photo} already in item #{@product.name}." if photo in @photos
       @count += ~~photo.count
       @photos.push photo
     remove: (photo) ->
@@ -93,7 +93,7 @@
       item = summary.group product
       item.add @
 
-      summary.calculate_total
+      summary.calculate_total()
     update_count: (value) ->
       item = summary.grouped[@product.name]
       item.count += +value - +@count

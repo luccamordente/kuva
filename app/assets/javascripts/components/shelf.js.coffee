@@ -23,7 +23,8 @@ do (parent = kuva, overlay = kuva.overlay) ->
       shelf.overlaying.removeClass('over');
     buttonzin: ->
       @overlaying = inputzin
-      overlay(flash).at inputzin
+      flash.css width:1, height:1
+      # overlay(flash).at inputzin
     button: ->
       @overlaying = input
       overlay(flash).at input

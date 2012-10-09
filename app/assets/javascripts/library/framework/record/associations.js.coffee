@@ -83,8 +83,8 @@ associable =
     # @after_save.push ->
     #   model[@resource] =
     #
-    @has_many = [@has_many] unless $.type(@has_many) == 'array'
-    @has_one = [@has_one] unless $.type(@has_one) == 'array'
+    @has_many   = [@has_many]   unless $.type(@has_many)   == 'array'
+    @has_one    = [@has_one]    unless $.type(@has_one)    == 'array'
     @belongs_to = [@belongs_to] unless $.type(@belongs_to) == 'array'
 
 

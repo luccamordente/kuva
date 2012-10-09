@@ -17,11 +17,11 @@ db/*.sqlite3
 *#
 .#*
 *.vp*
-*.lock
+#*.lock
+#Gemfile.lock
 compass/*
 config/database.yml
 .DS_Store
-Gemfile.lock
 log/*
 tmp/**
 public/clicktale/*

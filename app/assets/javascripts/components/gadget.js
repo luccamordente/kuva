@@ -19,7 +19,7 @@ var gadget = (function declare_gadget (sorts) {
       return this;
     },
     listen: function (name, callback) {
-      if (handlers.name) throw 'Listener already defined for ' + name
+      if (handlers.name) throw 'Listener already defined for ' + name;
       handlers[name] = callback;
       return this;
     },

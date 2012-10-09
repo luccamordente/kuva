@@ -41,15 +41,22 @@ button, a.button
 
   &.success
     background-color = success-color
-
     button-gradient-background(background-color)
-
     &:hover
       button-gradient-background(lighten(background-color,40%))
-
     &:active
       button-gradient-background(darken(background-color,10%), true)
+    &[disabled]
+      button-gradient-background(darken(background-color,10%))
 
+
+  &.danger
+    background-color = danger-color
+    button-gradient-background(background-color)
+    &:hover
+      button-gradient-background(lighten(background-color,40%))
+    &:active
+      button-gradient-background(darken(background-color,10%), true)
     &[disabled]
       button-gradient-background(darken(background-color,10%))
 

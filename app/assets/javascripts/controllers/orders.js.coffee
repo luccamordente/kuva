@@ -113,6 +113,28 @@ send =
   completed: ->
     order.close()
 
+
+
+cancel =
+
+  clicked: ->
+    kuva.overlay().at(document.body)
+    cancel.modal = modal
+      cancel: ->
+        kuva.overlay.close()
+        cancel.modal.close()
+      confirm: -> order.cancel(),
+      [
+        'confirm.danger => Sim<small>, quero cancelar meu pedido</small>',
+        'cancel => Não<small>, quero voltar</small>'
+      ],
+      template: templates.modal.cancel_order, minWidth: 500, minHeight: 500
+
+  completed: ->
+    document.location = document.location
+
+
+
 # module
 gadgets = do ->
   that = (key, options) ->
@@ -362,9 +384,14 @@ control =
       template: templates.modal.order_closed, minWidth: 510, minHeight: 500
 
 
+
   send_clicked  : send.clicked
   send_ignored  : send.ignored
   send_confirmed: send.confirmed
+  send_completed: send.completed
+
+  cancel_clicked  : cancel.clicked
+  cancel_completed: cancel.completed
 
 
 # Module methods
@@ -373,6 +400,7 @@ initialize = ->
   $('#send-button' ).bind 'click', control.send_clicked
   $('#ignore-send' ).bind 'click', control.send_ignored
   $('#confirm-send').bind 'click', control.send_confirmed
+  $('#cancel'      ).bind 'click', control.cancel_clicked
 
   # Hide sidebar
   aside.hide()
@@ -409,8 +437,9 @@ initialize = ->
     control.file_uploaded event
     gadgets(event.key).dispatch 'uploaded', event
   )
-  .on('send.completed'           , send.completed                                               )
+  .on('send.completed'           , control.send_completed                                       )
   .on('order.closed'             , control.closed                                               )
+  .on('order.canceled'           , control.cancel_completed                                     )
 
 
 templates =
@@ -439,30 +468,40 @@ templates =
         </div>
       """
     order_closed: $.jqotec """
-        <div class=\"modal simplemodal-data\" id=\"sent-modal\" style=\"display: block; \">
+        <div class="modal simplemodal-data" id="sent-modal" style="display: block; ">
           <h1>
-            <img src=\"/assets/structure/modal-summary-checkmark.png\">
+            <img src="/assets/structure/modal-summary-checkmark.png">
             Suas fotos foram enviadas e já estão conosco!
           </h1>
-          <div class=\"content\" style=\"width: 510px;\">
+          <div class="content" style="width: 510px;">
             <h2>Em até 1 hora* suas fotos estarão prontas para você buscar, aqui no Pedro Cine Foto.</h2>
-            <div class=\"note\">
+            <div class="note">
               <b>Lembre-se:</b>
               o pagamento só será feito quando você vier buscá-las.
               <br /><br />
-              <span class=\"observations\">
+              <span class="observations">
                 * O prazo de 1 hora para prepararmos suas fotos só é válido para o horário comercial (segunda a sexta de 8:00 às 19:00 e sábado de 8:00 às 13:00).Caso seu pedido tenha sido fechado fora desse horário, este ficará pronto às 10:00 do próximo dia comercial.
               </span>
             </div>
           </div>
-          <div class=\"button-group\">
-            <span class=\"help\">
+          <div class="button-group">
+            <span class="help">
               Tem alguma dúvida?
-              <a href=\"javascript:SnapABug.startLink();\">Clique aqui para falar com a gente.</a>
+              <a href="javascript:SnapABug.startLink();">Clique aqui para falar com a gente.</a>
             </span>
-            <a class=\"button confirm success\" data-on-click=\"modal.confirm\">
+            <a class="button confirm success" data-on-click="modal.confirm">
               CONCLUIR
             </a>
+          </div>
+        </div>
+      """
+    cancel_order:  $.jqotec """
+        <div class="modal simplemodal-data" id="sent-modal" style="display: block; ">
+          <div class="content">
+            Tem certeza que quer cancelar seu pedido?
+          </div>
+          <div class="button-group">
+            <*= this.rendered_buttons *>
           </div>
         </div>
       """

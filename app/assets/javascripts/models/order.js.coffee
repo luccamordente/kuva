@@ -6,7 +6,7 @@ order_model = model.call resource: 'order', has_many: 'images', route: 'pedidos'
 
 @order = (data) ->
   # TODO improve model method support
-  closeable.call associations.call order_model(data)
+  cancelable.call closeable.call associations.call order_model data
 
 # TODO Make association a generic method
 associations = ->
@@ -62,17 +62,35 @@ closeable = ->
     bus.publish 'order.closed'
 
   unprocessable = (xhr, status) ->
-    alert "Erro ao fechar pedido"
-    throw "order.unprocessable: {id: #{@_id}} Error '#{status}' processing request"
+    alert "Erro ao fechar pedido!"
+    throw "order.close.unprocessable: {id: #{@_id}} Error '#{status}' processing request"
 
   error = (xhr, status) ->
     alert "Erro ao accessar o servidor."
-    throw "order.error: {id: #{@_id}} Error '#{status}' processing request"
+    throw "order.close.error: {id: #{@_id}} Error '#{status}' processing request"
 
   @
 
-closed = ->
+cancelable = ->
+  @cancel = (response) ->
+    $.ajax
+      url: "#{@route}/#{@_id}/cancel"
+      type: "POST"
+      success: canceled
+      statusCode:
+        422: unprocessable
+        500: error
+      context: @
 
-cancel = ->
+  canceled = (response) ->
+    bus.publish 'order.canceled'
 
-canceled = ->
+  unprocessable = (xhr, status) ->
+    alert "Erro ao cancelar pedido!"
+    throw "order.cancel.unprocessable: {id: #{@_id}} Error '#{status}' processing request"
+
+  error = (xhr, status) ->
+    alert "Erro ao accessar o servidor."
+    throw "order.cancel.error: {id: #{@_id}} Error '#{status}' processing request"
+
+  @

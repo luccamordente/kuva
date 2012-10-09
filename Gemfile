@@ -41,6 +41,7 @@ group :development do
   gem 'letter_opener'
   gem 'pry'
   gem 'pry-remote'
+  gem 'capistrano'
 end
 
 group :test do
@@ -82,6 +83,6 @@ end
 
 # To use debugger
 # gem 'ruby-debug'
- 
+
 # Colorful console
 # gem 'mutter'

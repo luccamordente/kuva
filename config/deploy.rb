@@ -45,7 +45,7 @@ puts "\n\n"
 
 set :scm, 'git'
 set :scm_verbose, true
-set :deploy_via, :remote_cache
+# set :deploy_via, :remote_cache
 set :restart_server_command, "/opt/nginx/sbin/nginx -s reload"
 set :repository,  "ssh://lucca@201.17.161.70/home/lucca/apps/kuva"
 set :branch, branch
@@ -64,7 +64,7 @@ set :deploy_to, "/home/lucca/www/kuva"
 default_run_options[:pty] = true
 
 
-after "deploy", "deploy:cleanup"
+after "deploy"            , "deploy:cleanup"
 after "deploy:update_code", "deploy:copy_files"
 
 # need to run after create_symlink, otherwise rake is not found oO
@@ -87,7 +87,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/Gemfile.lock #{release_path}/Gemfile.lock"
     # run "cp #{shared_path}/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/assets #{release_path}/public/assets"
-    run "ln -nfs #{shared_path}/bundle #{release_path}/vendor/bundle"
+    # run "ln -nfs #{shared_path}/bundle #{release_path}/vendor/bundle"
     # run "ln -nfs #{shared_path}/public/uploads #{release_path}/public/uploads"
   end
 

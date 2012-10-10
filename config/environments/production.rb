@@ -1,6 +1,6 @@
 Kuva::Application.configure do
 
-  config.domain = "revelacao.pedrocinefoto.com.br"
+  config.domain = "kuva.pedrocinefoto.com.br"
 
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -49,11 +49,11 @@ Kuva::Application.configure do
   # config.action_controller.asset_host = "http://assets.example.com"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
-  config.assets.precompile += %w( controllers/orders.js )
+  config.assets.precompile += %w( controllers/orders.js layouts/temp.css )
 
   # Disable delivery errors, bad email addresses will be ignored
   config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default_url_options   = { host: 'revelacao.pedrocinefoto.com.br' }
+  config.action_mailer.default_url_options   = { host: 'kuva.pedrocinefoto.com.br' }
   config.action_mailer.asset_host            = 'http://201.17.161.70:9999'
   config.action_mailer.delivery_method = :sendmail
   config.action_mailer.perform_deliveries = true

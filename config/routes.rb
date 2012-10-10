@@ -7,6 +7,7 @@ Kuva::Application.routes.draw do
         get :download
       end
     end
+    resources :products
 
     root to: "orders#index"
   end

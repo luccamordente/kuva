@@ -1,0 +1,7 @@
+%tr
+  %td= product.name
+  %td= number_to_currency product.price
+  %td
+    .action
+      = link_to edit_admin_product_path(product) do
+        %i.icon-pencil

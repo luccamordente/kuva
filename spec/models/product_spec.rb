@@ -4,9 +4,12 @@ describe Product do
 
   describe "validations" do
     validate_timestamps
-    it{ should validate_presence_of(:price)      }
-    it{ should validate_presence_of(:name)       }
-    it{ should validate_presence_of(:dimensions) }
+    it{ should validate_presence_of :price           }
+    it{ should validate_presence_of :name            }
+    it{ should validate_presence_of :dimensions      }
+    it{ should validate_numericality_of :price       }
+    it{ should validate_numericality_of :dimensions1 }
+    it{ should validate_numericality_of :dimensions2 }
   end
 
   describe "relationships" do

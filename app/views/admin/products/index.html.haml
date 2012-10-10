@@ -1,0 +1,18 @@
+- content_for :id, :products
+
+%h1 Produtos
+
+= link_to new_admin_product_path, class: 'btn btn-success pull-right' do
+  %i.icon-plus.icon-white
+  Adicionar novo tamanho
+
+%table.table.table-striped
+
+  %tr
+    %th Tamanho
+    %th Preço
+    %th
+
+  = render @products
+
+

@@ -19,6 +19,7 @@ gem "rubyzip"
 gem "roadie"
 gem "active_decorator"
 gem "airbrake"
+gem "simple_form"
 
 gem 'haml-rails', '~> 0.3.4'
 

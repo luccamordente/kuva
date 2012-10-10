@@ -1,0 +1,9 @@
+- content_for :id, :products
+
+%h1
+  Alterando
+  = @product.name
+
+= render 'form'
+
+= link_to 'Voltar', admin_products_path

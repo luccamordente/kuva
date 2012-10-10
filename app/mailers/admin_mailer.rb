@@ -1,7 +1,7 @@
 class AdminMailer < ActionMailer::Base
   helper :orders
 
-  default from: "notification@kuva.com"
+  default from: "Kuva - Pedro Cine Foto <pedrocinefoto@gmail.com>"
   default to:   ["Lucca Mordente <luccamordente@gmail.com>", "Heitor Salazar <heitorsalazar@gmail.com>", "Ricardo Mordente <ricardomordente@gmail.com>"]
 
   def order_opened order

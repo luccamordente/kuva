@@ -34,7 +34,7 @@ private
   end
 
   def load_products
-    @products = Product.only(:_id,:name,:price, :dimensions).all
+    @products = Product.only(:_id,:name,:price, :dimensions).asc(:dimensions).all
   end
 
 end

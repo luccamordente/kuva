@@ -18,7 +18,7 @@ describe AdminMailer do
 
     #ensure that the sender is correct
     it 'renders the sender email' do
-      mail.from.should == ["notification@kuva.com"]
+      mail.from.should == ["pedrocinefoto@gmail.com"]
     end
 
     #ensure that the @name variable appears in the email body
@@ -48,7 +48,7 @@ describe AdminMailer do
 
     #ensure that the sender is correct
     it 'has the correct sender address' do
-      mail.from.should == ["notification@kuva.com"]
+      mail.from.should == ["pedrocinefoto@gmail.com"]
     end
 
     #ensure that the @name variable appears in the email body

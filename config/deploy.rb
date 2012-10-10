@@ -98,8 +98,8 @@ namespace :deploy do
   end
 
   task :copy_files  do
-    create_unless_exist :f, "#{shared_path}/Gemfile.lock"
-    run "ln -nfs #{shared_path}/Gemfile.lock #{release_path}/Gemfile.lock"
+    # create_unless_exist :f, "#{shared_path}/Gemfile.lock"
+    # run "ln -nfs #{shared_path}/Gemfile.lock #{release_path}/Gemfile.lock"
 
     create_unless_exist :f, "#{shared_path}/mongoid.yml"
     run "cp #{shared_path}/mongoid.yml #{release_path}/config/mongoid.yml"

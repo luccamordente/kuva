@@ -25,4 +25,15 @@ describe Product do
   end
 
 
+  describe "easy dimensions" do
+    let(:product){ Fabricate :product, dimension1: 15, dimension2: 10 }
+    it "should sort product dimensions when saved" do
+      product.dimensions.should == [10, 15]
+    end
+    it "should generate the product name" do
+      product.name.should == "10x15"
+    end
+  end
+
+
 end

@@ -14,6 +14,7 @@ class Product
   validates_numericality_of :price, :dimension1, :dimension2, greater_than: 0
 
   before_validation :update_dimensions
+  before_save 'self.dimensions.sort!'
 
 
   def horizontal_dimensions

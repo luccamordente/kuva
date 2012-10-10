@@ -4,7 +4,26 @@ set :application, 'guga'
 
 
 
-bundle = "bundle"
+
+def surun(command)
+  password = fetch(:root_password, Capistrano::CLI.password_prompt("root password: "))
+  run("su - lucca -c '#{command}'") do |channel, stream, output|
+    channel.send_data("#{password}n") if output
+  end
+end
+
+def create_unless_exist type, path
+  case type.to_s
+    when 'f'
+      run "if [ ! -f  #{path} ]; then touch #{path}; fi"
+    when 'd'
+      run "if [ ! -d  #{path} ]; then mkdir -p #{path}; fi"
+  end
+end
+
+
+
+
 
 
 begin
@@ -25,19 +44,13 @@ begin
 
   puts "\n"
   puts "Branch            => #{branch}"
-  puts "Reload server     => #{reload_server ? 'true' : 'false'}"
+  puts "Reload server     => #{reload_server     ? 'true' : 'false'}"
   puts "Precompile assets => #{precompile_assets ? 'true' : 'false'}"
   print "\nConfirma? [y/n] (y): "
 
 end until (confirmation = STDIN.gets.match /^y?$/i)
 
 
-def surun(command)
-  password = fetch(:root_password, Capistrano::CLI.password_prompt("root password: "))
-  run("su - lucca -c '#{command}'") do |channel, stream, output|
-    channel.send_data("#{password}n") if output
-  end
-end
 
 puts "\n\n"
 
@@ -46,7 +59,6 @@ puts "\n\n"
 set :scm, 'git'
 set :scm_verbose, true
 # set :deploy_via, :remote_cache
-set :restart_server_command, "/opt/nginx/sbin/nginx -s reload"
 set :repository,  "ssh://lucca@201.17.161.70/home/lucca/apps/kuva"
 set :branch, branch
 set :user, "lucca"
@@ -75,14 +87,6 @@ before "deploy:cleanup", "deploy:fix_permissions"
 after "deploy:cleanup", "deploy:restart"
 
 
-def create_unless_exist type, path
-  case type.to_s
-    when 'f'
-      run "if [ ! -f  #{path} ]; then touch #{path}; fi"
-    when 'd'
-      run "if [ ! -d  #{path} ]; then mkdir -p #{path}; fi"
-  end
-end
 
 
 namespace :deploy do
@@ -116,7 +120,7 @@ namespace :deploy do
 
   namespace :assets do
     task :precompile do
-      run "cd #{release_path} && #{bundle} exec rake assets:precompile RAILS_GROUPS=assets RAILS_ENV=production"
+      run "cd #{release_path} && bundle exec rake assets:precompile RAILS_GROUPS=assets RAILS_ENV=production"
     end
   end
 

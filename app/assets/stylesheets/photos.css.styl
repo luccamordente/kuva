@@ -188,7 +188,7 @@ control-style(color)
           text-align center
           vertical-align middle
           z-index 2
-          transition top 0.5s, left 0.5s
+          transition top 0.5s, left 0.5s, width 0.5s, height 0.5s
 
 
       .pomp
@@ -426,6 +426,10 @@ control-style(color)
         transition opacity 1s ease-in
 
       .canvas
+      
+        .image
+          background none
+
         .control, .control.hideable
           &.duplicate
             display block

@@ -150,11 +150,11 @@ private
     end
 
     def admin_notify_closed
-      AdminMailer.order_closed(self).deliver
+      AdminMailer.order_closed(self).deliver unless Rails.env.development?
     end
 
     def user_notify_closed
-      UserMailer.order_closed(self).deliver
+      UserMailer.order_closed(self).deliver unless Rails.env.development?
     end
 
 end

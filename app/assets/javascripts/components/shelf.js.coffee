@@ -1,12 +1,13 @@
 do (parent = kuva, overlay = kuva.overlay) ->
 
   inputzin = input = flash = null
+  timeouts = {}
 
 
   that = (selectorzin, selector, flash_selector) ->
     inputzin = inputzin || $(selectorzin)
-    input = input || $(selector)
-    flash = flash || $(flash_selector);
+    input    = input    || $(selector)
+    flash    = flash    || $(flash_selector);
     initialize()
     that
 
@@ -15,12 +16,15 @@ do (parent = kuva, overlay = kuva.overlay) ->
       css:
         position: 'absolute'
 
+
+  shelfer = (part) ->
+    shelf[part]()
+    shelf.current = part
+
+
   shelf =
     overlaying: null
-    mouse_enter: ->
-      shelf.overlaying.addClass('over');
-    mouse_leave: ->
-      shelf.overlaying.removeClass('over');
+    current   : null
     buttonzin: ->
       @overlaying = inputzin
       flash.css width:1, height:1
@@ -32,12 +36,25 @@ do (parent = kuva, overlay = kuva.overlay) ->
       @overlaying = $ document.body
       overlay(flash).at document.body
 
+
+  handlers =
+    resize: ->
+      clearTimeout timeouts.resize
+      timeouts.resize = setTimeout shelf[shelf.current], 500
+    mouse_enter: ->
+      shelf.overlaying.addClass('over');
+    mouse_leave: ->
+      shelf.overlaying.removeClass('over');
+
+
   initialize = ->
     input.attr 'disabled', true
     console.error "shelf: Flash for shelf not found" unless flash.length
 
-    bus.on('mouse.enter', shelf.mouse_enter)
-    .on('mouse.leave', shelf.mouse_leave)
+    bus.on('mouse.enter', handlers.mouse_enter)
+       .on('mouse.leave', handlers.mouse_leave)
+
+    $(window).on 'resize', handlers.resize
 
     # TODO bus.on('interface.initialized', -> )
     $ ready
@@ -45,10 +62,11 @@ do (parent = kuva, overlay = kuva.overlay) ->
 
   ready = ->
     input.attr 'disabled', false
-    shelf.button()
+    shelfer 'button'
+
     flash.css configuration.flash.css
 
 
-  that.overlay = shelf
+  that.overlay = shelfer
 
   parent.shelf = that

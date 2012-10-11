@@ -4,6 +4,8 @@ class Order
 
   EXECUTION_TIME = 1.hour
 
+  paginates_per 50
+
   # attrs
   attr_accessible :price, :observations, :user_id
   attr_protected :status
@@ -76,7 +78,15 @@ class Order
   end
 
   def downloadable?
-    not [EMPTY, PROGRESS].include? status
+    not [EMPTY, PROGRESS, CANCELED].include? status
+  end
+
+  def executable?
+    status == CAUGHT
+  end
+
+  def deliverable?
+    status == READY
   end
 
   def downloaded?

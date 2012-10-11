@@ -4,11 +4,12 @@
   <title>Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <%= stylesheet_link_tag    "admin/application", media: "all" %>
+  <%= stylesheet_link_tag    "admin/print/print", media: "print" %>
   <%= airbrake_javascript_notifier %>
   <%= javascript_include_tag "admin/application" %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body id="<%= yield :id if content_for? :id %>">
 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -44,7 +45,7 @@
   <div class="container-fluid">
     <div class="row-fluid">
       <%= render partial: 'layouts/admin/flash' %>
-      <div class="span12" id="<%= yield :id if content_for? :id %>">
+      <div class="span12">
         <%= yield %>
       </div>
     </div>

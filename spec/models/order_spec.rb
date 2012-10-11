@@ -122,11 +122,42 @@ describe Order do
       end
     end
 
-
   end
 
+
+
+  describe "executable" do
+    orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING READY DELIVERED CANCELED } do |order, status|
+      it "should not be executable when #{status}" do
+        order.should_not be_executable
+      end
+    end
+
+    orders_with_each_status %W{ CAUGHT } do |order, status|
+      it "should be executable when #{status}" do
+        order.should be_executable
+      end
+    end
+  end
+
+
+  describe "deliverable" do
+    orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING CAUGHT DELIVERED CANCELED } do |order, status|
+      it "should not be deliverable when #{status}" do
+        order.should_not be_deliverable
+      end
+    end
+
+    orders_with_each_status %W{ READY } do |order, status|
+      it "should be deliverable when #{status}" do
+        order.should be_deliverable
+      end
+    end
+  end
+
+
   describe "downloadable" do
-    orders_with_each_status %W{ EMPTY PROGRESS } do |order, status|
+    orders_with_each_status %W{ EMPTY PROGRESS CANCELED } do |order, status|
       it "should not be downloadable when #{status}" do
         order.should_not be_downloadable
       end

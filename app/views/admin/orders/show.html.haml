@@ -1,77 +1,125 @@
-%p
-  %b Status:
-  = labeled_status @order
-%p
-  %b Preço:
-  = number_to_currency @order.price
-%p
-  %b Aberta em:
-  = l @order.created_at, format: :medium
-%p
-  %b Atualizado pela última vez em:
-  =  l @order.updated_at, format: :medium
-- if @order.canceled?
-  %p
-    %b Cancelada em:
-    =  l @order.canceled_at, format: :medium
-%p
-  %b Cliente:
-  = @order.user.try :name
+- content_for :id, :orders
 
-%br
+.container-fluid
 
-%p
-  %b Início da seleção em:
-  = l @order.progress_at , format: :medium  if @order.progress_at
-%p
-  %b Fechada em:
-  = l @order.closed_at   , format: :medium  if @order.closed_at
-%p
-  %b Início da captura:
-  = l @order.catching_at , format: :medium  if @order.catching_at
-%p
-  %b Capturado em:
-  = l @order.caught_at   , format: :medium  if @order.caught_at
-%p
-  %b Pronta em:
-  = l @order.ready_at    , format: :medium  if @order.ready_at
-%p
-  %b Entregue em:
-  = l @order.delivered_at, format: :medium  if @order.delivered_at
-
-
-%br
-
-
-%p
-  %b Observações:
-  = @order.observations
-
-
-%br
-
-
-- if @order.downloadable?
-  %p= link_to 'Download', download_admin_order_path(@order), class: 'btn btn-primary'
-  %br
+  .row-fluid
+    .span12
+      %h1
+        Ordem:
+        = @order.id
 
 
 
-- unless @order.photos.empty?
-  %table.table.table-striped
-    %tr
-      %th Tamanho
-      %th Quantidade
-      %th Preço unitário
-      %th Preço total
 
-    - @order.photos.each do |photo|
-      %tr
-        %td= photo.product.name
-        %td= photo.count
-        %td= number_to_currency photo.product.price
-        %td= number_to_currency photo.product.price * photo.count
+  .row-fluid
+
+    .span9
+
+      %p.unprintable
+        %b Status:
+        = labeled_status @order
+        %span.status-actions.unprintable
+          = link_to "Marcar como executada", 'javascript:void(0);', class: 'btn btn-mini btn-inverse disabled' if @order.executable?
+          = link_to "Marcar como entregue" , 'javascript:void(0);', class: 'btn btn-mini btn-inverse disabled' if @order.deliverable?
+      %p
+        %b Cliente:
+        = @order.user.try :name
+      %br
+
+      %p
+        %b Observações:
+        = @order.observations
+      %br
 
 
 
-= link_to 'Voltar', admin_orders_path
+
+      - unless @order.photos.empty?
+        %table.table.table-striped
+          %tr
+            %th
+            %th
+            %th Tamanho
+            %th Papel
+            %th Preço unitário
+            %th Preço total
+
+          - @photos.each_pair do |specs, photos|
+            - count = photos.sum(&:count)
+            %tr
+              %td= count
+              %td &times;
+              %td= specs[:product].name
+              %td= t "photo.specs.paper.#{specs[:paper]}"
+              %td= number_to_currency specs[:product].price
+              %td= number_to_currency specs[:product].price * count
+
+
+
+      %p
+        %b Total de impressões:
+        = @total_count
+      %p
+        %b Preço:
+        = number_to_currency @order.price
+
+
+
+
+
+
+    .span3.unprintable
+
+      = link_to (@order.downloadable? ? download_admin_order_path(@order) : 'javascript:void(0);'), class: "btn btn-primary #{ 'disabled' unless @order.downloadable? }", rel: 'tooltip', title: 'Clique para fazer download' do
+        %i.icon-download-alt.icon-white
+        Download
+
+      = link_to (@order.downloadable? ? 'javascript:print();' : 'javascript:void(0);'), class: "btn #{ 'disabled' unless @order.downloadable?}", rel: 'tooltip', title: 'Clique para imprimir' do
+        %i.icon-print
+        Imprimir
+
+      %br
+      %br
+
+      #meta.well
+        %p
+          %b Aberta em:
+          %br
+          = l @order.created_at, format: :medium
+        %p
+          %b Atualizado pela última vez em:
+          %br
+          =  l @order.updated_at, format: :medium
+        - if @order.canceled?
+          %p
+            %b Cancelada em:
+            %br
+            =  l @order.canceled_at, format: :medium
+
+        %br
+
+        %p
+          %b Início da seleção em:
+          %br
+          = l @order.progress_at , format: :medium  if @order.progress_at
+        %p
+          %b Fechada em:
+          %br
+          = l @order.closed_at   , format: :medium  if @order.closed_at
+        %p
+          %b Início da captura:
+          %br
+          = l @order.catching_at , format: :medium  if @order.catching_at
+        %p
+          %b Capturado em:
+          %br
+          = l @order.caught_at   , format: :medium  if @order.caught_at
+        %p
+          %b Pronta em:
+          %br
+          = l @order.ready_at    , format: :medium  if @order.ready_at
+        %p
+          %b Entregue em:
+          %br
+          = l @order.delivered_at, format: :medium  if @order.delivered_at
+

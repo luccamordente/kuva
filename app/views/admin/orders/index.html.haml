@@ -1,15 +1,45 @@
+- content_for :id, :orders
+
 %h1 Ordens
 
-%table.table.table-striped
-  %tr
-    %th Status
-    %th Preço
-    %th.hidden-phone Data
-    %th Atualizado
-    %th Cliente
-    %th
-    %th.visible-desktop
-    / %th.hidden-phone
-    / %th.hidden-phone
+.row-fluid
 
-  = render @orders
+  .span2
+
+    %ul.nav.nav-list
+      %li.nav-header Filtrar
+      %li
+        = link_to admin_orders_path do
+          %span.label Todas
+
+      %li.divider
+
+      - Order::STATUSES.each do |status|
+        %li{ class: ("active" if status.to_s == @status) }
+          = link_to admin_orders_path status: status do
+            = label_with_status I18n.t("order.status.#{status}"), status
+
+    %br
+    %br
+
+
+  .span10
+
+    %table.table.table-striped
+      %tr
+        %th Status
+        %th Preço
+        %th.hidden-phone Abertura
+        %th
+          Atualizado
+          %i.icon-arrow-down
+        %th Cliente
+        %th.visible-desktop
+        / %th.hidden-phone
+        / %th.hidden-phone
+
+      = render @orders
+
+
+    = paginate @orders
+

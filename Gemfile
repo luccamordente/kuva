@@ -20,6 +20,7 @@ gem "roadie"
 gem "active_decorator"
 gem "airbrake"
 gem "simple_form"
+gem "kaminari"
 
 gem 'haml-rails', '~> 0.3.4'
 

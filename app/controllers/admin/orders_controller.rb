@@ -1,46 +1,47 @@
 class Admin::OrdersController < Admin::ApplicationController
+
   # GET /admin/orders
   # GET /admin/orders.json
   def index
-    @orders = Order.last_updated
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @orders }
-    end
+    @status = params[:status]
+    @orders = Order.last_updated.page params[:page]
+    @orders = @orders.where status: @status if @status
   end
 
   # GET /admin/orders/1
   # GET /admin/orders/1.json
   def show
-    @order = Order.find(params[:id])
+    @order = Order.includes(:user).find(params[:id])
+
+    @total_count = @order.photos.sum &:count
+
+    @photos = @order.photos.group_by do |photo|
+      {
+        paper: photo.specification.paper,
+        product:  photo.product
+      }
+    end
 
     respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @order }
+      format.html
     end
   end
-  
+
   def download
     @order  = Order.find params[:id]
-    
+
     @order.compressed do |file|
       @order.update_status Order::CATCHING
       send_data file.read, filename: "#{@order.id}.zip"
       @order.update_status Order::CAUGHT
     end
-    
+
   end
 
   # GET /admin/orders/new
   # GET /admin/orders/new.json
   def new
     @order = Order.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @order }
-    end
   end
 
   # GET /admin/orders/1/edit
@@ -56,10 +57,8 @@ class Admin::OrdersController < Admin::ApplicationController
     respond_to do |format|
       if @order.save
         format.html { redirect_to admin_order_path(@order), notice: 'Order was successfully created.' }
-        format.json { render json: @order, status: :created, location: admin_order_path(@order) }
       else
         format.html { render action: "new" }
-        format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -72,10 +71,8 @@ class Admin::OrdersController < Admin::ApplicationController
     respond_to do |format|
       if @order.update_attributes(params[:order])
         format.html { redirect_to admin_order_path(@order), notice: 'Order was successfully updated.' }
-        format.json { head :no_content }
       else
         format.html { render action: "edit" }
-        format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -88,7 +85,6 @@ class Admin::OrdersController < Admin::ApplicationController
 
     respond_to do |format|
       format.html { redirect_to admin_orders_url }
-      format.json { head :no_content }
     end
   end
 end

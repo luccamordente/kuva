@@ -1,8 +1,8 @@
 %tr
   %td= labeled_status order
   %td= number_to_currency order.price
-  %td.hidden-phone= l order.created_at, format: :medium
-  %td= l order.updated_at, format: :medium
+  %td.hidden-phone= time_ago_in_words order.created_at
+  %td= time_ago_in_words order.updated_at
   %td= order.user.try :name
   - if order.downloadable? and not order.downloaded?
     %td.visible-desktop= link_to 'Ver e fazer download', admin_order_path(order), class: 'btn btn-primary'

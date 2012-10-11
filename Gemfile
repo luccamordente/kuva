@@ -21,6 +21,8 @@ gem "active_decorator"
 gem "airbrake"
 gem "simple_form"
 gem "kaminari"
+gem "httparty"
+gem "rmagick"
 
 gem 'haml-rails', '~> 0.3.4'
 

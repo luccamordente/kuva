@@ -1,4 +1,8 @@
+require 'notifiable'
+
 class AdminMailer < ActionMailer::Base
+  include Notifiable
+
   helper :orders
 
   default from: "Kuva - Pedro Cine Foto <pedrocinefoto@gmail.com>"
@@ -16,6 +20,8 @@ class AdminMailer < ActionMailer::Base
     @order = order
     @user = @order.user
     @name  = @user.try :name
+
+    notify ['luccamordente','ricardo1216'], 'Ordem enviada por #{@order.user.name}', nil, admin_order_url(@order) if Rails.env.production?
 
     mail subject: "Ordem enviada por #{@order.user.name}! [#{@order.id}]"
   end

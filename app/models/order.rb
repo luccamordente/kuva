@@ -156,7 +156,7 @@ private
     end
 
     def admin_notify_opened
-      AdminMailer.order_opened(self).deliver unless Rails.env.development?
+      # AdminMailer.order_opened(self).deliver unless Rails.env.development?
     end
 
     def admin_notify_closed

@@ -10,6 +10,8 @@ class ImageUploader < CarrierWave::Uploader::Base
   storage :file
   # storage :fog
 
+  after :cache, :converter
+
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
@@ -20,7 +22,11 @@ class ImageUploader < CarrierWave::Uploader::Base
     end
   end
 
-  process convert: :jpeg
+
+
+  def converter file
+    system "convert #{file.path} -colorspace rgb -format jpg #{file.path}"
+  end
 
 
   # Provide a default URL as a default if there hasn't been a file uploaded:

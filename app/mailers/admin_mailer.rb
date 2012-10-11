@@ -21,7 +21,7 @@ class AdminMailer < ActionMailer::Base
     @user = @order.user
     @name  = @user.try :name
 
-    notify ['luccamordente','ricardo1216'], 'Ordem enviada por #{@order.user.name}', nil, admin_order_url(@order) if Rails.env.production?
+    notify ['luccamordente','ricardo1216'], "Ordem enviada por #{@order.user.name}", nil, admin_order_url(@order) if Rails.env.production?
 
     mail subject: "Ordem enviada por #{@order.user.name}! [#{@order.id}]"
   end

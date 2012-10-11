@@ -77,11 +77,10 @@ default_run_options[:pty] = true
 
 
 after "deploy"            , "deploy:cleanup"
-after "deploy:update_code", "deploy:copy_files"
 
-# need to run after create_symlink, otherwise rake is not found oO
-after "deploy:create_symlink", "deploy:bundle:install"
-after "deploy:create_symlink", "deploy:assets:precompile" if precompile_assets
+before "deploy:create_symlink", "deploy:copy_files"
+before "deploy:create_symlink", "deploy:bundle:install"
+before "deploy:create_symlink", "deploy:assets:precompile" if precompile_assets
 
 before "deploy:cleanup", "deploy:fix_permissions"
 after "deploy:cleanup", "deploy:restart"
@@ -93,7 +92,7 @@ namespace :deploy do
 
   namespace :bundle do
     task :install do
-      run "cd #{current_path} && bundle install --deployment --without test development"
+      run "cd #{release_path} && bundle install --deployment --without test development"
     end
   end
 

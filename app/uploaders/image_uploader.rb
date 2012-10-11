@@ -10,7 +10,7 @@ class ImageUploader < CarrierWave::Uploader::Base
   storage :file
   # storage :fog
 
-  after :store, :converter
+  after :store, :convert
 
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
@@ -25,7 +25,8 @@ class ImageUploader < CarrierWave::Uploader::Base
 
 
   def converter file
-    system "convert #{model.image.current_path} -colorspace rgb -format jpg #{model.image.current_path}"
+    # system "convert #{model.image.current_path} -colorspace rgb -format jpg -strip #{model.image.current_path}"
+    system "convert #{model.image.current_path} -format jpg #{model.image.current_path}"
   end
 
 

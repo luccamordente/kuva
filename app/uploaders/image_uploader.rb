@@ -35,7 +35,7 @@ class ImageUploader < CarrierWave::Uploader::Base
     image = Magick::Image.read(path).first
 
     convert_format     = !     FORMATS_WHITELIST.include?(image.format    )
-    convert_colorspace = ! COLORSPACES_WHITELIST.include?(image.colorspace)
+    convert_colorspace = true # ! COLORSPACES_WHITELIST.include?(image.colorspace)
 
     options  = []
     options << '-format  jpg'        if convert_format

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Admin::OrdersController do
-  
-  
+
+
   describe "download closed order" do
-    
-    let!(:order) do 
+
+    let!(:order) do
       order = Fabricate :order do |order|
         image = Fabricate :image, image: image_fixture
         images { [ image ] }
@@ -18,22 +18,22 @@ describe Admin::OrdersController do
       order.update_status :closed
       order
     end
-    
+
     specify{ order.status.should == Order::CLOSED }
-    
+
     it "changes the order status to caught" do
       controller.stub!(:render)
       controller.should_receive :send_data
       get :download, id: order.id
       order.reload.status.should == Order::CAUGHT
     end
-      
+
   end
-  
-  
+
+
   describe "download caught order" do
     it "does not change order status"
   end
-  
-  
+
+
 end

@@ -6,9 +6,15 @@ class Image
   mount_uploader :image, ImageUploader
 
   belongs_to :order
+  embeds_one :original, class_name: "Image"
 
   validates :image, presence: true
 
   after_save "self.order.check_and_update_status if self.order.present?"
+
+
+  def magick
+    Magick::Image.read(self.image.current_path).first
+  end
 
 end

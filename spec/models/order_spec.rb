@@ -208,9 +208,7 @@ describe Order do
     let!(:photos){[
       order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id: image.id),
       order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
-      order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
-      # photo without image that cannot fail
-      order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id)
+      order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id)
     ]}
 
     subject{ order.compressed }

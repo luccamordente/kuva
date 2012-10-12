@@ -10,22 +10,22 @@ require 'capybara/rspec'
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
 require 'database_cleaner'
- 
+
 RSpec.configure do |config|
   config.include Mongoid::Matchers
 
   config.mock_with :rspec
- 
+
   config.before(:each) do
-    DatabaseCleaner.orm = "mongoid" 
+    DatabaseCleaner.orm = "mongoid"
     DatabaseCleaner.strategy = :truncation, {except: %w[ neighborhoods ]}
     DatabaseCleaner.clean
   end
-  
+
   # Devise
   config.include Devise::TestHelpers, type: :controller
   config.extend ControllerMacros    , type: :controller
-  
+
   config.include LoginHelpers, type: :request
   config.extend LoginMacros, type: :request
 end
@@ -37,9 +37,17 @@ def validate_timestamps
 end
 
 def some_image_path
-  File.join(Rails.root,"app/assets/images/rails.png")
+  fixture_image_path 'rails.png'
 end
 
-def image_fixture
-  File.new some_image_path
+def fixture_image_path file
+  File.join(Rails.root,"spec/fixtures/images/#{file}")
+end
+
+def image_fixture file = nil
+  if file
+    File.new fixture_image_path file
+  else
+    File.new some_image_path
+  end
 end

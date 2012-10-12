@@ -34,7 +34,7 @@ class ImageUploader < CarrierWave::Uploader::Base
     path  = model.image.current_path
     image = Magick::Image.read(path).first
 
-    convert_format     = !     FORMATS_WHITELIST.include?(image.format    )
+    convert_format     = ! FORMATS_WHITELIST.include?(image.format)
     convert_colorspace = true # ! COLORSPACES_WHITELIST.include?(image.colorspace)
 
     options  = []
@@ -42,7 +42,8 @@ class ImageUploader < CarrierWave::Uploader::Base
     options << "-intent  #{INTENT}"  if convert_colorspace
     options << "-profile #{PROFILE}" if convert_colorspace
 
-    system "convert #{path} #{options.join(' ')} #{path}"
+    command = "convert #{path} #{options.join(' ')} #{path.chomp(File.extname(path))}.jpg"
+    system command
   end
 
 
@@ -71,8 +72,8 @@ class ImageUploader < CarrierWave::Uploader::Base
 
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
-  # def filename
-  #   "something.jpg" if original_filename
-  # end
+  def filename
+    "#{original_filename.chomp(File.extname(original_filename))}.jpg" if original_filename
+  end
 
 end

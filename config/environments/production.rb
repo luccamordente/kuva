@@ -53,7 +53,7 @@ Kuva::Application.configure do
 
   # Disable delivery errors, bad email addresses will be ignored
   config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default_url_options   = { host: 'http://201.17.161.70:9999' }
+  config.action_mailer.default_url_options   = { host: '201.17.161.70:9999' }
   config.action_mailer.asset_host            = 'http://201.17.161.70:9999'
   config.action_mailer.delivery_method       = :smtp
   config.action_mailer.smtp_settings = {

@@ -2,6 +2,12 @@
 
 class ImageUploader < CarrierWave::Uploader::Base
 
+  INTENT  = 'Relative'
+  PROFILE = "#{Rails.root}/lib/profiles/srgb.icm"
+
+  FORMATS_WHITELIST     = [ 'JPEG' ]
+  COLORSPACES_WHITELIST = [ Magick::RGBColorspace, Magick::SRGBColorspace ]
+
   # Include RMagick or MiniMagick support:
   include CarrierWave::RMagick
   # include CarrierWave::MiniMagick
@@ -24,9 +30,19 @@ class ImageUploader < CarrierWave::Uploader::Base
 
 
 
-  def converter file
-    # system "convert #{model.image.current_path} -colorspace rgb -format jpg -strip #{model.image.current_path}"
-    system "convert #{model.image.current_path} -format jpg #{model.image.current_path}"
+  def convert file
+    path  = model.image.current_path
+    image = Magick::Image.read(path).first
+
+    convert_format     = !     FORMATS_WHITELIST.include?(image.format    )
+    convert_colorspace = ! COLORSPACES_WHITELIST.include?(image.colorspace)
+
+    options  = []
+    options << '-format  jpg'        if convert_format
+    options << "-intent  #{INTENT}"  if convert_colorspace
+    options << "-profile #{PROFILE}" if convert_colorspace
+
+    system "convert #{path} #{options.join(' ')} #{path}"
   end
 
 

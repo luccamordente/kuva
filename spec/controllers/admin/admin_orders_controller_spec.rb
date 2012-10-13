@@ -28,6 +28,10 @@ describe Admin::OrdersController do
       order.reload.status.should == Order::CAUGHT
     end
 
+    context "originals" do
+      it "downloads with originals !!!!!!!!!!!!!!!!!!!!!!"
+    end
+
   end
 
 

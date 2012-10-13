@@ -6,10 +6,12 @@ class Orderizer
     @order = order
   end
 
-  def compressed &block
+  def compressed options = {}, &block
+    originals = !!options[:originals]
+
     base_directory = create_base_directory
 
-    place_photos_to base_directory
+    place_photos_to base_directory, originals
     file = compress base_directory
 
     if block_given?
@@ -44,12 +46,14 @@ private
     FileUtils.rm @order.tmp_zip_path
   end
 
-  def place_photos_to directory
+  def place_photos_to directory, originals = false
     @order.photos.each do |photo|
       Dir.chdir directory.path
       Dir.mkdir photo.directory.name unless File.directory? photo.directory.name
       raise "Photo has no Image" unless photo.image.present?
-      FileUtils.cp photo.image.image.current_path, photo.directory.name
+      image         = photo.image.image
+      image_to_copy = originals && image.original.present? ? image.original : image
+      FileUtils.cp image_to_copy.current_path, photo.directory.name
     end
   end
 

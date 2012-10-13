@@ -3,10 +3,10 @@ class Image
   include Mongoid::Timestamps
 
   attr_accessible :image, :image_cache
-  mount_uploader :image, ImageUploader
+
+  mount_uploader :image   , ImageUploader
 
   belongs_to :order
-  embeds_one :original, class_name: "Image"
 
   validates :image, presence: true
 

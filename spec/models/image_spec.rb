@@ -6,7 +6,6 @@ describe Image do
 
   describe "relationships" do
     it { should belong_to(:order)      }
-    it { should embed_one(:original)   }
   end
 
   describe "validations" do
@@ -30,13 +29,13 @@ describe Image do
     context "of jpeg NON rgb images" do
       let!(:magician){ ImageMagician.new image_fixture 'cmyk.jpg' }
 
-      specify { magician.original_image.should be_formatted_as :jpeg }
-      specify { magician.original_image.should have_profile    :cmyk }
+      specify { magician.image_before.should be_formatted_as :jpeg }
+      specify { magician.image_before.should have_profile    :cmyk }
 
-      it { magician.converted_image.should have_profile :srgb }
+      it { magician.image_after.should have_profile :srgb }
       it "keeps the original file" do
-        magician.image.original.should_not be_nil
-        magician.image.original.magick.should have_profile :cmyk
+        magician.image.original.should be_present
+        magician.original_image_after.should have_profile :cmyk
       end
       it "does not set the quality to 92"
       # diz que não precisa ser 100. 92 é extremamente próximo do original
@@ -45,36 +44,36 @@ describe Image do
     context "of rgb jpeg image" do
       let!(:magician){ ImageMagician.new image_fixture 'rgb.jpg' }
 
-      specify { magician.original_image.should be_formatted_as :jpeg }
-      specify { magician.original_image.should have_profile    :rgb  }
+      specify { magician.image_before.should be_formatted_as :jpeg }
+      specify { magician.image_before.should have_profile    :rgb  }
 
-      it { magician.converted_image.should have_profile :srgb }
-      it { magician.image.original.should be_nil }
+      it { magician.image_after.should have_profile :srgb }
+      it { magician.image.original.should be_blank }
       it "does not set the quality to 92"
     end
 
     context "of rgb NON jpeg image" do
       let!(:magician){ ImageMagician.new image_fixture 'rgb.png' }
 
-      specify { magician.original_image.should be_formatted_as :png }
-      specify { magician.original_image.should have_profile    :rgb }
+      specify { magician.image_before.should be_formatted_as :png }
+      specify { magician.image_before.should have_profile    :rgb }
 
-      it { magician.converted_image.should be_formatted_as :jpeg }
-      it { magician.image.original.should be_nil }
+      it { magician.image_after.should be_formatted_as :jpeg }
+      it { magician.image.original.should be_blank }
       it "sets the quality to 92"
     end
 
     context "of NON rgb and NON jpeg image" do
       let!(:magician){ ImageMagician.new image_fixture 'cmyk.tif' }
 
-      specify { magician.original_image.should be_formatted_as :tiff }
-      specify { magician.original_image.should have_profile    :cmyk }
+      specify { magician.image_before.should be_formatted_as :tiff }
+      specify { magician.image_before.should have_profile    :cmyk }
 
-      it { magician.converted_image.should be_formatted_as :jpeg  }
-      it { magician.converted_image.should have_profile    :srgb }
+      it { magician.image_after.should be_formatted_as :jpeg  }
+      it { magician.image_after.should have_profile    :srgb }
       it "keeps the original file" do
-        magician.image.original.should_not be_nil
-        magician.image.original.magick.should have_profile :cmyk
+        magician.image.original.should be_present
+        magician.original_image_after.should have_profile :cmyk
       end
       it "sets the quality to 92"
     end

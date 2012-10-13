@@ -202,45 +202,77 @@ describe Order do
 
   describe "compress" do
 
-    let!(:product){ Fabricate :product, name: "10x15" }
-    let!(:order){ Fabricate :order }
-    let!(:image){ order.images.create image: image_fixture }
-    let!(:photos){[
-      order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id: image.id),
-      order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
-      order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id)
-    ]}
+    context "normal" do
 
-    subject{ order.compressed }
-    after{ system "rm -rf #{ order.tmp_zip_path }"}
+      let!(:product){ Fabricate :product, name: "10x15" }
+      let!(:order){ Fabricate :order }
+      let!(:image){ order.images.create image: image_fixture }
+      let!(:photos){[
+        order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id: image.id),
+        order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
+        order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id)
+      ]}
 
-    it { should_not be_nil }
-    its(:class){ should == File }
-    its(:path) { should match /tmp.*?\.zip/ }
+      subject{ order.compressed }
+      after{ system "rm -rf #{ order.tmp_zip_path }"}
 
-    it "should delete the original dir" do
-      subject
-      expect{ Dir.new order.tmp_path }.to raise_error Errno::ENOENT
-    end
+      it { should_not be_nil }
+      its(:class){ should == File }
+      its(:path) { should match /tmp.*?\.zip/ }
 
-    it "should delete zip file"
-
-    it "should contain 2 dirs and include photos with image" do
-      Dir.chdir Order.tmp_path
-      system "unzip #{subject.path} -d . > /dev/null"
-      Dir.chdir order.tmp_path
-      dirs = Dir["*"]
-      dirs.count.should == 2
-      photos.each do |photo|
-        image = photo.reload.image
-        next if image.nil?
-        Dir["#{photo.directory.name}/*"].should include(File.join(photo.directory.name, image.image.current_path.split(/\//).last))
+      it "should delete the original dir" do
+        subject
+        expect{ Dir.new order.tmp_path }.to raise_error Errno::ENOENT
       end
-      system "rm -r #{order.tmp_path}"
+
+      it "should delete zip file"
+
+      it "should contain 2 dirs and include photos with image" do
+        Dir.chdir Order.tmp_path
+        system "unzip #{subject.path} -d . > /dev/null"
+        Dir.chdir order.tmp_path
+        dirs = Dir["*"].count.should == 2
+        photos.each do |photo|
+          Dir["#{photo.directory.name}/*"].should include(File.join(photo.directory.name, File.basename(photo.reload.image.image.current_path)))
+        end
+        system "rm -r #{order.tmp_path}"
+      end
+
+      it "should delete the original dir when anything wrong happens in between"
+      it "allows photos without image, by simply not copying the image"
     end
 
-    it "should delete the original dir when anything wrong happens in between"
-    it "allows photos without image, by simply not copying the image"
+
+    context "originals" do
+      let!(:product){ Fabricate :product, name: "10x15" }
+      let!(:order){ Fabricate :order }
+      let!( :rgb_image){ order.images.create image: image_fixture('rgb.jpg' ) }
+      let!(:cmyk_image){ order.images.create image: image_fixture('cmyk.jpg') }
+      let!(:photos){[
+        order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id:  rgb_image.id),
+        order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: cmyk_image.id)
+      ]}
+      subject{ order.compressed originals: true }
+
+      it "should include the original images when stored" do
+        Dir.chdir Order.tmp_path
+        system "unzip #{subject.path} -d . > /dev/null"
+        Dir.chdir order.tmp_path
+        photos.each do |photo|
+          image    = photo.reload.image.image
+          original = image.original
+          if image.original.present?
+            Dir["#{photo.directory.name}/*"].should     include(File.join(photo.directory.name, File.basename(original.current_path)))
+            Dir["#{photo.directory.name}/*"].should_not include(File.join(photo.directory.name, File.basename(   image.current_path)))
+          else
+            Dir["#{photo.directory.name}/*"].should     include(File.join(photo.directory.name, File.basename(   image.current_path)))
+            Dir["#{photo.directory.name}/*"].should_not include(File.join(photo.directory.name, File.basename(original.current_path)))
+          end
+        end
+        # system "rm -r #{order.tmp_path}"
+      end
+
+    end
 
 
   end

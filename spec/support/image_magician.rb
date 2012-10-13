@@ -4,26 +4,30 @@ class ImageMagician
     @file = file
   end
 
-  def original_file
+  def file_before
     @file
   end
 
-  def original_image
-    magick
+  def image_before
+    magick file_before.path
   end
 
   def image
-    @image ||= Fabricate :image, image: original_file
+    @image ||= Fabricate(:image, image: file_before).image
   end
 
-  def converted_image
-    image.magick
+  def image_after
+    magick image.current_path
+  end
+
+  def original_image_after
+    magick image.original.current_path
   end
 
 private
 
-  def magick
-    Magick::Image.read(@file.path).first
+  def magick path
+    Magick::Image.read(path).first
   end
 
 end

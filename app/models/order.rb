@@ -111,14 +111,14 @@ class Order
 
   # download
 
-  def compressed &block
+  def compressed options = {}, &block
     orderizer = Orderizer.new(self)
     if block_given?
-      orderizer.compressed do |file|
+      orderizer.compressed options do |file|
         yield file
       end
     else
-      orderizer.compressed
+      orderizer.compressed options
     end
   end
 

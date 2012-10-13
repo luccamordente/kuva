@@ -28,9 +28,11 @@ class Admin::OrdersController < Admin::ApplicationController
   end
 
   def download
-    @order  = Order.find params[:id]
+    @order = Order.find params[:id]
 
-    @order.compressed do |file|
+    originals = !params[:originals].nil?
+
+    @order.compressed originals: originals do |file|
       @order.update_status Order::CATCHING
       send_data file.read, filename: "#{@order.id}.zip"
       @order.update_status Order::CAUGHT

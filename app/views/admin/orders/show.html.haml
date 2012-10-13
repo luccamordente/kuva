@@ -71,13 +71,22 @@
 
     .span3.unprintable
 
-      = link_to (@order.downloadable? ? download_admin_order_path(@order) : 'javascript:void(0);'), class: "btn btn-primary #{ 'disabled' unless @order.downloadable? }", rel: 'tooltip', title: 'Clique para fazer download' do
-        %i.icon-download-alt.icon-white
-        Download
+      .btn-group#download
+        = link_to (@order.downloadable? ? download_admin_order_path(@order) : 'javascript:void(0);'), class: "btn btn-primary #{ 'disabled' unless @order.downloadable? }", rel: 'tooltip', title: 'Clique para fazer download' do
+          %i.icon-download-alt.icon-white
+          Download
+        .btn.btn-primary.dropdown-toggle{ data: { toggle: 'dropdown' }}
+          %span.caret
+        %ul.dropdown-menu
+          %li
+            = link_to (@order.downloadable? ? download_admin_order_path(@order, originals: true) : 'javascript:void(0);'), class: "btn-link #{ 'disabled' unless @order.downloadable? }" do
+              Originais
+
       &nbsp;
       = link_to (@order.downloadable? ? 'javascript:print();' : 'javascript:void(0);'), class: "btn #{ 'disabled' unless @order.downloadable?}", rel: 'tooltip', title: 'Clique para imprimir' do
         %i.icon-print
         Imprimir
+
 
       %br
       %br

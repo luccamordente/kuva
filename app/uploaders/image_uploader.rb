@@ -11,12 +11,16 @@ class ImageUploader < CarrierWave::Uploader::Base
 
   FORMATS_WHITELIST     = [ 'JPEG' ]
   COLORSPACES_WHITELIST = [ Magick::RGBColorspace, Magick::SRGBColorspace ]
+  RGB_COLORSPACES       = [ Magick::RGBColorspace, Magick::SRGBColorspace ]
 
   # Choose what kind of storage to use for this uploader:
   storage :file
   # storage :fog
 
-  after :store, :convert
+  before :store, :check
+  after  :store, :convert
+
+  version :original, :if => :keep_original?
 
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
@@ -28,24 +32,28 @@ class ImageUploader < CarrierWave::Uploader::Base
     end
   end
 
-
-
-  def convert file
-    path  = model.image.current_path
+  def check image
     image = Magick::Image.read(path).first
 
-    convert_format     = ! FORMATS_WHITELIST.include?(image.format)
-    convert_colorspace = true # ! COLORSPACES_WHITELIST.include?(image.colorspace)
+    @convert_format     = ! FORMATS_WHITELIST.include?(image.format)
+    @convert_colorspace = true # ! COLORSPACES_WHITELIST.include?(image.colorspace)
+  end
 
+  def convert file
     options  = []
-    options << '-format  jpg'        if convert_format
-    options << "-intent  #{INTENT}"  if convert_colorspace
-    options << "-profile #{PROFILE}" if convert_colorspace
+    options << '-format  jpg'        if @convert_format
+    options << "-intent  #{INTENT}"  if @convert_colorspace
+    options << "-profile #{PROFILE}" if @convert_colorspace
 
     command = "convert #{path} #{options.join(' ')} #{path.chomp(File.extname(path))}.jpg"
     system command
   end
 
+  # Override the filename of the uploaded files:
+  # Avoid using model.id or version_name here, see uploader/store.rb for details.
+  def filename
+    "#{original_filename.chomp(File.extname(original_filename))}.jpg" if original_filename
+  end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
   # def default_url
@@ -70,10 +78,20 @@ class ImageUploader < CarrierWave::Uploader::Base
   #   %w(jpg jpeg gif png)
   # end
 
-  # Override the filename of the uploaded files:
-  # Avoid using model.id or version_name here, see uploader/store.rb for details.
-  def filename
-    "#{original_filename.chomp(File.extname(original_filename))}.jpg" if original_filename
+
+private
+
+  def keep_original? file
+    not rgb? file
+  end
+
+  def rgb? file
+    image = Magick::Image.read(file.file).first
+    RGB_COLORSPACES.include?(image.colorspace)
+  end
+
+  def path
+    model.image.current_path
   end
 
 end

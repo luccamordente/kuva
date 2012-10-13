@@ -6,6 +6,9 @@ Kuva::Application.routes.draw do
       member do
         get :download
       end
+      resources :photos, only: [] do
+        get :download, on: :member
+      end
     end
     resources :products
 

@@ -125,7 +125,8 @@ namespace :deploy do
 
   desc "Restart the web server"
   task :restart, :roles => :app do
-    run "touch #{current_path}/tmp/restart.txt" if reload_server
+    run "touch #{current_path}/tmp/restart.txt"  if reload_server
+    run "curl http://127.0.0.1:9999 > /dev/null" if reload_server
   end
 
 end

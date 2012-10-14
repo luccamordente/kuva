@@ -109,7 +109,7 @@
             <div class=\"block times\">x</div>
             <div class=\"block product\">
               <div class=\"thumb\">
-                <img alt=\"Generic Temporary Small Photo Pile\" src=\"http://kuva.dev/assets/generic-temporary-small-photo-pile.png\" />
+                <img alt=\"Generic Temporary Small Photo Pile\" src=\"/assets/generic-temporary-small-photo-pile.png\" />
                 <div class=\"name\" data-text=\"item.product_name\"></div>
               </div>
             </div>

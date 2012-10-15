@@ -80,12 +80,12 @@
                 %td= t "photo.specs.paper.#{photo.specification.paper}"
                 %td= number_to_currency photo.product.price
                 %td= number_to_currency photo.product.price * photo.count
-                %td= File.basename photo.image.image.current_path
+                %td= File.basename photo.image.image.current_path if photo.image.present? && photo.image.image.present?
                 %td.visible-desktop
                   %div.btn-group
                     = link_to download_admin_order_photo_path(@order.id, photo.id),  class: "btn btn-primary #{ 'disabled' unless @order.downloadable? }", rel: 'tooltip', title: 'Clique para fazer download' do
                       %i.icon-download-alt.icon-white
-                    - if photo.image.image.original.present?
+                    - if photo.image.present? && photo.image.image.original.present?
                       .btn.btn-primary.dropdown-toggle{ data: { toggle: 'dropdown' }}
                         %span.caret
                       %ul.dropdown-menu

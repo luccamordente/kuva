@@ -498,7 +498,7 @@ templates =
     cancel_order:  $.jqotec """
         <div class="modal simplemodal-data" id="sent-modal" style="display: block; ">
           <div class="content">
-            Tem certeza que quer cancelar seu pedido?
+            Quer mesmo cancelar seu pedido?
           </div>
           <div class="button-group">
             <*= this.rendered_buttons *>

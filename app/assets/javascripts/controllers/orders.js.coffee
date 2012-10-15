@@ -487,7 +487,7 @@ templates =
           <div class="button-group">
             <span class="help">
               Tem alguma dúvida?
-              <a href="javascript:SnapABug.startLink();">Clique aqui para falar com a gente.</a>
+              <a href="javascript:$zopim.livechat.window.show();">Clique aqui para falar com a gente.</a>
             </span>
             <a class="button confirm success" data-on-click="modal.confirm">
               CONCLUIR

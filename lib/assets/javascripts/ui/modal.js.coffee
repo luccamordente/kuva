@@ -12,6 +12,8 @@ $.extend $.modal.defaults,
   modal       : false
   width       : 'auto'
   height      : 'auto'
+  escClose    : false
+  overlayClose: false
 
 
 # Only one modal can be opened at time for now.

@@ -60,7 +60,7 @@ control-style(color)
 
 #photos
 
-  & > .tooltip
+  .tooltip
     .tooltip-inner
       line-height 1em
       padding 0.7em
@@ -98,9 +98,30 @@ control-style(color)
     vertical-align middle
 
 
+  #defaults-gadget .gadget .canvas
+    .tooltip
+      &#tooltip-size
+        width 127px
+        left -172px
+        top   -36px
+        .tooltip-arrow
+          top 18px
+      &#tooltip-paper
+        width 125px
+        right -135px
+        top   -17px
+        .tooltip-arrow
+          top 38px
+      &#tooltip-count
+        width 170px
+        right -6px
+        top  266px
+        .tooltip-arrow
+          left inherit
+          right 35px
 
-  #defaults-gadget .gadget .canvas .control.hideable.duplicate
-    display none
+    .control.hideable.duplicate
+      display none
 
 
   .gadget
@@ -493,6 +514,7 @@ control-style(color)
     #gadgets
       clearfix()
       border-spacing 1em
+      padding-left 1em
       width 100%
 
 
@@ -705,7 +727,7 @@ control-style(color)
       img
         vertical-align -0.3em
     .content
-      padding 2em
+      padding 1em
       h2
         color #000
         font-size 1.1em

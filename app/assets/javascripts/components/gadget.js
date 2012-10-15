@@ -184,6 +184,7 @@ var gadget = (function declare_gadget (sorts) {
       var element  = this.element,
           photo    = this.photo,
           controls = element.find('.control'),
+          canvas   = element.find('.canvas'),
           paper;
 
       element.addClass('controlable');
@@ -192,24 +193,33 @@ var gadget = (function declare_gadget (sorts) {
       setTimeout(function(){
         controls.tooltip('destroy');
 
-        controls.filter('.size')
-          .data('title','<h1>TAMANHO<h1><small>Selecione o tamanho<br />da impressão final<br />que você deseja.</small>')
-          .data('placement', 'left');
+        $("                                                                                                         \
+          <div class=\"tooltip left\" id=\"tooltip-size\">                                                          \
+            <div class=\"tooltip-arrow\"></div>                                                                     \
+            <div class=\"tooltip-inner\">                                                                           \
+              TAMANHO<br /><small>Selecione o tamanho<br />da impressão final<br />que você deseja.</small>         \
+            </div>                                                                                                  \
+          </div>                                                                                                    \
+        ").appendTo(canvas).delay(0).fadeTo('fast', 0.8);
 
-        paper = specification.paper[photo.specification.paper].toUpperCase();
-        controls.filter('.paper')
-          .data('title','<h1>PAPEL ' + paper + '<h1><small>Você pode escolher<br />entre as opções<br />FOSCO e BRILHANTE.</small>')
-          .data('placement', 'right');
+        $("                                                                                                         \
+          <div class=\"tooltip right\" id=\"tooltip-paper\">                                                        \
+            <div class=\"tooltip-arrow\"></div>                                                                     \
+            <div class=\"tooltip-inner\">                                                                           \
+              PAPEL<br /><small>Você pode escolher<br />entre as opções<br />FOSCO e BRILHANTE.</small>             \
+            </div>                                                                                                  \
+          </div>                                                                                                    \
+        ").appendTo(canvas).delay(700).fadeTo('fast', 0.8);
 
-        controls.filter('.count')
-          .data('title','<h1>QUANTIDADE<h1><small>Escolha quantas cópias de cada<br />foto que você quer revelar.</small>')
-          .data('placement', 'bottom');
+        $("                                                                                                         \
+          <div class=\"tooltip bottom\" id=\"tooltip-count\">                                                       \
+            <div class=\"tooltip-arrow\"></div>                                                                     \
+            <div class=\"tooltip-inner\">                                                                           \
+              QUANTIDADE<br /><small>Escolha quantas cópias de cada<br />foto que você quer revelar.</small>        \
+            </div>                                                                                                  \
+          </div>                                                                                                    \
+        ").appendTo(canvas).delay(1400).fadeTo('fast', 0.8);
 
-        controls.tooltip({animation: true, trigger: 'manual'});
-
-        setTimeout(function(){ controls.filter('.size' ).tooltip('show'); },    0);
-        setTimeout(function(){ controls.filter('.paper').tooltip('show'); },  700);
-        setTimeout(function(){ controls.filter('.count').tooltip('show'); }, 1400);
       }, 700);
 
     }
@@ -241,7 +251,7 @@ var gadget = (function declare_gadget (sorts) {
       var percentage = Math.round(100 - (event.parsed / event.total) * 100), now = (new Date()).getTime();
 
       if (now - this.thumbnail_bar.updated > 200) {
-        this.thumbnail_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
+        this.thumbnail_bar.animate({width: percentage + '%'}, 1000, 'linear');
         this.thumbnail_bar.updated = now;
       }
     },
@@ -278,7 +288,7 @@ var gadget = (function declare_gadget (sorts) {
     uploading: function upload_progress (event) {
       var percentage = Math.round(100 - ((event.loaded / event.total) * 100));
 
-      this.upload_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
+      this.upload_bar.animate({width: percentage + '%'}, 1000, 'linear');
     },
     uploaded: function upload_complete(event) {
       var gadget = this;

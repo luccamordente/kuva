@@ -39,10 +39,11 @@
 
       unless group
         group = @grouped[product.name] = observable.call $.extend
-          photos: [],
+          photos      : [],
           product_name: product.name,
-          product: product,
-          count: 0
+          product     : product,
+          count       : 0
+          show        : false
         , item_prototype
 
         group.count = 0
@@ -87,16 +88,19 @@
       # product_id changes
       old_product = window.product.find @product_id
       old_item = summary.group old_product
-      old_item.remove @ if old_item?
+      old_item.remove @
+      old_item.show = old_item.count > 0
 
       product = window.product.find value
       item = summary.group product
       item.add @
+      item.show = item.count > 0
 
       summary.calculate_total()
     update_count: (value) ->
       item = summary.grouped[@product.name]
       item.count += +value - +@count
+      item.show   = item.count > 0
 
       summary.calculate_total() # TODO Only recalculate the changed price
 
@@ -105,12 +109,14 @@
       <div id=\"summary\" class=\"faded\">
         <div class=\"items\">
           <div class=\"item\" data-each-item=\"summary.items\">
-            <div class=\"block count\" data-text=\"item.count\">0</div>
-            <div class=\"block times\">x</div>
-            <div class=\"block product\">
-              <div class=\"thumb\">
-                <img alt=\"Generic Temporary Small Photo Pile\" src=\"/assets/generic-temporary-small-photo-pile.png\" />
-                <div class=\"name\" data-text=\"item.product_name\"></div>
+            <div data-show="item.show">
+              <div class=\"block count\" data-text=\"item.count\">0</div>
+              <div class=\"block times\">x</div>
+              <div class=\"block product\">
+                <div class=\"thumb\">
+                  <img alt=\"Generic Temporary Small Photo Pile\" src=\"/assets/generic-temporary-small-photo-pile.png\" />
+                  <div class=\"name\" data-text=\"item.product_name\"></div>
+                </div>
               </div>
             </div>
           </div>

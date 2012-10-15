@@ -86,7 +86,7 @@ dropper =
 
 send =
   clicked: ->
-    kuva.overlay().at(document.body)
+    kuva.overlay().dynamic().at(document.body)
     $('#end-confirmation').fadeIn()
   ignored: ->
     kuva.overlay().close()
@@ -118,7 +118,7 @@ send =
 cancel =
 
   clicked: ->
-    kuva.overlay().at(document.body)
+    kuva.overlay().dynamic().at(document.body)
     cancel.modal = modal
       cancel: ->
         kuva.overlay.close()
@@ -232,7 +232,7 @@ control =
       paper       : 'Brilhante'
 
     # Display modal and gadget
-    kuva.overlay().at(document.body)
+    kuva.overlay().dynamic().at(document.body)
     confirm = modal assigns, buttons, template: templates.modal.files_selected, minWidth: 780, minHeight: 680
     mass.photo = photo
     mass.show()
@@ -377,7 +377,7 @@ control =
     photo.image_id = event.data.id
     photo.save()
   closed: ->
-    kuva.overlay().at(document.body)
+    kuva.overlay().dynamic().at(document.body)
     modal
       confirm: -> document.location = document.location,
       ['confirm.success => Concluir'],
@@ -501,7 +501,7 @@ templates =
             Quer mesmo cancelar seu pedido?
           </div>
           <div class="button-group">
-            <*= this.rendered_buttons *>
+            <*= this.rendered_buttons.join(' ') *>
           </div>
         </div>
       """

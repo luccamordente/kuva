@@ -83,7 +83,7 @@ before "deploy:create_symlink", "deploy:bundle:install"
 before "deploy:create_symlink", "deploy:assets:precompile" if precompile_assets
 
 before "deploy:cleanup", "deploy:fix_permissions"
-after "deploy:cleanup", "deploy:restart"
+# after "deploy:cleanup", "deploy:restart"
 
 
 
@@ -126,7 +126,7 @@ namespace :deploy do
   desc "Restart the web server"
   task :restart, :roles => :app do
     run "touch #{current_path}/tmp/restart.txt"  if reload_server
-    run "curl http://127.0.0.1:9999 > /dev/null" if reload_server
+    run "curl http://127.0.0.1:9999 >& /dev/null" if reload_server
   end
 
 end

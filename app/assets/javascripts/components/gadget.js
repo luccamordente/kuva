@@ -39,7 +39,7 @@ var gadget = (function declare_gadget (sorts) {
 
 
       // TODO Better proxy binding on event bindings
-      bound = {}
+      bound = {};
       for (property in view) {
         if ($.type(view[property]) == 'function')
           bound[property] = $.proxy(view[property], this);
@@ -65,10 +65,10 @@ var gadget = (function declare_gadget (sorts) {
     },
     // TODO Make rivets view.sync work!
     update: function () {
-      var photo = this.photo
-      photo.count = photo.count
-      photo.product_id = photo.product_id
-      photo.specification && (photo.specification.paper = photo.specification.paper)
+      var photo = this.photo;
+      photo.count = photo.count;
+      photo.product_id = photo.product_id;
+      photo.specification && (photo.specification.paper = photo.specification.paper);
     },
     duplicate: function () {
       // TODO less memory leaking copy
@@ -127,8 +127,6 @@ var gadget = (function declare_gadget (sorts) {
           top           = 0,
           cropped_height,
           cropped_width,
-          canvas_height,
-          canvas_width,
           canvas_left,
           canvas_top,
           img_height,

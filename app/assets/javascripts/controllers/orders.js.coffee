@@ -229,7 +229,7 @@ control =
       amount      : 1
       copies      : '1 cópia'
       size        : photo.size || '10x15'
-      paper       : 'Brilhante'
+      paper       : 'Brilhante',
 
     # Display modal and gadget
     kuva.overlay().dynamic().at(document.body)
@@ -379,6 +379,7 @@ control =
   closed: ->
     kuva.overlay().dynamic().at(document.body)
     modal
+      order: order._id.substr 0, 8
       confirm: -> document.location = document.location,
       ['confirm.success => Concluir'],
       template: templates.modal.order_closed, minWidth: 510, minHeight: 500
@@ -483,6 +484,7 @@ templates =
                 * O prazo de 1 hora para prepararmos suas fotos só é válido para o horário comercial (segunda a sexta de 8:00 às 19:00 e sábado de 8:00 às 13:00).Caso seu pedido tenha sido fechado fora desse horário, este ficará pronto às 10:00 do próximo dia comercial.
               </span>
             </div>
+            <div class="order"><*= this.order *></div>
           </div>
           <div class="button-group">
             <span class="help">

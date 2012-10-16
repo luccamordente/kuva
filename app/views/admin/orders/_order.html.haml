@@ -1,5 +1,5 @@
 %tr
-  %td= order.id
+  %td.id= order.pretty_id
   %td= labeled_status order
   %td= number_to_currency order.price
   %td.hidden-phone= time_ago_in_words order.created_at

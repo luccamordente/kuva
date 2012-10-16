@@ -1,0 +1,12 @@
+= simple_form_for [:admin, @user] do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.input :name
+    = f.input :email
+    - unless @user.persisted?
+      = f.input :password
+      = f.input :password_confirmation
+
+  .form-actions
+    = f.button :submit, 'Salvar', class: 'btn-primary'

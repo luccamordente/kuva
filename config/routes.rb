@@ -2,6 +2,7 @@ Kuva::Application.routes.draw do
 
 
   namespace :admin do
+
     resources :orders do
       member do
         get :download
@@ -10,10 +11,17 @@ Kuva::Application.routes.draw do
         get :download, on: :member
       end
     end
+
     resources :products
+    resources :users, except: :destroy do
+      get  :password       , on: :member
+      post :update_password, on: :member
+    end
 
     root to: "orders#index"
   end
+
+
 
   devise_for :users, controllers: { sessions: "sessions" }
 

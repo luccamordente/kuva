@@ -690,7 +690,7 @@ pt-BR:
       short: ! "%d/%b, %H:%Mh"
       tiny: ! "%H:%Mh"
     pm: ""
-    
+
   views:
     pagination:
       first: "&laquo;"
@@ -742,3 +742,8 @@ pt-BR:
         dimension1: X
         dimension2: Y
         price: Preço
+      user:
+        name: Nome
+        email: E-mail
+        password: Senha
+        password_confirmation: Confirmação de senha

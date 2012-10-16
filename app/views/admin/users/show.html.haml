@@ -1,0 +1,15 @@
+%p
+  %b Name:
+  = @user.name
+%p
+  %b Email:
+  = @user.email
+
+.btn-group
+  = link_to edit_admin_user_path(@user), class: 'btn' do
+    %i.icon-pencil
+    Editar
+  = link_to edit_admin_user_path(@user), class: 'btn' do
+    %i.icon-lock
+    Mudar senha
+= link_to 'Voltar', admin_users_path

@@ -288,8 +288,10 @@ var gadget = (function declare_gadget (sorts) {
     uploading: function upload_progress (event) {
       var percentage = Math.round(100 - ((event.loaded / event.total) * 100)), now = (new Date()).getTime();
 
-      if (now - this.upload_bar.updated > 200)
+      if (now - this.upload_bar.updated > 200) {
         this.upload_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
+        this.upload_bar.updated = now;
+      }
     },
     uploaded: function upload_complete(event) {
       var gadget = this;

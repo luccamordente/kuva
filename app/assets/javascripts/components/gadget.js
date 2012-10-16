@@ -189,7 +189,7 @@ var gadget = (function declare_gadget (sorts) {
 
       // TODO clear timeouts upon confirmation
       setTimeout(function(){
-        controls.tooltip('destroy');
+        controls.filter('.count').tooltip('destroy');
 
         $("                                                                                                         \
           <div class=\"tooltip left\" id=\"tooltip-size\">                                                          \

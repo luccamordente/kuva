@@ -41,6 +41,11 @@ kuva.orders = (options) ->
 dropper =
   dragover: (event) -> false
   droped  : (event) ->
+    # avoids any drop
+    # TODO fix drag and drop
+    dropper.overlay.hide();
+    return false
+
     files = event.originalEvent.dataTransfer.files
     dropper.overlay.hide();
 

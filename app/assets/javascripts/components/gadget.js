@@ -256,12 +256,12 @@ var gadget = (function declare_gadget (sorts) {
       }
     },
     encoding: function thumbnailer_encoding (event) {
-      this.thumbnail_bar.stop().animate({width: '0%'});
+      this.thumbnail_bar.animate({width: '0%'});
     },
     thumbnailed: function thumbnailer_thumbnailed (event) {
       var gadget = this;
 
-      this.thumbnail_bar.stop().animate({width: '0%'}, 1000, 'linear', function () {
+      this.thumbnail_bar.animate({width: '0%'}, 1000, 'linear', function () {
         gadget.image.hide();
 
         // TODO Fix in a better way the hide bug on webkit browsers
@@ -298,7 +298,7 @@ var gadget = (function declare_gadget (sorts) {
       gadget.uploading = false;
       gadget.uploaded  = true;
 
-      this.upload_bar.stop().animate({width: '0%'}, 1000, 'linear', function () {
+      this.upload_bar.animate({width: '0%'}, 1000, 'linear', function () {
         // TODO when rivetized, this can be removed
         gadget.element.removeClass('uploading').addClass('uploaded');
       });

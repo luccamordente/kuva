@@ -2,6 +2,9 @@ class Admin::PhotosController < Admin::ApplicationController
   before_filter :find_photo
 
 
+  def show
+  end
+
   def download
     original = ! params[:original].nil?
 

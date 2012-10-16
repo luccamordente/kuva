@@ -33,5 +33,8 @@
                 %i.icon-download-alt
                 Original
 
-      = link_to admin_order_photo_path(photo.order, photo, format: :text), class: 'btn identify', rel: 'tooltip', title: 'ver informações da imagem' do
+      = link_to admin_order_photo_path(photo.order, photo, format: :jpeg), class: 'btn identify', rel: 'tooltip', title: 'visualizar imagem', target: :_blank do
+        %i.icon-eye-open
+
+      = link_to admin_order_photo_path(photo.order, photo, format: :text), class: 'btn identify', rel: 'tooltip', title: 'ver informações da imagem', target: :_blank do
         %i.icon-info-sign

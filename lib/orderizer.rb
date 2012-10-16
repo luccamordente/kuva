@@ -48,12 +48,29 @@ private
 
   def place_photos_to directory, originals = false
     @order.photos.each do |photo|
+      next if photo.count.zero?
+
+      photo_dir = photo.directory.name
+
       Dir.chdir directory.path
-      Dir.mkdir photo.directory.name unless File.directory? photo.directory.name
+      Dir.mkdir photo_dir unless File.directory? photo_dir
+
       raise "Photo has no Image" unless photo.image.present?
+
       image         = photo.image.image
       image_to_copy = originals && image.original.present? ? image.original : image
-      FileUtils.cp image_to_copy.current_path, photo.directory.name
+
+      file_path  = image_to_copy.current_path
+      file_name  = File.basename(file_path)
+      file_ext   = File.extname(file_name)
+      dest_match = file_name.chomp(file_ext)
+
+      # verifies if file exists and then rename it putting an incremental integer after the name
+      dest_path  = (existing = Dir["#{photo_dir}/#{dest_match}*"].last) ?
+                    File.join(photo_dir, "#{dest_match}#{(File.basename(existing).chomp(file_ext).gsub(dest_match,'').to_i + 1)}#{file_ext}") :
+                    photo_dir
+
+      FileUtils.cp image_to_copy.current_path, dest_path
     end
   end
 

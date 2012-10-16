@@ -251,17 +251,17 @@ var gadget = (function declare_gadget (sorts) {
       var percentage = Math.round(100 - (event.parsed / event.total) * 100), now = (new Date()).getTime();
 
       if (now - this.thumbnail_bar.updated > 200) {
-        this.thumbnail_bar.animate({width: percentage + '%'}, 1000, 'linear');
+        this.thumbnail_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
         this.thumbnail_bar.updated = now;
       }
     },
     encoding: function thumbnailer_encoding (event) {
-      this.thumbnail_bar.animate({width: '0%'});
+      this.thumbnail_bar.stop().animate({width: '0%'});
     },
     thumbnailed: function thumbnailer_thumbnailed (event) {
       var gadget = this;
 
-      this.thumbnail_bar.animate({width: '0%'}, 1000, 'linear', function () {
+      this.thumbnail_bar.stop().animate({width: '0%'}, 1000, 'linear', function () {
         gadget.image.hide();
 
         // TODO Fix in a better way the hide bug on webkit browsers
@@ -286,9 +286,10 @@ var gadget = (function declare_gadget (sorts) {
       this.element.addClass('uploading');
     },
     uploading: function upload_progress (event) {
-      var percentage = Math.round(100 - ((event.loaded / event.total) * 100));
+      var percentage = Math.round(100 - ((event.loaded / event.total) * 100)), now = (new Date()).getTime();
 
-      this.upload_bar.animate({width: percentage + '%'}, 1000, 'linear');
+      if (now - this.thumbnail_bar.updated > 200)
+        this.upload_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
     },
     uploaded: function upload_complete(event) {
       var gadget = this;
@@ -297,7 +298,7 @@ var gadget = (function declare_gadget (sorts) {
       gadget.uploading = false;
       gadget.uploaded  = true;
 
-      this.upload_bar.animate({width: '0%'}, 1000, 'linear', function () {
+      this.upload_bar.stop().animate({width: '0%'}, 1000, 'linear', function () {
         // TODO when rivetized, this can be removed
         gadget.element.removeClass('uploading').addClass('uploaded');
       });

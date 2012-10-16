@@ -100,7 +100,14 @@ send =
     progress = aside.progress
     progress.confirmed = true
 
-    bus.on('upload.start'  , (event) -> gadgets(event.key).dispatch('upload', event))
+    bus
+      .on('upload.start', (event) ->
+        aside.progress.status.text = "Enviando fotos..."
+        bus.off 'upload.start', @callee
+      )
+      .on('upload.start', (event) ->
+        gadgets(event.key).dispatch('upload', event)
+      )
       .on('upload.progress', (event) ->
         gadget = gadgets event.key
         gadget.dispatch('upload', event) unless gadget.uploading
@@ -382,6 +389,7 @@ control =
     photo.image_id = event.data.id
     photo.save()
   closed: ->
+    aside.progress.status.text = "Concluído!"
     kuva.overlay().dynamic().at(document.body)
     modal
       order: order._id.substr 0, 8
@@ -486,7 +494,7 @@ templates =
               o pagamento só será feito quando você vier buscá-las.
               <br /><br />
               <span class="observations">
-                * O prazo de 1 hora para prepararmos suas fotos só é válido para o horário comercial (segunda a sexta de 8:00 às 19:00 e sábado de 8:00 às 13:00).Caso seu pedido tenha sido fechado fora desse horário, este ficará pronto às 10:00 do próximo dia comercial.
+                * O prazo de 1 hora para prepararmos suas fotos só é válido para o horário comercial (segunda a sexta de 8:00 às 19:00 e sábado de 8:00 às 13:00).Caso seu pedido tenha sido fechado fora desse horário, este ficará pronto às 9:00 do próximo dia comercial.
               </span>
             </div>
             <div class="order"><*= this.order *></div>

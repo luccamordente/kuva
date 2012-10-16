@@ -22,11 +22,13 @@
     status: observable.call
       count: 0
       total: 0
+      text : "Preparando fotos..."
     change: (count) ->
       $('#send-progress .bar').css width: (count / progress.status.total * 100) + '%'
 
       if progress.confirmed and count == progress.status.total
         bus.publish 'send.completed'
+        progress.status.text = "Fechando pedido..."
 
 
 

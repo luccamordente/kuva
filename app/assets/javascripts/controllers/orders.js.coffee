@@ -32,7 +32,7 @@ kuva.orders = (options) ->
   kuva.orders.products       = products = window.product.cache = options.products
   window.gadgets = gadgets
 
-  uploader = window.uploader
+  window.domo = uploader = window.uploader
     url: "/pedidos/#{order._id}/images/"
     data:
       order_id: order._id
@@ -330,7 +330,8 @@ control =
     # todas miniaturas construidas
     for key, gadget of gadgets.all
       break
-    gadget.files && uploader.upload gadget.files[gadget.files.length - 1]
+      
+    # gadget.files && uploader.upload gadget.files[gadget.files.length - 1]
   photos:
     create: (count) ->
       $.ajax

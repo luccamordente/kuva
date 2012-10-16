@@ -27,6 +27,8 @@ var uploader = (function declare_uploader (reader) {
 	var uploader = {
 		// TODO Check if file is array and upload multiple files
 		upload: function upload_file(files) {
+		  if (!files) throw new TypeError("uploader.upload: Files parameter must not be falsy ");
+
 			this.get && this.get(0).files && (files = this.get(0).files);		// jQuery compatibility
 			files.length || (files = $.makeArray(files));						// Transform any paremeter in array
 

@@ -67,7 +67,7 @@ private
 
       # verifies if file exists and then rename it putting an incremental integer after the name
       dest_path  = (existing = Dir["#{photo_dir}/#{dest_match}*"].last) ?
-                    File.join(photo_dir, "#{dest_match}#{(File.basename(existing).chomp(file_ext).gsub(dest_match,'').to_i + 1)}#{file_ext}") :
+                    File.join(photo_dir, "#{dest_match}[#{(File.basename(existing).chomp(file_ext).gsub(dest_match,'').gsub(/[\[\]]/,'').to_i + 1)}]#{file_ext}") :
                     photo_dir
 
       FileUtils.cp image_to_copy.current_path, dest_path

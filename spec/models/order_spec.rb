@@ -262,9 +262,9 @@ describe Order do
         it "should copy files duplicated images" do
           files = Dir["#{duplicated_photo.directory.name}/*"]
           files.count.should == 3
-          files[0].should match 'rgb.jpg'
-          files[1].should match 'rgb1.jpg'
-          files[2].should match 'rgb2.jpg'
+          files[0].should match /rgb.jpg$/
+          files[1].should match /rgb\[1\].jpg$/
+          files[2].should match /rgb\[2\].jpg$/
         end
 
         after { system "if [ -d #{order.tmp_path} ]; then rm -rf #{order.tmp_path}; fi;" }

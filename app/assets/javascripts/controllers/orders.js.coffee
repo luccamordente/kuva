@@ -387,7 +387,7 @@ control =
       order: order._id.substr 0, 8
       confirm: -> document.location = document.location,
       ['confirm.success => Concluir'],
-      template: templates.modal.order_closed, minWidth: 510, minHeight: 500
+      template: templates.modal.order_closed, minWidth: 590, minHeight: 500
 
 
 

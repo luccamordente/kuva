@@ -229,7 +229,7 @@ var gadget = (function declare_gadget (sorts) {
       this.element.addClass('reading');
     },
     loadend: function reader_loadend (event) {
-      this.thumbnail_bar.updated = (new Date()).getTime();
+      this.thumbnail_bar.updated = this.upload_bar.updated = (new Date()).getTime();
       this.orientation  = event.width < event.height ? "vertical" : "horizontal";
       this.photo.height = event.height;
       this.photo.width  = event.width;

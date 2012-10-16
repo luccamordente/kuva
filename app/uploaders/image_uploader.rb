@@ -41,7 +41,6 @@ class ImageUploader < CarrierWave::Uploader::Base
 
   def convert file
     options  = []
-    options << '-format  jpg'        if @convert_format
     options << "-intent  #{INTENT}"  if @convert_colorspace
     options << "-profile #{PROFILE}" if @convert_colorspace
 

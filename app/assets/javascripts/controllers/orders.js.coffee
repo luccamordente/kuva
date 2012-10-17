@@ -397,11 +397,13 @@ control =
   closed: ->
     aside.progress.status.text = "Concluído!"
     kuva.overlay().dynamic().at(document.body)
+    $(window).off 'beforeunload'
+
     modal
       order: order._id.substr 0, 8
       confirm: -> document.location = document.location,
       ['confirm.success => Concluir'],
-      template: templates.modal.order_closed, minWidth: 590, minHeight: 500
+      template: templates.modal.order_closed, minWidth: 550, minHeight: 500
 
 
 
@@ -497,7 +499,7 @@ templates =
             <img src="/assets/structure/modal-summary-checkmark.png">
             Suas fotos foram enviadas e já estão conosco!
           </h1>
-          <div class="content">
+          <div class="content" style="width: 550px;">
             <h2>Em até 1 hora* suas fotos estarão prontas para você buscar, aqui no Pedro Cine Foto.</h2>
             <div class="note">
               <b>Lembre-se:</b>

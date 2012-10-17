@@ -135,7 +135,10 @@ cancel =
       cancel: ->
         kuva.overlay.close()
         cancel.modal.close()
-      confirm: -> order.cancel(),
+      confirm: ->
+        $(window).off 'beforeunload'
+        order.cancel()
+      ,
       [
         'confirm.danger => Sim<small>, quero cancelar meu pedido</small>',
         'cancel => Não<small>, quero voltar</small>'
@@ -397,11 +400,13 @@ control =
   closed: ->
     aside.progress.status.text = "Concluído!"
     kuva.overlay().dynamic().at(document.body)
-    $(window).off 'beforeunload'
 
     modal
       order: order._id.substr 0, 8
-      confirm: -> document.location = document.location,
+      confirm: ->
+        $(window).off 'beforeunload'
+        document.location = document.location
+      ,
       ['confirm.success => Concluir'],
       template: templates.modal.order_closed, minWidth: 550, minHeight: 500
 

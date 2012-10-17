@@ -273,7 +273,8 @@ var gadget = (function declare_gadget (sorts) {
             gadget.thumbnail_bar.hide();
           }, 1)
         });
-
+		
+		f 
         // TODO resizer.unload();
         gadget.thumbnailed && gadget.thumbnailed();   // Execute callback if any
       });

@@ -417,6 +417,8 @@ control =
 # Module methods
 initialize = ->
 
+  $(window).on 'beforeunload', -> 'Seu pedido será cancelado!'
+
   $('#send-button' ).bind 'click', control.send_clicked
   $('#ignore-send' ).bind 'click', control.send_ignored
   $('#confirm-send').bind 'click', control.send_confirmed
@@ -495,7 +497,7 @@ templates =
             <img src="/assets/structure/modal-summary-checkmark.png">
             Suas fotos foram enviadas e já estão conosco!
           </h1>
-          <div class="content" style="width: 510px;">
+          <div class="content">
             <h2>Em até 1 hora* suas fotos estarão prontas para você buscar, aqui no Pedro Cine Foto.</h2>
             <div class="note">
               <b>Lembre-se:</b>

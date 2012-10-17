@@ -183,9 +183,14 @@ control =
     product: undefined
   modal: undefined
 
+  initialized: ->
+    $('#initializing').fadeOut 'fast', ->
+      $('#main-add').fadeIn 2000
+      shelf.overlay 'button'
+
 
   file_selected: (event) ->
-    file = event.file
+    file  = event.file
     key   = event.key
     count = 0
 
@@ -430,7 +435,9 @@ initialize = ->
 
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
-  bus.on('file.selected'         , control.file_selected                                        )
+  bus
+  .on('application.initialized'  , control.initialized                                          )
+  .on('file.selected'            , control.file_selected                                        )
   .on('files.selected'           , control.files_selected                                       )
   .on('files.selected'           , control.first_files_selection                                )
   .on('files.selection_confirmed', control.selection_confirmed                                  )

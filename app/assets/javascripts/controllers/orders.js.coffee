@@ -250,7 +250,7 @@ control =
 
     # Display modal and gadget
     kuva.overlay().dynamic().at(document.body)
-    confirm = modal assigns, buttons, template: templates.modal.files_selected, minWidth: 780, minHeight: 680
+    confirm = modal assigns, buttons, template: templates.modal.files_selected, minWidth: 950, minHeight: 680
     mass.photo = photo
     mass.show()
     mass.dispatch 'loadend', photo

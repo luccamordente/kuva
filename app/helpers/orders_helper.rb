@@ -27,6 +27,8 @@ module OrdersHelper
       klass = "inverse"
     when Order::DELIVERED
       klass = "inverse"
+    when Order::CANCELED
+      klass = "important"
     end
   end
 

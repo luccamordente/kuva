@@ -58,7 +58,7 @@ describe AdminMailer do
 
     #ensure that the @confirmation_url variable appears in the email body
     it 'displays the admin url' do
-      mail.body.encoded.should match admin_root_url
+      mail.body.encoded.should match admin_order_url(order.id)
     end
   end
 

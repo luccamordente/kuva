@@ -70,9 +70,23 @@ control-style(color)
       margin-top 0.5em
 
 
+
+  #initializing
+    padding 10em
+    text-align center
+
+    .image
+      padding 2em
+
+    .message
+      text-transform lowercase
+
+
+
+
   #overlay
     // background image('bla.gif') center center rgba(0,0,0,0.4) no-repeat
-    background rgba(128,128,128,0.7)
+    background rgba(240,240,240,0.7)
     height 100%
     position fixed
     top 0px
@@ -472,6 +486,9 @@ control-style(color)
     .gadget
       background none !important
 
+      .modal
+        display none
+
       .canvas
 
         .control, .pomp
@@ -480,6 +497,9 @@ control-style(color)
 
       &.uploading
         background none !important
+
+        .modal
+          display none
 
         .canvas
           .control, .pomp
@@ -490,6 +510,9 @@ control-style(color)
 
 
       &.loaded
+
+        .modal
+          display none
 
         .canvas
           .control, .control.hideable
@@ -523,6 +546,7 @@ control-style(color)
 
     #main-add
 
+      display none
       text-align center
 
       #add-button
@@ -731,6 +755,8 @@ control-style(color)
       h2
         color #000
         font-size 1.1em
+      .order
+        padding 1em 0 0
       .note
         color #999
         font-size 0.8em

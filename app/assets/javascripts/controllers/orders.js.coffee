@@ -41,6 +41,11 @@ kuva.orders = (options) ->
 dropper =
   dragover: (event) -> false
   droped  : (event) ->
+    # avoids any drop
+    # TODO fix drag and drop
+    dropper.overlay.hide();
+    return false
+
     files = event.originalEvent.dataTransfer.files
     dropper.overlay.hide();
 
@@ -95,7 +100,14 @@ send =
     progress = aside.progress
     progress.confirmed = true
 
-    bus.on('upload.start'   , (event) -> gadgets(event.key).dispatch('upload'   , event))
+    bus
+      .on('upload.start', (event) ->
+        aside.progress.status.text = "Enviando fotos..."
+        bus.off 'upload.start', @callee
+      )
+      .on('upload.start', (event) ->
+        gadgets(event.key).dispatch('upload', event)
+      )
       .on('upload.progress', (event) ->
         gadget = gadgets event.key
         gadget.dispatch('upload', event) unless gadget.uploading
@@ -171,9 +183,14 @@ control =
     product: undefined
   modal: undefined
 
+  initialized: ->
+    $('#initializing').fadeOut 'fast', ->
+      $('#main-add').fadeIn 2000
+      shelf.overlay 'button'
+
 
   file_selected: (event) ->
-    file = event.file
+    file  = event.file
     key   = event.key
     count = 0
 
@@ -229,7 +246,7 @@ control =
       amount      : 1
       copies      : '1 cópia'
       size        : photo.size || '10x15'
-      paper       : 'Brilhante'
+      paper       : 'Brilhante',
 
     # Display modal and gadget
     kuva.overlay().dynamic().at(document.body)
@@ -378,11 +395,13 @@ control =
     photo.image_id = event.data.id
     photo.save()
   closed: ->
+    aside.progress.status.text = "Concluído!"
     kuva.overlay().dynamic().at(document.body)
     modal
+      order: order._id.substr 0, 8
       confirm: -> document.location = document.location,
       ['confirm.success => Concluir'],
-      template: templates.modal.order_closed, minWidth: 510, minHeight: 500
+      template: templates.modal.order_closed, minWidth: 590, minHeight: 500
 
 
 
@@ -417,7 +436,9 @@ initialize = ->
 
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
-  bus.on('file.selected'         , control.file_selected                                        )
+  bus
+  .on('application.initialized'  , control.initialized                                          )
+  .on('file.selected'            , control.file_selected                                        )
   .on('files.selected'           , control.files_selected                                       )
   .on('files.selected'           , control.first_files_selection                                )
   .on('files.selection_confirmed', control.selection_confirmed                                  )
@@ -481,9 +502,10 @@ templates =
               o pagamento só será feito quando você vier buscá-las.
               <br /><br />
               <span class="observations">
-                * O prazo de 1 hora para prepararmos suas fotos só é válido para o horário comercial (segunda a sexta de 8:00 às 19:00 e sábado de 8:00 às 13:00).Caso seu pedido tenha sido fechado fora desse horário, este ficará pronto às 10:00 do próximo dia comercial.
+                * O prazo de 1 hora para prepararmos suas fotos só é válido para o horário comercial (segunda a sexta de 8:00 às 19:00 e sábado de 8:00 às 13:00).Caso seu pedido tenha sido fechado fora desse horário, este ficará pronto às 9:00 do próximo dia comercial.
               </span>
             </div>
+            <div class="order"><*= this.order *></div>
           </div>
           <div class="button-group">
             <span class="help">

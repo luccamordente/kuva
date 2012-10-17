@@ -1,7 +1,12 @@
 # coding: utf-8
 
 module OrderDecorator
-  
+
+  def pretty_id
+    start, finish = id.to_s.partition(/.{8}/)[1..2]
+    "<b>#{start}</b><br /><small>#{finish}</small>".html_safe
+  end
+
   # Statuses for human admins. e.g.:
   #  => "Em andamento"
   def simple_status
@@ -19,7 +24,7 @@ module OrderDecorator
       I18n.t "order.status.humanized.#{status}"
     end
   end
-  
+
   # Depending on the status, generates a string like:
   #  => "Aberto em: 14/Ago/2012, 10:47h (aproximadamente 6 horas atrás)"
   def status_time
@@ -32,18 +37,18 @@ module OrderDecorator
     end
     "#{I18n.t("order.status.time.#{which}")} #{l(time, format: :medium)} (#{time_ago_in_words(time)})"
   end
-  
+
   # Time remaining for promised time. e.g.:
   #  => "47 minutos"
   def remaining_time
     distance_of_time_in_words promised_for, Time.now
   end
-  
+
 private
-  
+
   # Time ago in words with "ago"
   def time_ago_in_words *args
     "#{super} #{I18n.t("datetime.distance_in_words.ago")}"
   end
-  
+
 end

@@ -63,7 +63,7 @@
 
         - unless @order.photos.empty?
           #advanced.tab-pane
-            %table.table.table-striped
+            %table#photos.table.table-striped
               %tr
                 %th
                 %th
@@ -74,27 +74,7 @@
                 %th Arquivo
                 %th.visible-desktop
 
-              - @order.photos.each do |photo|
-                %tr
-                  %td= photo.count
-                  %td &times;
-                  %td= photo.product.name
-                  %td= t "photo.specs.paper.#{photo.specification.paper}"
-                  %td= number_to_currency photo.product.price
-                  %td= number_to_currency photo.product.price * photo.count
-                  %td= File.basename photo.image.image.current_path if photo.image.present? && photo.image.image.present?
-                  %td.visible-desktop
-                    %div.btn-group
-                      = link_to @order.downloadable? ? download_admin_order_photo_path(@order.id, photo.id) : 'javascript:void(0);',  class: "btn btn-primary #{ 'disabled' unless @order.downloadable? }", rel: 'tooltip', title: 'Clique para fazer download' do
-                        %i.icon-download-alt.icon-white
-                      - if photo.image.present? && photo.image.image.original.present?
-                        .btn.btn-primary.dropdown-toggle{ data: { toggle: 'dropdown' }}
-                          %span.caret
-                        %ul.dropdown-menu
-                          %li
-                            = link_to download_admin_order_photo_path(@order.id, photo.id, original: true), class: "btn-link #{ 'disabled' unless @order.downloadable? }" do
-                              %i.icon-download-alt
-                              Original
+              = render partial: 'admin/orders/photo', collection: @order.photos, as: :photo
 
 
 

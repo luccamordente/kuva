@@ -274,7 +274,6 @@ var gadget = (function declare_gadget (sorts) {
           }, 1)
         });
 		
-		f 
         // TODO resizer.unload();
         gadget.thumbnailed && gadget.thumbnailed();   // Execute callback if any
       });

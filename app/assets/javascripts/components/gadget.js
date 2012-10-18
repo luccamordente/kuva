@@ -303,14 +303,25 @@ var gadget = (function declare_gadget (sorts) {
         gadget.element.removeClass('uploading').addClass('uploaded');
       });
     },
-    errored: function reader_errored(event) {
+    reader_errored: function reader_errored(event) {
       var element = this.element;
-      element.addClass('errored');
+      element.addClass('errored reader-errored');
       element.find('.image:first').append($(
         '<div class="error-message">'                             +
-        '  Não conseguimos ler o arquivo'                         +
+        '  Não conseguimos ler a imagem'                          +
         '  <div class="file-name">'+this.files[0].name+'</div>'   +
         '  Este arquivo não será enviado.'                        +
+        '</div>'
+      ));
+    },
+    thumbnailer_errored: function reader_errored(event) {
+      var element = this.element;
+      element.addClass('errored thumbnailer-errored');
+      element.find('.image:first').append($(
+        '<div class="error-message">'                                                     +
+        '  Não conseguimos gerar a miniatura da imagem'                                   +
+        '  <div class="file-name">'+this.files[0].name+'</div>'                           +
+        '  Este arquivo SERÁ enviado, você ainda pode definir como vai querer revelá-lo.' +
         '</div>'
       ));
     }

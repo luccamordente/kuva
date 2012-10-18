@@ -398,8 +398,24 @@ control =
     photo.image_id = event.data.id
     photo.save()
 
-  reader_errored: (event) ->
+  reader_errored: (event, gadget) ->
     aside.progress.status.total--
+    message  = "Reader error with order #{order._id}. \n"
+    message += "Event details: #{JSON.stringify event} \n"
+    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    throw message
+
+  thumbnailer_errored: (event, gadget) ->
+    message  = "Thumbnailing error with order #{order._id}. \n"
+    message += "Event details: #{JSON.stringify event} \n"
+    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    throw message
+
+  upload_errored: (event, gadget) ->
+    message  = "Upload error with order #{order._id}. \n"
+    message += "Event details: #{JSON.stringify event} \n"
+    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    throw message
 
   closed: ->
     aside.progress.status.text = "Concluído!"
@@ -461,8 +477,9 @@ initialize = ->
   .on('reader.loadend'           , (event) -> gadgets(event.key).dispatch('loadend'     , event))
   .on('reader.abort'             , (event) -> gadgets(event.key).dispatch('abort'       , event))
   .on('reader.errored'           , (event) ->
-    control.reader_errored event
-    gadgets(event.key).dispatch('errored', event)
+    gadget = gadgets(event.key)
+    gadget.dispatch('reader_errored', event)
+    control.reader_errored event, gadget
   )
   .on('thumbnailer.progress'     , (event) -> gadgets(event.key).dispatch('thumbnailing', event))
   .on('thumbnailer.encoding'     , (event) -> gadgets(event.key).dispatch('encoding'    , event))
@@ -471,10 +488,21 @@ initialize = ->
     gadget.dispatch 'thumbnailed', event
   )
   .on('thumbnailer.finished'     , control.thumbnailed                                          )
+  .on('thumbnailer.errored'      , (event) ->
+    gadget = gadgets(event.key)
+    gadget.dispatch('thumbnailer_errored', event)
+    control.thumbnailer_errored event, gadget
+  )
   .on('upload.complete.data'     , (event) ->
     # TODO figure out how get image id control.file_uploaded(event);
-    control.file_uploaded event
     gadgets(event.key).dispatch 'uploaded', event
+    control.file_uploaded event
+  )
+  .on('upload.errored'      , (event) ->
+    gadget = gadgets(event.key)
+    # TODO deal with upload errors on gadgets
+    # gadget.dispatch('upload_errored', event)
+    control.upload_errored event, gadget
   )
   .on('send.completed'           , control.send_completed                                       )
   .on('order.closed'             , control.closed                                               )

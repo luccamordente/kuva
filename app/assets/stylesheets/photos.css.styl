@@ -480,29 +480,47 @@ control-style(color)
 
 
     &.errored
-      .canvas
+      .canvas .image
+        color = #000
+        background-color color
+
+        img
+          display none
+
+        .error-message
+          color lighten(color, 50%)
+          font-size 0.7em
+          max-width 80%
+          padding 30% 10% 0
+          position absolute
+          top 0
+          z-index 2
+
+          .file-name
+            color #FFF
+            font-weight bold
+            padding 1em 0 2em
+            word-break break-word
+            width 100%
+
+
+    &.errored.reader-errored
+      .canvas .image
         color = #A33
-        .image
-          background-color color
+        background-color color
+        .error-message
+          color lighten(color, 50%)
+          .file-name
+            color #FFF
 
-          img
-            display none
-
-          .error-message
-            color lighten(color, 50%)
-            font-size 0.7em
-            max-width 80%
-            padding 30% 10% 0
-            position absolute
-            top 0
-            z-index 2
-
-            .file-name
-              color #FFF
-              font-weight bold
-              padding 1em 0 2em
-              word-break break-word
-              width 100%
+    &.errored.thumbnailer-errored
+      .canvas .image
+        color = #DA2
+        background-color color
+        .error-message
+          color lighten(color, 70%)
+          .file-name
+            color #FFF
 
 
 

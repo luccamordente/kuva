@@ -41,9 +41,9 @@ class ImageUploader < CarrierWave::Uploader::Base
 
   def convert file
     options  = []
-    options << '-format  jpg'        if @convert_format
-    options << "-intent  #{INTENT}"  if @convert_colorspace
-    options << "-profile #{PROFILE}" if @convert_colorspace
+    options << "-black-point-compensation" if @convert_colorspace
+    options << "-intent  #{INTENT}"        if @convert_colorspace
+    options << "-profile #{PROFILE}"       if @convert_colorspace
 
     command = "convert #{path} #{options.join(' ')} #{path.chomp(File.extname(path))}.jpg"
     system command

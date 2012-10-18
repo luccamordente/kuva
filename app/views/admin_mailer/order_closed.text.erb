@@ -8,4 +8,4 @@ Cliente: <%= @name %>
 
 Foi prometido ao cliente que serviço estaria pronto em <%= l @order.promised_for, format: :short %>.
 
-Acesse o link para baixar a ordem: <%= admin_root_url %>
+Acesse o link para baixar a ordem: <%= admin_order_url(@order) %>

@@ -35,8 +35,7 @@ describe Order do
 
     context "open" do
       it "should notify the staff" do
-        pending "Send asynchronously"
-        expect { order = Fabricate :order }.to change(ActionMailer::Base.deliveries, :count).by(1)
+        expect { order = Fabricate :order }.not_to change(ActionMailer::Base.deliveries, :count)
       end
     end
 
@@ -77,7 +76,7 @@ describe Order do
       end
       it "should update status to PROGRESS when the first image is added" do
         order = Fabricate :order
-        image = order.images.create Fabricate.attributes_for :image
+        image = Fabricate :image, order_id: order.id
         image.should be_persisted
         order.reload.status.should == Order::PROGRESS
       end
@@ -206,47 +205,80 @@ describe Order do
 
       let!(:product){ Fabricate :product, name: "10x15" }
       let!(:order){ Fabricate :order }
-      let!(:image){ order.images.create image: image_fixture }
+      let!(:image){ order.images.create image: image_fixture('rgb.jpg') }
+      let!(:zero_photo      ){ order.photos.create(count: 0, specification_attributes: { paper: Specification::MATTE_PAPER  },
+                                product_id: product.id, image_id: image.id) }
+      let!(:duplicated_photo){ order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  },
+                                product_id: product.id, image_id: image.id)
+                               order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  },
+                                product_id: product.id, image_id: image.id)
+                               order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  },
+                                product_id: product.id, image_id: image.id)
+                             }
       let!(:photos){[
         order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id: image.id),
-        order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id),
-        order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  }, product_id: product.id, image_id: image.id)
+        duplicated_photo,
+        duplicated_photo,
+        zero_photo
       ]}
 
       subject{ order.compressed }
-      after{ system "rm -rf #{ order.tmp_zip_path }"}
 
-      it { should_not be_nil }
-      its(:class){ should == File }
+      after { system "rm -rf #{ order.tmp_zip_path }" }
+
+      it         { should_not be_nil          }
+      its(:class){ should == File             }
       its(:path) { should match /tmp.*?\.zip/ }
 
       it "should delete the original dir" do
-        subject
         expect{ Dir.new order.tmp_path }.to raise_error Errno::ENOENT
       end
 
-      it "should delete zip file"
+      it "should delete the zip file"
 
-      it "should contain 2 dirs and include photos with image" do
-        Dir.chdir Order.tmp_path
-        system "unzip #{subject.path} -d . > /dev/null"
-        Dir.chdir order.tmp_path
-        dirs = Dir["*"].count.should == 2
-        photos.each do |photo|
-          Dir["#{photo.directory.name}/*"].should include(File.join(photo.directory.name, File.basename(photo.reload.image.image.current_path)))
+
+      context "decompressed" do
+        before do
+          Dir.chdir Order.tmp_path
+          system "unzip #{subject.path} -d . > /dev/null"
+          Dir.chdir order.tmp_path
         end
-        system "rm -r #{order.tmp_path}"
+
+        it "should contain 2 dirs" do
+          Dir["*"].count.should == 2
+        end
+
+        it "should include photos with image" do
+          photos.each do |photo|
+            photo_dir = photo.directory.name
+            Dir["#{photo_dir}/*"].should include File.join(photo_dir, File.basename(photo.reload.image.image.current_path)) if photo.count > 0
+          end
+        end
+
+        it "should create no dir when photo count = 0" do
+          Dir["#{zero_photo.directory.name}/*"].should_not include zero_photo.directory.name
+        end
+
+        it "should copy files duplicated images" do
+          files = Dir["#{duplicated_photo.directory.name}/*"]
+          files.count.should == 3
+          files[0].should match /rgb.jpg$/
+          files[1].should match /rgb\[1\].jpg$/
+          files[2].should match /rgb\[2\].jpg$/
+        end
+
+        after { system "if [ -d #{order.tmp_path} ]; then rm -rf #{order.tmp_path}; fi;" }
       end
 
+
       it "should delete the original dir when anything wrong happens in between"
-      it "allows photos without image, by simply not copying the image"
     end
 
 
     context "originals" do
       let!(:product){ Fabricate :product, name: "10x15" }
       let!(:order){ Fabricate :order }
-      let!( :rgb_image){ order.images.create image: image_fixture('rgb.jpg' ) }
+      let!( :rgb_image){ order.images.create image: image_fixture( 'rgb.jpg') }
       let!(:cmyk_image){ order.images.create image: image_fixture('cmyk.jpg') }
       let!(:photos){[
         order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id:  rgb_image.id),

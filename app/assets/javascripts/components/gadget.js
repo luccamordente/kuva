@@ -39,7 +39,7 @@ var gadget = (function declare_gadget (sorts) {
 
 
       // TODO Better proxy binding on event bindings
-      bound = {}
+      bound = {};
       for (property in view) {
         if ($.type(view[property]) == 'function')
           bound[property] = $.proxy(view[property], this);
@@ -65,10 +65,10 @@ var gadget = (function declare_gadget (sorts) {
     },
     // TODO Make rivets view.sync work!
     update: function () {
-      var photo = this.photo
-      photo.count = photo.count
-      photo.product_id = photo.product_id
-      photo.specification && (photo.specification.paper = photo.specification.paper)
+      var photo = this.photo;
+      photo.count = photo.count;
+      photo.product_id = photo.product_id;
+      photo.specification && (photo.specification.paper = photo.specification.paper);
     },
     duplicate: function () {
       // TODO less memory leaking copy
@@ -127,8 +127,6 @@ var gadget = (function declare_gadget (sorts) {
           top           = 0,
           cropped_height,
           cropped_width,
-          canvas_height,
-          canvas_width,
           canvas_left,
           canvas_top,
           img_height,
@@ -191,7 +189,7 @@ var gadget = (function declare_gadget (sorts) {
 
       // TODO clear timeouts upon confirmation
       setTimeout(function(){
-        controls.tooltip('destroy');
+        controls.filter('.count').tooltip('destroy');
 
         $("                                                                                                         \
           <div class=\"tooltip left\" id=\"tooltip-size\">                                                          \
@@ -229,7 +227,7 @@ var gadget = (function declare_gadget (sorts) {
       this.element.addClass('reading');
     },
     loadend: function reader_loadend (event) {
-      this.thumbnail_bar.updated = (new Date()).getTime();
+      this.thumbnail_bar.updated = this.upload_bar.updated = (new Date()).getTime();
       this.orientation  = event.width < event.height ? "vertical" : "horizontal";
       this.photo.height = event.height;
       this.photo.width  = event.width;
@@ -251,7 +249,7 @@ var gadget = (function declare_gadget (sorts) {
       var percentage = Math.round(100 - (event.parsed / event.total) * 100), now = (new Date()).getTime();
 
       if (now - this.thumbnail_bar.updated > 200) {
-        this.thumbnail_bar.animate({width: percentage + '%'}, 1000, 'linear');
+        this.thumbnail_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
         this.thumbnail_bar.updated = now;
       }
     },
@@ -273,7 +271,7 @@ var gadget = (function declare_gadget (sorts) {
             gadget.thumbnail_bar.hide();
           }, 1)
         });
-		
+
         // TODO resizer.unload();
         gadget.thumbnailed && gadget.thumbnailed();   // Execute callback if any
       });
@@ -286,9 +284,12 @@ var gadget = (function declare_gadget (sorts) {
       this.element.addClass('uploading');
     },
     uploading: function upload_progress (event) {
-      var percentage = Math.round(100 - ((event.loaded / event.total) * 100));
+      var percentage = Math.round(100 - ((event.loaded / event.total) * 100)), now = (new Date()).getTime();
 
-      this.upload_bar.animate({width: percentage + '%'}, 1000, 'linear');
+      if (now - this.upload_bar.updated > 200) {
+        this.upload_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
+        this.upload_bar.updated = now;
+      }
     },
     uploaded: function upload_complete(event) {
       var gadget = this;

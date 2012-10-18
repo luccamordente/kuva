@@ -68,5 +68,4 @@ do (parent = kuva, overlay = kuva.overlay) ->
 
 
   that.overlay = shelfer
-
-  parent.shelf = that 
+  parent.shelf = that

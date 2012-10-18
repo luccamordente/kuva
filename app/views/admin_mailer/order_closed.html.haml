@@ -18,4 +18,4 @@
   
 %p= "Foi prometido ao cliente que serviço estaria pronto em #{l @order.promised_for, format: :short}."
 
-%p= link_to "Clique aqui baixar a ordem", admin_root_url
+%p= link_to "Clique aqui baixar a ordem", admin_order_url(@order)

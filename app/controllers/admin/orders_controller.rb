@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class Admin::OrdersController < Admin::ApplicationController
 
   # GET /admin/orders
@@ -12,6 +14,7 @@ class Admin::OrdersController < Admin::ApplicationController
   # GET /admin/orders/1.json
   def show
     @order = Order.includes(:user).find(params[:id])
+    @less_than_a_day = (Time.now - @order.created_at) > 1.day
 
     @total_count = @order.photos.sum &:count
 
@@ -86,7 +89,7 @@ class Admin::OrdersController < Admin::ApplicationController
     @order.destroy
 
     respond_to do |format|
-      format.html { redirect_to admin_orders_url }
+      format.html { redirect_to admin_orders_url, notice: 'Ordem de serviço excluída com sucesso.' }
     end
   end
 end

@@ -14,7 +14,7 @@ class Product
   validates_numericality_of :price, :dimension1, :dimension2, greater_than: 0
 
   before_validation :update_dimensions
-  before_save 'self.dimensions.sort!'
+  before_validation :sort_dimensions!
 
 
   def horizontal_dimensions
@@ -56,9 +56,13 @@ private
 
   def update_dimensions
     if @dimension1.present? and @dimension2.present?
-      self.dimensions = [ @dimension1, @dimension2 ].sort
+      self.dimensions = [ @dimension1.to_f, @dimension2.to_f ].sort
       self.name       = "#{dimensions[0]}x#{dimensions[1]}"
     end
+  end
+
+  def sort_dimensions!
+    self.dimensions = self.dimensions.map(&:to_f).sort
   end
 
 end

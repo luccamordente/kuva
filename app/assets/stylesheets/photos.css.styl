@@ -479,6 +479,33 @@ control-style(color)
 
 
 
+    &.errored
+      .canvas
+        color = #A33
+        .image
+          background-color color
+
+          img
+            display none
+
+          .error-message
+            color lighten(color, 50%)
+            font-size 0.7em
+            max-width 80%
+            padding 30% 10% 0
+            position absolute
+            top 0
+            z-index 2
+
+            .file-name
+              color #FFF
+              font-weight bold
+              padding 1em 0 2em
+              word-break break-word
+              width 100%
+
+
+
 
 
   &.sending

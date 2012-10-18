@@ -397,6 +397,10 @@ control =
     # associate and save image
     photo.image_id = event.data.id
     photo.save()
+
+  reader_errored: (event) ->
+    aside.progress.status.total--
+
   closed: ->
     aside.progress.status.text = "Concluído!"
     kuva.overlay().dynamic().at(document.body)
@@ -456,6 +460,10 @@ initialize = ->
   .on('reader.progress'          , (event) -> gadgets(event.key).dispatch('progress'    , event))
   .on('reader.loadend'           , (event) -> gadgets(event.key).dispatch('loadend'     , event))
   .on('reader.abort'             , (event) -> gadgets(event.key).dispatch('abort'       , event))
+  .on('reader.errored'           , (event) ->
+    control.reader_errored event
+    gadgets(event.key).dispatch('errored', event)
+  )
   .on('thumbnailer.progress'     , (event) -> gadgets(event.key).dispatch('thumbnailing', event))
   .on('thumbnailer.encoding'     , (event) -> gadgets(event.key).dispatch('encoding'    , event))
   .on('thumbnailer.thumbnailed'  , (event) ->

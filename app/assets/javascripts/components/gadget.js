@@ -302,6 +302,17 @@ var gadget = (function declare_gadget (sorts) {
         // TODO when rivetized, this can be removed
         gadget.element.removeClass('uploading').addClass('uploaded');
       });
+    },
+    errored: function reader_errored(event) {
+      var element = this.element;
+      element.addClass('errored');
+      element.find('.image:first').append($(
+        '<div class="error-message">'                             +
+        '  Não conseguimos ler o arquivo'                         +
+        '  <div class="file-name">'+this.files[0].name+'</div>'   +
+        '  Este arquivo não será enviado.'                        +
+        '</div>'
+      ));
     }
   },
   view = {

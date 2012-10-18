@@ -24,6 +24,23 @@ describe Image do
   end
 
 
+  describe "deletion" do
+    let!(:image){ Fabricate.build :image, image: image_fixture }
+    let!(:path ){ image.image.current_path }
+
+    specify { File.exists?(path).should be_true }
+
+    context "deleted" do
+      before  { image.destroy }
+
+      it "should delete the file" do
+        File.exists?(path).should be_false
+      end
+    end
+
+  end
+
+
   describe "upload" do
 
     context "of jpeg NON rgb images" do

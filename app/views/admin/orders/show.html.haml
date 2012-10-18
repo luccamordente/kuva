@@ -111,6 +111,11 @@
         %i.icon-print
         Imprimir
 
+      &nbsp;
+      -
+      = link_to admin_order_path(@order), method: :delete, id: 'destroy', class: "btn btn-danger #{ 'disabled' if @less_than_a_day}", rel: 'tooltip', title: (@less_than_a_day ? 'Aguarde completar 1 dia' : 'Excluir (perigo!)') do
+        %i.icon-trash.icon-white
+
 
       %br
       %br

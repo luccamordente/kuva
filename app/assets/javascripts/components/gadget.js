@@ -33,8 +33,10 @@ var gadget = (function declare_gadget (sorts) {
       (!photo.specification) && (photo.specification = window.specification());
 
       photo.specification.subscribe('paper', view.subscriptions.paper);
-      photo.subscribe('product_id', view.subscriptions.size );
-      photo.subscribe('count'     , view.subscriptions.count);
+      photo.subscribe('product_id', view.subscriptions.size  );
+      photo.subscribe('count'     , view.subscriptions.count );
+      photo.subscribe('border'    , view.subscriptions.border);
+      photo.subscribe('margin'    , view.subscriptions.margin);
       photo.gadget = photo.specification.gadget = this;
 
 
@@ -55,7 +57,9 @@ var gadget = (function declare_gadget (sorts) {
       // TODO better change event support on record
       subscription = function(){ setTimeout(function(){ photo.save(); }, 500); };
       photo.subscribe('product_id', subscription);
-      photo.subscribe('count', subscription);
+      photo.subscribe('count'     , subscription);
+      photo.subscribe('border'    , subscription);
+      photo.subscribe('margin'    , subscription);
       photo.specification.subscribe('paper', subscription);
 
       // TODO Make rivets view.sync work!
@@ -66,7 +70,8 @@ var gadget = (function declare_gadget (sorts) {
     // TODO Make rivets view.sync work!
     update: function () {
       var photo = this.photo;
-      photo.count = photo.count;
+      photo.count      = photo.count;
+      photo.margin     = photo.margin;
       photo.product_id = photo.product_id;
       photo.specification && (photo.specification.paper = photo.specification.paper);
     },
@@ -95,8 +100,8 @@ var gadget = (function declare_gadget (sorts) {
       photo._id = null;
       delete photo._id;
 
-      gadget.photo.route = this.photo.route;
-      gadget.photo.width = this.photo.width;
+      gadget.photo.route  = this.photo.route;
+      gadget.photo.width  = this.photo.width;
       gadget.photo.height = this.photo.height;
 
       // Force new element criation
@@ -106,27 +111,31 @@ var gadget = (function declare_gadget (sorts) {
       gadget.tied = false;
 
       this.dispatch('duplicated', gadget);
+
       return gadget;
     },
     crop: function() {
       var dimensions    = this.photo.product[this.orientation + "_dimensions"],
           photo_height  = this.photo.height,
           photo_width   = this.photo.width,
-          canvas_ratio  = this.orientation == "vertical" ? dimensions.width / dimensions.height : dimensions.height / dimensions.width, // inverso deixa borda
-          canvas_scale  = Math.min(250 / dimensions.width, 250 / dimensions.height),
+          canvas_ratio  = (this.orientation == "vertical") ?
+                            dimensions.width  / dimensions.height :
+                            dimensions.height / dimensions.width,
+          canvas_scale  = Math.min(configuration.size.width / dimensions.width, configuration.size.height / dimensions.height),
           canvas_width  = Math.round(canvas_scale * dimensions.width ),
           canvas_height = Math.round(canvas_scale * dimensions.height),
-          img_ratio     = this.orientation == "vertical" ? photo_width / photo_height : photo_height / photo_width, // inverso deixa borda
-          img_scale     = img_ratio > canvas_ratio ?
-                            Math.min(250 / photo_width, 250 / photo_height) :
-                            Math.max(canvas_width / photo_width, canvas_height / photo_height),
+          img_ratio     = (this.orientation == "vertical") ?
+                            photo_width  / photo_height :
+                            photo_height / photo_width,
+          total_margin  = +this.photo.margin * configuration.margin.width * 2,
+          img_scale     = (img_ratio > canvas_ratio) && !this.photo.border ?
+                            Math[!this.photo.border ? 'min' : 'max'](configuration.size.width / photo_width, configuration.size.height / photo_height) :
+                            Math[!this.photo.border ? 'max' : 'min'](canvas_width / photo_width, canvas_height / photo_height),
           canvas        = this.element.find('.canvas'),
           image         = canvas.find('.image'),
           img           = image.find('img'),
           left          = 0,
           top           = 0,
-          cropped_height,
-          cropped_width,
           canvas_left,
           canvas_top,
           img_height,
@@ -135,19 +144,23 @@ var gadget = (function declare_gadget (sorts) {
           img_top,
           product_dimensions;
 
+      // margin only affects the image wrapper and the img itself
 
-      img_width  = Math.round(img_scale * photo_width );
-      img_height = Math.round(img_scale * photo_height);
+      image_width  = canvas_width  - total_margin;
+      image_height = canvas_height - total_margin;
 
-      img_left = (canvas_width - img_width) / 2;
-      img_top  = (canvas_height - img_height) / 2;
+      img_width  = Math.round(img_scale * photo_width ) - total_margin;
+      img_height = Math.round(img_scale * photo_height) - total_margin;
+
+      img_left = (canvas_width  - img_width ) / 2 - total_margin / 2;
+      img_top  = (canvas_height - img_height) / 2 - total_margin / 2;
 
       canvas_left = (this.element.innerWidth()  - canvas_width ) / 2;
       canvas_top  = (this.element.innerHeight() - canvas_height) / 2;
 
       canvas.css({width: canvas_width, height: canvas_height});
       canvas.css({top: canvas_top, left: canvas_left});
-      image.css({width: canvas_width, height: canvas_height});
+      image.css({width: image_width, height: image_height});
       img.css({left: img_left, top: img_top, height: img_height, width: img_width});
 
       product_dimensions = this.element.find(".dimension");
@@ -166,12 +179,12 @@ var gadget = (function declare_gadget (sorts) {
       (this.render) || (this.render = control.render);
       this.parent && this.render(templates.gadget);
 
-      this.element = $('#gadget-' + this.data.id);
-      this.element.find("[rel=tooltip]").tooltip();
-      this.image = library.image(this.element.find('img'), this.data.title);
-      this.upload_bar = this.element.find('.upload.bar');
+      this.element       = $('#gadget-' + this.data.id);
+      this.image         = library.image(this.element.find('img'), this.data.title);
+      this.upload_bar    = this.element.find('.upload.bar   ');
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
       this.orientation || (this.orientation = "vertical");
+      this.element.find("[rel=tooltip]").tooltip();
 
       delete this.render;
     },
@@ -182,14 +195,14 @@ var gadget = (function declare_gadget (sorts) {
       var element  = this.element,
           photo    = this.photo,
           controls = element.find('.control'),
-          canvas   = element.find('.canvas'),
+          canvas   = element.find('.canvas '),
           paper;
 
       element.addClass('controlable');
 
       // TODO clear timeouts upon confirmation
       setTimeout(function(){
-        controls.filter('.count').tooltip('destroy');
+        controls.filter('.count, .margin, .border').tooltip('destroy');
 
         $("                                                                                                         \
           <div class=\"tooltip left\" id=\"tooltip-size\">                                                          \
@@ -218,6 +231,24 @@ var gadget = (function declare_gadget (sorts) {
           </div>                                                                                                    \
         ").appendTo(canvas).delay(1400).fadeTo('fast', 0.8);
 
+        $("                                                                                                         \
+          <div class=\"tooltip bottom\" id=\"tooltip-margin\">                                                       \
+            <div class=\"tooltip-arrow\"></div>                                                                     \
+            <div class=\"tooltip-inner\">                                                                           \
+              MARGEM<br /><small>Adicione ou remova uma margem<br />branca ao redor da foto.</small>                \
+            </div>                                                                                                  \
+          </div>                                                                                                    \
+        ").appendTo(canvas).delay(2100).fadeTo('fast', 0.8);
+
+        $("                                                                                                         \
+          <div class=\"tooltip left\" id=\"tooltip-border\">                                                       \
+            <div class=\"tooltip-arrow\"></div>                                                                     \
+            <div class=\"tooltip-inner\">                                                                           \
+              CORTE<br /><small>Encaixa a imagem na proporção do papel de<br />forma regular, dependendo do tamanho.<br />Clique para testar</small> \
+            </div>                                                                                                  \
+          </div>                                                                                                    \
+        ").appendTo(canvas).delay(2800).fadeTo('fast', 0.8);
+
       }, 700);
 
     }
@@ -231,6 +262,8 @@ var gadget = (function declare_gadget (sorts) {
       this.orientation  = event.width < event.height ? "vertical" : "horizontal";
       this.photo.height = event.height;
       this.photo.width  = event.width;
+      this.photo.border = false; // TODO FIXME Why I had to do this here too?
+      this.photo.margin = false; // TODO FIXME Why I had to do this here too?
 
       this.crop();
       this.element.addClass(this.orientation);
@@ -363,6 +396,22 @@ var gadget = (function declare_gadget (sorts) {
         gadget.element.removeClass("size-" + current.name).addClass("size-" + selected.name);
 
         gadget.crop();
+      },
+      border: function photo_border(border) {
+        var gadget = this.gadget;
+
+        gadget.element.find(".canvas .control.border").data('title',
+          border ? 'Sem corte <small>(clique para cortar)</small>' : 'Corte ativo <small>(clique para não cortar)</small>'
+        ).tooltip('destroy').tooltip();
+
+        // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
+        setTimeout(function(){ gadget.crop(); }, 10);
+      },
+      margin: function photo_margin(margin) {
+        // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
+        var gadget = this.gadget;
+        gadget.element[margin ? 'addClass' : 'removeClass']('margin');
+        setTimeout(function(){ gadget.crop(); }, 10);
       }
     },
     decrement: function() { this.photo.count--; },
@@ -376,6 +425,15 @@ var gadget = (function declare_gadget (sorts) {
           control.tooltip("show");
           return;
         }
+    },
+    borderize: function() {
+      var control = this.element.find(".canvas .control.border");
+      control.tooltip("destroy");
+      this.photo.border = !this.photo.border;
+      control.tooltip("show");
+    },
+    marginize: function() {
+      this.photo.margin = !this.photo.margin;
     },
     duplicate: gadget.duplicate,
     sizeize: function() {
@@ -420,7 +478,8 @@ var gadget = (function declare_gadget (sorts) {
 
 
   configuration = {
-    size: { height: 250, width: 250 }
+    size  : { height: 250, width: 250 },
+    margin: { width: 4 }
   };
 
 

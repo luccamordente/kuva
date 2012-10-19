@@ -29,11 +29,11 @@ class Directorizer
   end
 
   def border
-    DEFAULT_BORDER
+    @photo.border ? "S" : "N"
   end
 
   def margin
-    DEFAULT_MARGIN
+    @photo.margin ? "S" : "N"
   end
 
   def photo

@@ -33,7 +33,7 @@ class Directorizer
   end
 
   def margin
-    DEFAULT_MARGIN
+    @photo.margin ? "S" : "N"
   end
 
   def photo

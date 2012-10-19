@@ -206,6 +206,7 @@ control =
     gadget.photo = photo = order.photos.build
       name       : file.name
       border     : false
+      margin     : false
       count      : 1
       product    : control.defaults.product
       product_id : control.defaults.product._id
@@ -224,6 +225,8 @@ control =
     # Create default model
     control.defaults.photo = photo = order.photos.build
         name          : 'Foto Padrão'
+        border        : false
+        margin        : false
         count         : 1
         default       : true
         product       : control.defaults.product

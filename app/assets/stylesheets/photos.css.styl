@@ -127,12 +127,29 @@ control-style(color)
         .tooltip-arrow
           top 38px
       &#tooltip-count
-        width 170px
-        right -6px
-        top  266px
+        width  170px
+        right -106px
+        top    266px
         .tooltip-arrow
-          left inherit
-          right 35px
+          left  auto
+          right 134px
+      &#tooltip-margin
+        width 170px
+        left -116px
+        top   266px
+        .tooltip-arrow
+          left  auto
+          right 14px
+      &#tooltip-border
+        width 260px
+        left -286px
+        top   196px
+        .tooltip-arrow
+          bottom 15px
+          top    54px
+
+        .tooltip-inner
+          max-width 260px
 
     .control.hideable.duplicate
       display none
@@ -213,11 +230,12 @@ control-style(color)
       transition width 0.5s, height 0.5s, top 0.5s, left 0.5s
 
       .image
-        background-color #000
+        background-color #FFF
+        border 0px solid #FF9
         box-shadow 1px 1px 4px #777
         overflow hidden
         position relative
-        transition width 0.5s, height 0.5s, opacity 1s
+        transition width 0.5s, height 0.5s, border 0.5s, opacity 1s
 
         img
           display block
@@ -311,6 +329,10 @@ control-style(color)
           bottom -13px
           left   -14px
 
+        &.margin
+          bottom -13px
+          left   30px
+
         &.count
           background-color #EEE
           background-color rgba(255,255,255,0.8)
@@ -390,6 +412,10 @@ control-style(color)
             color #FFF
 
 
+    &.margin
+      .canvas .image
+        border 4px solid white
+
     &.paper-glossy
       .canvas
         .control.paper
@@ -447,6 +473,9 @@ control-style(color)
     &.thumbnailing
       width 10em
       height 10em
+
+      .image
+        background-color #000
 
       .thumbnail.bar
         display block

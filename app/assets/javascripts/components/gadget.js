@@ -70,7 +70,8 @@ var gadget = (function declare_gadget (sorts) {
     // TODO Make rivets view.sync work!
     update: function () {
       var photo = this.photo;
-      photo.count = photo.count;
+      photo.count      = photo.count;
+      photo.margin     = photo.margin;
       photo.product_id = photo.product_id;
       photo.specification && (photo.specification.paper = photo.specification.paper);
     },
@@ -99,8 +100,8 @@ var gadget = (function declare_gadget (sorts) {
       photo._id = null;
       delete photo._id;
 
-      gadget.photo.route = this.photo.route;
-      gadget.photo.width = this.photo.width;
+      gadget.photo.route  = this.photo.route;
+      gadget.photo.width  = this.photo.width;
       gadget.photo.height = this.photo.height;
 
       // Force new element criation
@@ -110,6 +111,7 @@ var gadget = (function declare_gadget (sorts) {
       gadget.tied = false;
 
       this.dispatch('duplicated', gadget);
+
       return gadget;
     },
     crop: function() {
@@ -177,12 +179,12 @@ var gadget = (function declare_gadget (sorts) {
       (this.render) || (this.render = control.render);
       this.parent && this.render(templates.gadget);
 
-      this.element = $('#gadget-' + this.data.id);
-      this.element.find("[rel=tooltip]").tooltip();
-      this.image = library.image(this.element.find('img'), this.data.title);
-      this.upload_bar = this.element.find('.upload.bar');
+      this.element       = $('#gadget-' + this.data.id);
+      this.image         = library.image(this.element.find('img'), this.data.title);
+      this.upload_bar    = this.element.find('.upload.bar   ');
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
       this.orientation || (this.orientation = "vertical");
+      this.element.find("[rel=tooltip]").tooltip();
 
       delete this.render;
     },
@@ -193,7 +195,7 @@ var gadget = (function declare_gadget (sorts) {
       var element  = this.element,
           photo    = this.photo,
           controls = element.find('.control'),
-          canvas   = element.find('.canvas'),
+          canvas   = element.find('.canvas '),
           paper;
 
       element.addClass('controlable');

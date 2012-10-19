@@ -33,8 +33,9 @@ var gadget = (function declare_gadget (sorts) {
       (!photo.specification) && (photo.specification = window.specification());
 
       photo.specification.subscribe('paper', view.subscriptions.paper);
-      photo.subscribe('product_id', view.subscriptions.size );
-      photo.subscribe('count'     , view.subscriptions.count);
+      photo.subscribe('product_id', view.subscriptions.size  );
+      photo.subscribe('count'     , view.subscriptions.count );
+      photo.subscribe('border'    , view.subscriptions.border);
       photo.gadget = photo.specification.gadget = this;
 
 
@@ -55,7 +56,8 @@ var gadget = (function declare_gadget (sorts) {
       // TODO better change event support on record
       subscription = function(){ setTimeout(function(){ photo.save(); }, 500); };
       photo.subscribe('product_id', subscription);
-      photo.subscribe('count', subscription);
+      photo.subscribe('count'     , subscription);
+      photo.subscribe('border'    , subscription);
       photo.specification.subscribe('paper', subscription);
 
       // TODO Make rivets view.sync work!
@@ -112,14 +114,18 @@ var gadget = (function declare_gadget (sorts) {
       var dimensions    = this.photo.product[this.orientation + "_dimensions"],
           photo_height  = this.photo.height,
           photo_width   = this.photo.width,
-          canvas_ratio  = this.orientation == "vertical" ? dimensions.width / dimensions.height : dimensions.height / dimensions.width, // inverso deixa borda
+          canvas_ratio  = (this.orientation == "vertical") ?
+                            dimensions.width  / dimensions.height :
+                            dimensions.height / dimensions.width,
           canvas_scale  = Math.min(250 / dimensions.width, 250 / dimensions.height),
           canvas_width  = Math.round(canvas_scale * dimensions.width ),
           canvas_height = Math.round(canvas_scale * dimensions.height),
-          img_ratio     = this.orientation == "vertical" ? photo_width / photo_height : photo_height / photo_width, // inverso deixa borda
-          img_scale     = img_ratio > canvas_ratio ?
-                            Math.min(250 / photo_width, 250 / photo_height) :
-                            Math.max(canvas_width / photo_width, canvas_height / photo_height),
+          img_ratio     = (this.orientation == "vertical") ?
+                            photo_width  / photo_height :
+                            photo_height / photo_width,
+          img_scale     = (img_ratio > canvas_ratio) && !this.photo.border ?
+                            Math[!this.photo.border ? 'min' : 'max'](250 / photo_width, 250 / photo_height) :
+                            Math[!this.photo.border ? 'max' : 'min'](canvas_width / photo_width, canvas_height / photo_height),
           canvas        = this.element.find('.canvas'),
           image         = canvas.find('.image'),
           img           = image.find('img'),
@@ -139,7 +145,7 @@ var gadget = (function declare_gadget (sorts) {
       img_width  = Math.round(img_scale * photo_width );
       img_height = Math.round(img_scale * photo_height);
 
-      img_left = (canvas_width - img_width) / 2;
+      img_left = (canvas_width  - img_width ) / 2;
       img_top  = (canvas_height - img_height) / 2;
 
       canvas_left = (this.element.innerWidth()  - canvas_width ) / 2;
@@ -231,6 +237,7 @@ var gadget = (function declare_gadget (sorts) {
       this.orientation  = event.width < event.height ? "vertical" : "horizontal";
       this.photo.height = event.height;
       this.photo.width  = event.width;
+      this.photo.border = false; // TODO FIXME Why I had to do this here too?
 
       this.crop();
       this.element.addClass(this.orientation);
@@ -363,6 +370,16 @@ var gadget = (function declare_gadget (sorts) {
         gadget.element.removeClass("size-" + current.name).addClass("size-" + selected.name);
 
         gadget.crop();
+      },
+      border: function photo_border(border) {
+        var gadget = this.gadget;
+
+        gadget.element.find(".canvas .control.border").data('title',
+          border ? 'Sem corte <small>(clique para cortar)</small>' : 'Corte ativo <small>(clique para não cortar)</small>'
+        ).tooltip('destroy').tooltip();
+
+        // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
+        setTimeout(function(){ gadget.crop(); }, 10);
       }
     },
     decrement: function() { this.photo.count--; },
@@ -376,6 +393,12 @@ var gadget = (function declare_gadget (sorts) {
           control.tooltip("show");
           return;
         }
+    },
+    borderize: function() {
+      var control = this.element.find(".canvas .control.border");
+      control.tooltip("destroy")
+      this.photo.border = !this.photo.border;
+      control.tooltip("show");
     },
     duplicate: gadget.duplicate,
     sizeize: function() {

@@ -205,6 +205,7 @@ control =
     # Criar uma photo para arquivo selecionado
     gadget.photo = photo = order.photos.build
       name       : file.name
+      border     : false
       count      : 1
       product    : control.defaults.product
       product_id : control.defaults.product._id

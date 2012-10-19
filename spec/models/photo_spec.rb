@@ -25,6 +25,14 @@ describe Photo do
       photo.directory.name.should == "P005_10x15_OBNN"
     end
 
+
+    context "with border" do
+      let!(:photo){ order.photos.create count: 5, specification_attributes: { paper: :glossy }, product_id: product.id, border: true }
+      it "has the correct name" do
+        photo.directory.name.should == "P005_10x15_OBSN"
+      end
+    end
+
   end
 
 end

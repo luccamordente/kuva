@@ -254,6 +254,8 @@ control =
       copies      : '1 cópia'
       size        : photo.size || '10x15'
       paper       : 'Brilhante',
+      border      : false
+      margin      : false
 
     # Display modal and gadget
     kuva.overlay().dynamic().at(document.body)
@@ -278,6 +280,12 @@ control =
 
     photo.subscribe 'product_id', (product_id) ->
       confirm.size = product.find(product_id).name
+
+    photo.subscribe 'border', (border) ->
+      confirm.border = border
+
+    photo.subscribe 'margin', (margin) ->
+      confirm.margin = margin
 
     # Positionate and display modal and gadget
     mass.image.size null, 250
@@ -530,6 +538,8 @@ templates =
               <img src="/assets/structure/modal-summary-small-checkmark.png" /> <b data-text="modal.copies">1</b> de cada<br />
               <img src="/assets/structure/modal-summary-small-checkmark.png" /> tamanho <b data-text="modal.size">10x15</b><br />
               <img src="/assets/structure/modal-summary-small-checkmark.png" /> papel <b data-text="modal.paper">fosco</b><br />
+              <span data-show="modal.margin"><img src="/assets/structure/modal-summary-small-checkmark.png" /> <b>margem</b><br /></span>
+              <span data-show="modal.border"><img src="/assets/structure/modal-summary-small-checkmark.png" /> <b>sem corte</b><br /></span>
             </div>
           </div>
 

@@ -229,8 +229,8 @@ control =
         product       : control.defaults.product
         product_id    : control.defaults.product._id
         specification : window.specification({ paper: 'glossy' })
-        width         : 320
-        height        : 480
+        width         : 188
+        height        : 250
 
 
     # TODO create a deferred

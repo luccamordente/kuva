@@ -232,7 +232,7 @@ var gadget = (function declare_gadget (sorts) {
         ").appendTo(canvas).delay(1400).fadeTo('fast', 0.8);
 
         $("                                                                                                         \
-          <div class=\"tooltip bottom\" id=\"tooltip-margin\">                                                       \
+          <div class=\"tooltip left\" id=\"tooltip-margin\">                                                        \
             <div class=\"tooltip-arrow\"></div>                                                                     \
             <div class=\"tooltip-inner\">                                                                           \
               MARGEM<br /><small>Adicione ou remova uma margem<br />branca ao redor da foto.</small>                \

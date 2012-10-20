@@ -409,8 +409,12 @@ var gadget = (function declare_gadget (sorts) {
       },
       margin: function photo_margin(margin) {
         // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
-        var gadget = this.gadget;
-        gadget.element[margin ? 'addClass' : 'removeClass']('margin');
+        var gadget  = this.gadget,
+            element = gadget.element;
+
+        element[margin ? 'addClass' : 'removeClass']('margin');
+        element.find(".canvas .control.margin:first")[margin ? 'addClass' : 'removeClass']('active');
+
         setTimeout(function(){ gadget.crop(); }, 10);
       }
     },

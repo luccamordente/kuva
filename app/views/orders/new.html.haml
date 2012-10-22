@@ -31,7 +31,7 @@
           - if current_user.anonymous?
             = "Usuário anonimo (#{link_to "login", new_user_session_path})"
           - else
-            =raw "#{current_user.email} #{link_to "sair", destroy_user_session_path, method: "delete", confirm: "Seu pedido será cancelado. Deseja sair?"}"
+            =raw "#{current_user.email} #{link_to "sair", destroy_user_session_path, method: "delete"}"
 
 
       :javascript

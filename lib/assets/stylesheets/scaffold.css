@@ -81,3 +81,7 @@ form .field, form .actions {
 form label {
   display: block;
 }
+
+form input {
+  max-width: 100%;
+}

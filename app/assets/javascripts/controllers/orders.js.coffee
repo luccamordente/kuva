@@ -357,6 +357,7 @@ control =
   first_files_selection: ->
     $('#main-add').slideUp()
     bus.off 'files.selected', @callee
+    $(window).on 'beforeunload', -> 'Seu pedido será cancelado!'
 
   thumbnailed: (event) ->
     # todas miniaturas construidas
@@ -432,11 +433,11 @@ control =
   closed: ->
     aside.progress.status.text = "Concluído!"
     kuva.overlay().dynamic().at(document.body)
+    $(window).off 'beforeunload'
 
     modal
       order: order._id.substr 0, 8
       confirm: ->
-        $(window).off 'beforeunload'
         document.location = document.location
       ,
       ['confirm.success => Concluir'],
@@ -455,8 +456,6 @@ control =
 
 # Module methods
 initialize = ->
-
-  $(window).on 'beforeunload', -> 'Seu pedido será cancelado!'
 
   $('#send-button' ).bind 'click', control.send_clicked
   $('#ignore-send' ).bind 'click', control.send_ignored

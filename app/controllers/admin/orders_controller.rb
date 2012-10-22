@@ -20,7 +20,9 @@ class Admin::OrdersController < Admin::ApplicationController
 
     @photos = @order.photos.group_by do |photo|
       {
-        paper: photo.specification.paper,
+        paper:    photo.specification.paper,
+        border:   photo.border,
+        margin:   photo.margin,
         product:  photo.product
       }
     end

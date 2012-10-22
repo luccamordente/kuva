@@ -47,6 +47,8 @@
                 %th
                 %th Tamanho
                 %th Papel
+                %th Borda
+                %th Margem
                 %th Preço unitário
                 %th Preço total
 
@@ -57,6 +59,8 @@
                   %td &times;
                   %td= specs[:product].name
                   %td= t "photo.specs.paper.#{specs[:paper]}"
+                  %td= specs[:border] ? "Sim" : "Não"
+                  %td= specs[:margin] ? "Sim" : "Não"
                   %td= number_to_currency specs[:product].price
                   %td= number_to_currency specs[:product].price * count
 

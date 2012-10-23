@@ -164,6 +164,8 @@ var gadget = (function declare_gadget (sorts) {
       img.css({left: img_left, top: img_top, height: img_height, width: img_width});
 
       product_dimensions = this.element.find(".dimension");
+
+      // TODO rivetize !!
       product_dimensions.filter(".height").children(".count").html(dimensions.height);
       product_dimensions.filter(".width ").children(".count").html(dimensions.width );
     }
@@ -180,7 +182,7 @@ var gadget = (function declare_gadget (sorts) {
       this.parent && this.render(templates.gadget);
 
       this.element       = $('#gadget-' + this.data.id);
-      this.image         = library.image(this.element.find('img'), this.data.title);
+      this.image         = library.image(this.element.find('img'), this.data.title); // TODO REMOVE title
       this.upload_bar    = this.element.find('.upload.bar   ');
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
       this.orientation || (this.orientation = "vertical");
@@ -274,6 +276,8 @@ var gadget = (function declare_gadget (sorts) {
         this.element.removeClass('reading').addClass('thumbnailing');
 
       if (event.file) {
+        // TODO create association photo.image & rivetize!
+        this.element.find('.pomp.info-pomp:first').html(event.file.name)
         this.image.title(event.file.name);
         this.data.title = event.file.name;
       }

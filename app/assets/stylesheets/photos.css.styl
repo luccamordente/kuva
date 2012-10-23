@@ -249,6 +249,16 @@ control-style(color)
         position absolute
         z-index 3
 
+        &.info-pomp
+          bottom 0
+          color white
+          font-size 0.6em
+          padding 2.5%
+          text-align center
+          text-shadow 0px 0px 3px rgba(#000, 0.6)
+          width 95%
+          opacity 0.9
+
         &.paper-pomp
           height 77px
           right 0
@@ -416,6 +426,9 @@ control-style(color)
             background-image none
             background-color control-background-color
             color #FFF
+        .pomp.info-pomp
+          text-shadow 0px 0px 3px rgba(0, 0, 0, 0.6), 0px 0px 13px rgba(0, 0, 0, 1.6)
+          opacity 1
 
 
     &.margin
@@ -491,6 +504,8 @@ control-style(color)
         display block
         height 100%
 
+      .pomp.info-pomp
+        display none
 
       img
         width 100%

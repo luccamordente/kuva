@@ -9,18 +9,31 @@ var gadget = (function declare_gadget (sorts) {
     return observable.call($.extend(options, inherit(gadget)));
   }, id = 0,
   gadget = {
+    listeners: {},
     show: function() {
       !this.element && control.create.call(this);
       this.element.css(configuration.size).fadeIn();
       return this;
     },
     dispatch: function(name, event) {
-      handlers[name] && handlers[name].call(this, event);
-      return this;
+      var listeners = gadget.listeners[name] || [],
+                  i = listeners.length;
+
+      try {
+        while(i--) listeners[i].call(this, event);
+        handlers[name] && handlers[name].call(this, event);
+      }
+      catch(e) {
+        console.error(e.message+ " " + e + " on listener " + listeners[i] + "\n " + e.stack);
+        throw e.message + " " + e + " on listener " + listeners[i] + "\n " + e.stack;
+        return false;
+      }
     },
-    listen: function (name, callback) {
-      if (handlers.name) throw 'Listener already defined for ' + name;
-      handlers[name] = callback;
+    listen: function (name, listener) {
+      gadget.listeners[name] || (gadget.listeners[name] = []);
+      if (gadget.listeners[name].indexOf(listener) != -1)
+        throw 'Listener already defined for ' + name;
+      gadget.listeners[name].push(listener);
       return this;
     },
     tie: function (photo_id) {
@@ -519,6 +532,8 @@ var gadget = (function declare_gadget (sorts) {
   };
 
   $(initialize);
+
+  that.listen = gadget.listen;
 
   return that;
 }).call(kuva, kuva.fn.sorts);

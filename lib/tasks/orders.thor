@@ -69,10 +69,10 @@ private
   def capture_order id
     puts "Capturando ordem de serviço #{id}\n"
 
-    tmp_path = "tmp/downloads/#{id}.zip"
+    tmp_path = "/tmp/#{id}.zip"
 
     puts "  Fazendo download..."
-    system "curl -o #{tmp_path} --user #{USERNAME}:#{PASSWORD} http://kuva.dev/api/orders/#{id}/download "
+    system "curl -o #{tmp_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download "
     print "  Download concluído.\n"
 
     date = Date.today

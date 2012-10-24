@@ -333,4 +333,5 @@ DEPENDENCIES
   stylus (~> 0.6.2)
   terminal-notifier
   therubyracer
+  thor
   uglifier (>= 1.0.3)

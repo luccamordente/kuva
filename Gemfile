@@ -23,6 +23,7 @@ gem "simple_form"
 gem "kaminari"
 gem "httparty"
 gem "rmagick"
+gem "thor"
 
 gem 'haml-rails', '~> 0.3.4'
 

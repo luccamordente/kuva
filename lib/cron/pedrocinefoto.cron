@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cd /home/lucca/www/kuva/current
+
+# load rvm ruby
+source /usr/local/rvm/environments/ruby-1.9.3-p194
+
+date
+echo
+
+bundle exec thor orders:search >> log/search.log 2>> log/search.log

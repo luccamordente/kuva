@@ -364,7 +364,7 @@ control =
     for key, gadget of gadgets.all
       break
 
-    gadget.files && uploader.upload gadget.files[gadget.files.length - 1]
+    uploader.upload {}
   photos:
     create: (count) ->
       $.ajax

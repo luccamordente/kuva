@@ -52,7 +52,7 @@ private
   def closed_orders_ids
     ids = []
 
-    uri = URI("http://#{domain}/api/orders/closed")
+    uri = URI("http://#{domain}/api/orders/closed.json")
     req = Net::HTTP::Get.new(uri.request_uri)
 
     req.basic_auth USERNAME, PASSWORD
@@ -69,19 +69,20 @@ private
   def capture_order id
     puts "Capturando ordem de serviço #{id}\n"
 
-    tmp_path = "/tmp/#{id}.zip"
+    tmp_path         = "/tmp/#{id}.zip"
+    destination_path = destination_folder
 
-    puts "  Fazendo download..."
-    system "curl -o #{tmp_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download "
-    print "  Download concluído.\n"
 
-    date = Date.today
-    destination_folder = "#{download_path}/#{date.strftime('%Y%m')}/#{date.strftime('%d')}"
-    system "mkdir -p #{destination_folder}"
+    puts   "  Fazendo download..."
+    system "curl -o #{tmp_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download"
+    print  "  Download concluído.\n"
 
-    if system "unzip #{tmp_path} -d #{destination_folder}"
+    system "mkdir -p #{destination_path}"
+
+    if system "unzip #{tmp_path} -d #{destination_path}"
       puts "  Imprimindo..."
-      # system "lp -d os #{destination_folder}/#{id}.pdf"
+      system "curl -o #{destination_path}/#{id}.pdf --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}.pdf"
+      # system "lp -d os #{destinatiodestination_pathn_folder}/#{id}.pdf"
       puts "  Impressão concluída.\n"
     else
       notify error_class:   "DownloadError",
@@ -95,6 +96,10 @@ private
   end
 
 
+  def destination_folder
+    date = Date.today
+    "#{download_path}/#{date.strftime('%Y%m')}/#{date.strftime('%d')}"
+  end
 
   def notify *args
     Airbrake.notify *args if environment == :production

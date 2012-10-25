@@ -22,8 +22,8 @@ Kuva::Application.routes.draw do
   end
 
 
-  namespace :api, defaults: { format: 'json' } do
-    resources :orders, only: [] do
+  namespace :api do
+    resources :orders, only: [:show] do
       get :closed  , on: :collection
       get :download, on: :member
     end

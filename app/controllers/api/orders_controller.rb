@@ -1,5 +1,24 @@
 class Api::OrdersController < Api::BaseController
-  respond_to :json
+
+  def show
+    @order = Order.includes(:user).find(params[:id])
+
+    @total_count = @order.photos.sum &:count
+
+    @photos = @order.photos.group_by do |photo|
+      {
+        paper:    photo.specification.paper,
+        border:   photo.border,
+        margin:   photo.margin,
+        product:  photo.product
+      }
+    end
+
+    respond_to do |format|
+      format.html
+      format.pdf { render layout: false }
+    end
+  end
 
   def download
     @order = Order.find params[:id]
@@ -12,7 +31,10 @@ class Api::OrdersController < Api::BaseController
   end
 
   def closed
-    respond_with Order.where(status: Order::CLOSED).order_by(:closed_at.asc).only(:_id).map(&:_id)
+    ids = Order.where(status: Order::CLOSED).order_by(:closed_at.asc).only(:_id).map(&:_id)
+    respond_to do |format|
+      format.json { render json: ids }
+    end
   end
 
 end

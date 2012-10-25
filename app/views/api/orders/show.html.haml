@@ -1,0 +1,61 @@
+!!!
+%html
+  %head
+    %title Photo
+    %meta{ name: 'viewport', content: 'width=device-width, initial-scale=1.0' }
+    = stylesheet_link_tag    "admin/application", media: "all"
+    = stylesheet_link_tag    "admin/print/print", media: "print"
+
+  %body#orders
+
+    .container-fluid
+
+      .row-fluid
+        .span12
+          %h1
+            Ordem:
+            = @order.id
+
+
+      .row-fluid
+
+        .span9
+
+          .tab-content
+            - unless @order.photos.empty?
+              #simple.tab-pane.active
+                %table.table.table-striped
+                  %tr
+                    %th
+                    %th
+                    %th Tamanho
+                    %th Papel
+                    %th Borda
+                    %th Margem
+                    %th Preço unitário
+                    %th Preço total
+
+                  - @photos.each_pair do |specs, photos|
+                    - count = photos.sum(&:count)
+                    %tr
+                      %td= count
+                      %td &times;
+                      %td= specs[:product].name
+                      %td= t "photo.specs.paper.#{specs[:paper]}"
+                      %td= specs[:border] ? "Sim" : "Não"
+                      %td= specs[:margin] ? "Sim" : "Não"
+                      %td= number_to_currency specs[:product].price
+                      %td= number_to_currency specs[:product].price * count
+
+
+          %p
+            %b Total de impressões:
+            = @total_count
+          %p
+            %b Preço:
+            = number_to_currency @order.price
+
+          %br
+          %br
+
+

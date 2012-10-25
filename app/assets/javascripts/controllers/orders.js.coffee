@@ -175,7 +175,6 @@ gadgets = do ->
       control.photos.create(1)
       copy.show()
 
-
       original = this
 
       original.listen 'uploading', (event) ->
@@ -187,8 +186,11 @@ gadgets = do ->
         if original.key == event.key
           event.key = copy.key
           copy.dispatch 'uploaded', event
-
-
+          
+          unless copy.photo.image_id?
+            photo.image_id = event.data.id
+            photo.save()
+          
       # Display fotos in summary
       aside.summary.add photo
 

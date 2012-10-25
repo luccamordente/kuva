@@ -49,14 +49,14 @@ private
 
   def place_photos_to directory, originals = false
     @order.photos.each do |photo|
+
       next if photo.count.zero?
+      raise "Photo has no Image" unless photo.image.present?
 
       photo_dir = photo.directory.name
 
       Dir.chdir directory.path
       Dir.mkdir photo_dir unless File.directory? photo_dir
-
-      raise "Photo has no Image" unless photo.image.present?
 
       image         = photo.image.image
       image_to_copy = originals && image.original.present? ? image.original : image

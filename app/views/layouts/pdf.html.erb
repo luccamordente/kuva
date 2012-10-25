@@ -3,10 +3,8 @@
 <head>
   <title>Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="/assets/admin/application.css" media="all"   rel="stylesheet" type="text/css" />
-  <!--link href="/assets/admin/print/print.css" media="print" rel="stylesheet" type="text/css" /-->
-  <%#= stylesheet_link_tag    "admin/application", media: "all" %>
-  <%#= stylesheet_link_tag    "admin/print/print", media: "print" %>
+  <%= stylesheet_link_tag    "admin/application", media: "all" %>
+  <%= stylesheet_link_tag    "admin/print/print", media: "print" %>
 </head>
 <body id="<%= yield :id if content_for? :id %>">
 

@@ -17,7 +17,7 @@ end
 module Kuva
   class Application < Rails::Application
 
-    config.middleware.use PDFKit::Middleware
+    config.middleware.use PDFKit::Middleware, { print_media_type: true }, only: /\/orders\//
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

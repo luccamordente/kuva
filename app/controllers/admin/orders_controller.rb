@@ -29,6 +29,7 @@ class Admin::OrdersController < Admin::ApplicationController
 
     respond_to do |format|
       format.html
+      format.pdf { render layout: 'pdf.html' }
     end
   end
 

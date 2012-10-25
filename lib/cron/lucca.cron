@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# crontab:
+# * * * * * /bin/sh -l -c 'cd ~/Kuva/www && ./lib/cron/lucca.cron >> log/search.log 2>> log/search.log'
+
 cd /Users/luccamordente/Kuva/www
 
 # load rvm ruby

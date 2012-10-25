@@ -22,6 +22,8 @@ class Orderizer
     file
   rescue
     raise
+  ensure
+    delete_base_directory
   end
 
 private
@@ -29,7 +31,6 @@ private
   def compress directory
     Dir.chdir Order.tmp_path
     system "zip -r #{@order.tmp_zip_identifier} #{@order.tmp_identifier} > /dev/null"
-    delete_base_directory
     File.open @order.tmp_zip_path
   end
 
@@ -39,7 +40,7 @@ private
   end
 
   def delete_base_directory
-    FileUtils.rm_rf @order.tmp_path
+    system "rm -rf #{@order.tmp_path}"
   end
 
   def delete_compressed

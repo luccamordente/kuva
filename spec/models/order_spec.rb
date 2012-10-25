@@ -271,7 +271,8 @@ describe Order do
       end
 
 
-      it "should delete the original dir when anything wrong happens in between"
+      it "should delete the original temporary dir when anything wrong happen in between"
+
     end
 
 

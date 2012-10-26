@@ -72,17 +72,27 @@ private
     tmp_path         = "/tmp/#{id}.zip"
     destination_path = destination_folder
 
-
+    # download
     puts   "  Fazendo download..."
     system "curl -o #{tmp_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download"
     print  "  Download concluído.\n"
 
     system "mkdir -p #{destination_path}"
 
+    # unzip
     if system "unzip #{tmp_path} -d #{destination_path}"
+
+      # print
       puts "  Imprimindo..."
-      system "curl -o #{destination_path}/#{id}.pdf --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}.pdf"
-      # system "lp -d os #{destinatiodestination_pathn_folder}/#{id}.pdf"
+
+      pdf_name = "#{id}.pdf"
+      pdf_path = "#{destination_path}/#{id}/#{pdf_name}"
+
+      # download pdf
+      system "curl -o #{pdf_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{pdf_name}"
+      # print pdf
+      system "lp -d os #{pdf_path}" if environment == :production
+
       puts "  Impressão concluída.\n"
     else
       notify error_class:   "DownloadError",
@@ -90,6 +100,7 @@ private
              parameters:    { order_id: id }
     end
 
+    # clean
     system "rm #{tmp_path}"
 
     puts "Pronto!\n\n"

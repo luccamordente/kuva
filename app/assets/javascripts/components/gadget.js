@@ -113,61 +113,6 @@ var gadget = (function declare_gadget (sorts) {
       this.dispatch('duplicated', gadget);
 
       return gadget;
-    },
-    crop: function() {
-      var dimensions    = this.photo.product[this.orientation + "_dimensions"],
-          photo_height  = this.photo.height,
-          photo_width   = this.photo.width,
-          canvas_ratio  = (this.orientation == "vertical") ?
-                            dimensions.width  / dimensions.height :
-                            dimensions.height / dimensions.width,
-          canvas_scale  = Math.min(configuration.size.width / dimensions.width, configuration.size.height / dimensions.height),
-          canvas_width  = Math.round(canvas_scale * dimensions.width ),
-          canvas_height = Math.round(canvas_scale * dimensions.height),
-          img_ratio     = (this.orientation == "vertical") ?
-                            photo_width  / photo_height :
-                            photo_height / photo_width,
-          total_margin  = +this.photo.margin * configuration.margin.width * 2,
-          img_scale     = (img_ratio > canvas_ratio) && !this.photo.border ?
-                            Math[!this.photo.border ? 'min' : 'max'](configuration.size.width / photo_width, configuration.size.height / photo_height) :
-                            Math[!this.photo.border ? 'max' : 'min'](canvas_width / photo_width, canvas_height / photo_height),
-          canvas        = this.element.find('.canvas'),
-          image         = canvas.find('.image'),
-          img           = image.find('img'),
-          left          = 0,
-          top           = 0,
-          canvas_left,
-          canvas_top,
-          img_height,
-          img_width,
-          img_left,
-          img_top,
-          product_dimensions;
-
-      // margin only affects the image wrapper and the img itself
-
-      image_width  = canvas_width  - total_margin;
-      image_height = canvas_height - total_margin;
-
-      img_width  = Math.round(img_scale * photo_width ) - total_margin;
-      img_height = Math.round(img_scale * photo_height) - total_margin;
-
-      img_left = (canvas_width  - img_width ) / 2 - total_margin / 2;
-      img_top  = (canvas_height - img_height) / 2 - total_margin / 2;
-
-      canvas_left = (this.element.innerWidth()  - canvas_width ) / 2;
-      canvas_top  = (this.element.innerHeight() - canvas_height) / 2;
-
-      canvas.css({width: canvas_width, height: canvas_height});
-      canvas.css({top: canvas_top, left: canvas_left});
-      image.css({width: image_width, height: image_height});
-      img.css({left: img_left, top: img_top, height: img_height, width: img_width});
-
-      product_dimensions = this.element.find(".dimension");
-
-      // TODO rivetize !!
-      product_dimensions.filter(".height").children(".count").html(dimensions.height);
-      product_dimensions.filter(".width ").children(".count").html(dimensions.width );
     }
   },
   control = {
@@ -267,13 +212,19 @@ var gadget = (function declare_gadget (sorts) {
       this.photo.border = false; // TODO FIXME Why I had to do this here too?
       this.photo.margin = false; // TODO FIXME Why I had to do this here too?
 
-      this.crop();
+      scalation.crop(this);
+
       this.element.addClass(this.orientation);
 
-      if (event.default)
+      if (event.default) {
         control.defaultize.call(this);
-      else
-        this.element.removeClass('reading').addClass('thumbnailing');
+        return;
+      }
+
+      this.loaded = true;
+      resolution.check(this);
+
+      this.element.removeClass('reading').addClass('thumbnailing');
 
       if (event.file) {
         // TODO create association photo.image & rivetize!
@@ -399,7 +350,8 @@ var gadget = (function declare_gadget (sorts) {
 
         gadget.element.removeClass("size-" + current.name).addClass("size-" + selected.name);
 
-        gadget.crop();
+        scalation.crop(gadget);
+        resolution.check(gadget);
       },
       border: function photo_border(border) {
         var gadget = this.gadget;
@@ -409,7 +361,7 @@ var gadget = (function declare_gadget (sorts) {
         ).tooltip('destroy').tooltip();
 
         // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
-        setTimeout(function(){ gadget.crop(); }, 10);
+        setTimeout(function(){ scalation.crop(gadget); }, 10);
       },
       margin: function photo_margin(margin) {
         // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
@@ -419,7 +371,7 @@ var gadget = (function declare_gadget (sorts) {
         element[margin ? 'addClass' : 'removeClass']('margin');
         element.find(".canvas .control.margin:first")[margin ? 'addClass' : 'removeClass']('active');
 
-        setTimeout(function(){ gadget.crop(); }, 10);
+        setTimeout(function(){ scalation.crop(gadget); }, 10);
       }
     },
     decrement: function() { this.photo.count--; },
@@ -454,7 +406,6 @@ var gadget = (function declare_gadget (sorts) {
 
 
       if (element.children(".modal").length) {
-        photo.product_id = photo.product_id;
         close();
         return;
       }
@@ -480,6 +431,121 @@ var gadget = (function declare_gadget (sorts) {
           }));
         })
       })});
+    }
+  },
+
+
+  resolution = {
+    // must be in descendent order by ppi
+    ranges: [
+      { ppi: 130, quality: 'good'    },
+      { ppi: 100, quality: 'average' },
+      { ppi:   0, quality: 'bad'     }
+    ],
+    unit: 'centimeters',
+    check: function check_resolution(gadget) {
+      var photo   = gadget.photo,
+          product = photo.product,
+          quality, pomp;
+
+      if (!gadget.loaded) return;
+
+      quality = this.quality(photo.width * photo.height, product.dimensions);
+      pomp    = gadget.element.find('.canvas .resolution-pomp:first');
+
+      pomp.remove();
+
+      switch(quality) {
+        case 'good':
+          break;
+        case 'bad':
+          gadget.element.find('.canvas:first').append($('<div class="pomp resolution-pomp bad" data-title="Resolução não recomendada<br /><small>A resolução desta foto ('+photo.width+'x'+photo.height+') pode prejudicar a qualidade da imagem para o tamanho '+ product.dimensions[0] +'x'+ product.dimensions[1] +' cm. Aconselhamos escolher um tamanho menor.</small>">&bull;</div>').tooltip({placement: 'bottom'}));
+          break;
+        case 'average':
+          gadget.element.find('.canvas:first').append($('<div class="pomp resolution-pomp average" data-title="Resolução aceitavel<br /><small>A resolução desta foto ('+photo.width+'x'+photo.height+') pode prejudicar a qualidade da imagem para o tamanho '+ product.dimensions[0] +'x'+ product.dimensions[1] +' cm, mas ainda é aceitável.</small>">&bull;</div>').tooltip({placement: 'bottom'}));
+          break;
+      };
+
+    },
+    quality: function quality_resolution(pixels, dimensions, unit) {
+      var ppi, range;
+
+      unit || (unit = this.unit);
+      if ( !pixels ) throw "Pixels cannnot be " + pixels;
+      if ( !$.isArray(dimensions) || dimensions.length != 2 ) throw "Dimensions should be like [10, 15]";
+
+      ppi = Math.sqrt( +pixels / (+dimensions[0] * +dimensions[1]) );
+
+      switch(unit) {
+        case 'centimeters':
+          ppi = ppi * 2.5;
+          break;
+      };
+
+      // TODO accept ranges in any order
+      for (var i=0; i < this.ranges.length; i++) {
+        range = this.ranges[i];
+        if (ppi > range.ppi) return range.quality;
+      };
+    }
+  },
+
+
+  scalation = {
+    crop: function(gadget) {
+      var dimensions    = gadget.photo.product[gadget.orientation + "_dimensions"],
+          photo_height  = gadget.photo.height,
+          photo_width   = gadget.photo.width,
+          canvas_ratio  = (gadget.orientation == "vertical") ?
+                            dimensions.width  / dimensions.height :
+                            dimensions.height / dimensions.width,
+          canvas_scale  = Math.min(configuration.size.width / dimensions.width, configuration.size.height / dimensions.height),
+          canvas_width  = Math.round(canvas_scale * dimensions.width ),
+          canvas_height = Math.round(canvas_scale * dimensions.height),
+          img_ratio     = (gadget.orientation == "vertical") ?
+                            photo_width  / photo_height :
+                            photo_height / photo_width,
+          total_margin  = +gadget.photo.margin * configuration.margin.width * 2,
+          img_scale     = (img_ratio > canvas_ratio) && !gadget.photo.border ?
+                            Math[!gadget.photo.border ? 'min' : 'max'](configuration.size.width / photo_width, configuration.size.height / photo_height) :
+                            Math[!gadget.photo.border ? 'max' : 'min'](canvas_width / photo_width, canvas_height / photo_height),
+          canvas        = gadget.element.find('.canvas'),
+          image         = canvas.find('.image'),
+          img           = image.find('img'),
+          left          = 0,
+          top           = 0,
+          canvas_left,
+          canvas_top,
+          img_height,
+          img_width,
+          img_left,
+          img_top,
+          product_dimensions;
+
+      // margin only affects the image wrapper and the img itself
+
+      image_width  = canvas_width  - total_margin;
+      image_height = canvas_height - total_margin;
+
+      img_width  = Math.round(img_scale * photo_width ) - total_margin;
+      img_height = Math.round(img_scale * photo_height) - total_margin;
+
+      img_left = (canvas_width  - img_width ) / 2 - total_margin / 2;
+      img_top  = (canvas_height - img_height) / 2 - total_margin / 2;
+
+      canvas_left = (gadget.element.innerWidth()  - canvas_width ) / 2;
+      canvas_top  = (gadget.element.innerHeight() - canvas_height) / 2;
+
+      canvas.css({width: canvas_width, height: canvas_height});
+      canvas.css({top: canvas_top, left: canvas_left});
+      image.css({width: image_width, height: image_height});
+      img.css({left: img_left, top: img_top, height: img_height, width: img_width});
+
+      product_dimensions = gadget.element.find(".dimension");
+
+      // TODO rivetize !!
+      product_dimensions.filter(".height").children(".count").html(dimensions.height);
+      product_dimensions.filter(".width ").children(".count").html(dimensions.width );
     }
   },
 

@@ -145,6 +145,8 @@ var gadget = (function declare_gadget (sorts) {
           canvas   = element.find('.canvas '),
           paper;
 
+      this.default = true;
+
       element.addClass('controlable');
 
       // TODO clear timeouts upon confirmation
@@ -221,7 +223,6 @@ var gadget = (function declare_gadget (sorts) {
         return;
       }
 
-      this.loaded = true;
       resolution.check(this);
 
       this.element.removeClass('reading').addClass('thumbnailing');
@@ -448,7 +449,7 @@ var gadget = (function declare_gadget (sorts) {
           product = photo.product,
           quality, pomp;
 
-      if (!gadget.loaded) return;
+      if (gadget.default || (!photo.width && !photo.height)) return;
 
       quality = this.quality(photo.width * photo.height, product.dimensions);
       pomp    = gadget.element.find('.canvas .resolution-pomp:first');

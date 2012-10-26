@@ -123,6 +123,11 @@ var gadget = (function declare_gadget (sorts) {
 
       gadget.tied = false;
 
+	  if (gadget.photo.image) {
+        this.element.find('.pomp.info-pomp:first').html();
+		gadget.photo.image.name = gadget.photo.image.name;
+	  }
+
       this.dispatch('duplicated', gadget);
 
       return gadget;
@@ -200,6 +205,9 @@ var gadget = (function declare_gadget (sorts) {
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
       this.orientation || (this.orientation = "vertical");
       this.element.find("[rel=tooltip]").tooltip();
+
+	  // TODO automatically forward thos property to view layer
+      this.element.find('.pomp.info-pomp:first').html(this.data.title);
 
       delete this.render;
     },
@@ -359,7 +367,7 @@ var gadget = (function declare_gadget (sorts) {
       element.find('.image:first').append($(
         '<div class="error-message">'                             +
         '  Não conseguimos ler a imagem'                          +
-        '  <div class="file-name">'+this.files[0].name+'</div>'   +
+        '  <div class="file-name">' + this.files[0].name + '</div>'   +
         '  Este arquivo não será enviado.'                        +
         '</div>'
       ));
@@ -370,7 +378,7 @@ var gadget = (function declare_gadget (sorts) {
       element.find('.image:first').append($(
         '<div class="error-message">'                                                     +
         '  Não conseguimos gerar a miniatura da imagem'                                   +
-        '  <div class="file-name">'+this.files[0].name+'</div>'                           +
+        '  <div class="file-name">' + this.files[0].name + '</div>'                           +
         '  Este arquivo SERÁ enviado, você ainda pode definir como vai querer revelá-lo.' +
         '</div>'
       ));
@@ -496,8 +504,6 @@ var gadget = (function declare_gadget (sorts) {
     }
   },
 
-
-
   configuration = {
     size  : { height: 250, width: 250 },
     margin: { width: 4 }
@@ -534,6 +540,7 @@ var gadget = (function declare_gadget (sorts) {
   $(initialize);
 
   that.listen = gadget.listen;
+  that.handlers = handlers;
 
   return that;
 }).call(kuva, kuva.fn.sorts);

@@ -177,15 +177,13 @@ gadgets = do ->
 
       original = this
 
-      original.listen 'uploading', (event) ->
-        if original.key == event.key
-          event.key = copy.key
-          copy.dispatch 'uploading', event
+      # original.listen 'uploading', (event) ->
+      #   if copy.key == event.key
+      #     gadget.handlers.uploading.call copy, event
 
       original.listen 'uploaded', (event) ->
-        if original.key == event.key
-          event.key = copy.key
-          copy.dispatch 'uploaded', event
+        if !copy.uploaded
+          gadget.handlers.uploaded.call copy, event
           
           unless copy.photo.image_id?
             photo.image_id = event.data.id

@@ -3,6 +3,7 @@
 bus = ->
 flash = null
 
+# Private module components
 listener =
   listen: (type, listener) ->
     @listeners[type] ||= []
@@ -24,7 +25,7 @@ listener =
       @listeners[type] = []
     @
 
-
+# Private module components
 publisher =
   key: (event) ->
     return event.key.toString().substring(0, 8) if event.key
@@ -95,9 +96,9 @@ initialize = ->
   # TODO pretty error message for this
   console.error('bus: flash not found.') unless flash?
 
-  bus.listen('error.uncaughted.maxed', errored)
-  bus.listen('application.initialized', publisher.initialized)
+  bus.listen 'error.uncaughted.maxed', errored
+  bus.listen 'application.initialized', publisher.initialized
 
-$(initialize)
+$ initialize
 
 this.bus = bus;

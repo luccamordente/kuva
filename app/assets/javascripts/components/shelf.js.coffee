@@ -27,7 +27,7 @@ do (parent = kuva, overlay = kuva.overlay) ->
     current   : null
     buttonzin: ->
       @overlaying = inputzin
-      flash.css width:1, height:1
+      flash.css width: 1, height: 1
       # overlay(flash).at inputzin
     button: ->
       @overlaying = input

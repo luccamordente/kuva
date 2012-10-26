@@ -3,7 +3,7 @@
   %head
     %title Photo
     = stylesheet_link_tag    "admin/application", media: "all"
-    = stylesheet_link_tag    "admin/print/print", media: "print"
+    = stylesheet_link_tag    "admin/print/print", media: "all"
 
   %body#orders
 
@@ -12,8 +12,22 @@
       .row-fluid
         .span12
           %h1
-            Ordem:
-            = @order.id
+            \ #
+            = @order.pretty_id
+
+
+      .row-fluid
+
+        %p
+          %b Cliente:
+          = @order.user.try :name
+
+        - if @order.observations.present?
+          %p
+            %b Observações:
+            = @order.observations
+
+        %br
 
 
       .row-fluid

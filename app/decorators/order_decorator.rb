@@ -4,7 +4,7 @@ module OrderDecorator
 
   def pretty_id
     start, finish = id.to_s.partition(/.{8}/)[1..2]
-    "<b>#{start}</b><br /><small>#{finish}</small>".html_safe
+    "<b>#{start}</b><small>#{finish}</small>".html_safe
   end
 
   # Statuses for human admins. e.g.:

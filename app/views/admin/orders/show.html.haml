@@ -5,8 +5,8 @@
   .row-fluid
     .span12
       %h1
-        Ordem:
-        = @order.id
+        \#
+        = @order.pretty_id
 
 
 
@@ -24,11 +24,12 @@
       %p
         %b Cliente:
         = @order.user.try :name
-      %br
 
-      %p
-        %b Observações:
-        = @order.observations
+      = if @order.observations.present?
+        %p
+          %b Observações:
+          = @order.observations
+
       %br
 
 

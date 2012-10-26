@@ -15,8 +15,8 @@ class Api::OrdersController < Api::BaseController
     end
 
     respond_to do |format|
-      format.html
-      format.pdf { render layout: false }
+      format.html { render layout: false }
+      format.pdf  { render layout: false }
     end
   end
 

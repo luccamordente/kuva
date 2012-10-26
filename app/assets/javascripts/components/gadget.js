@@ -120,14 +120,15 @@ var gadget = (function declare_gadget (sorts) {
       this.data = $.extend({
         id: id++,
         source: kuva.service.url + '/assets/blank.gif',
-        title: 'Sumonando imagem'
+        title: 'Gerando miniatura...'
       }, this.data);
 
       (this.render) || (this.render = control.render);
       this.parent && this.render(templates.gadget);
 
       this.element       = $('#gadget-' + this.data.id);
-      this.image         = library.image(this.element.find('img'), this.data.title); // TODO REMOVE title
+      this.image         = library.image(this.element.find('.image img'), this.data.title); // TODO REMOVE title
+      this.original_image= library.image(this.element.find('.original-image img'), this.data.title); // TODO best support for original image
       this.upload_bar    = this.element.find('.upload.bar   ');
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
       this.orientation || (this.orientation = "vertical");
@@ -229,9 +230,10 @@ var gadget = (function declare_gadget (sorts) {
 
       if (event.file) {
         // TODO create association photo.image & rivetize!
-        this.element.find('.pomp.info-pomp:first').html(event.file.name)
+        this.element.find('.pomp.info-pomp:first').html(event.file.name);
         this.image.title(event.file.name);
         this.data.title = event.file.name;
+        this.original_image.title("Esta parte da imagem será cortada.");
       }
     },
     thumbnailing: function thumbnailer_thumbnailing (event) {
@@ -250,6 +252,7 @@ var gadget = (function declare_gadget (sorts) {
 
       this.thumbnail_bar.animate({width: '0%'}, 1000, 'linear', function () {
         gadget.image.hide();
+        gadget.original_image.hide();
 
         // TODO Fix in a better way the hide bug on webkit browsers
         setTimeout(function () {
@@ -258,7 +261,11 @@ var gadget = (function declare_gadget (sorts) {
           gadget.element.addClass('loaded').removeClass('thumbnailing');
           gadget.image.source(prefix + event.base64).show('slow', function () {
             gadget.thumbnail_bar.hide();
-          }, 1)
+          }, 1);
+          // TODO best support for original image
+          gadget.original_image.source(prefix + event.base64).show('slow', function () {
+            gadget.thumbnail_bar.hide();
+          }, 1);
         });
 
         // TODO resizer.unload();
@@ -511,8 +518,8 @@ var gadget = (function declare_gadget (sorts) {
                             Math[!gadget.photo.border ? 'min' : 'max'](configuration.size.width / photo_width, configuration.size.height / photo_height) :
                             Math[!gadget.photo.border ? 'max' : 'min'](canvas_width / photo_width, canvas_height / photo_height),
           canvas        = gadget.element.find('.canvas'),
-          image         = canvas.find('.image'),
-          img           = image.find('img'),
+          image         = canvas.find('.image, .original-image'),
+          img           = canvas.find('.image img, .original-image img'),
           left          = 0,
           top           = 0,
           canvas_left,

@@ -228,7 +228,7 @@ control-style(color)
       position absolute
       transition width 0.5s, height 0.5s, top 0.5s, left 0.5s
 
-      .image
+      .image, .original-image
         background-color #FFF
         border 0px solid #FF9
         box-shadow 1px 1px 4px #777
@@ -244,6 +244,10 @@ control-style(color)
           z-index 2
           transition top 0.5s, left 0.5s, width 0.5s, height 0.5s
 
+      .original-image
+        opacity 0.1
+        overflow visible
+        position absolute
 
       .pomp
         position absolute
@@ -443,11 +447,16 @@ control-style(color)
         .pomp.info-pomp
           text-shadow 0px 0px 3px rgba(0, 0, 0, 0.6), 0px 0px 13px rgba(0, 0, 0, 1.6)
           opacity 1
+        .original-image
+          opacity 0.4
 
 
     &.margin
-      .canvas .image
-        border 4px solid white
+      .canvas
+        .image
+          border 4px solid white
+        .original-image
+          border 4px solid rgba(#FFF,0)
 
     &.paper-glossy
       .canvas

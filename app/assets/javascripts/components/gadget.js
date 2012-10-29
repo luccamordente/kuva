@@ -212,8 +212,6 @@ var gadget = (function declare_gadget (sorts) {
       this.orientation  = event.width < event.height ? "vertical" : "horizontal";
       this.photo.height = event.height;
       this.photo.width  = event.width;
-      this.photo.border = false; // TODO FIXME Why I had to do this here too?
-      this.photo.margin = false; // TODO FIXME Why I had to do this here too?
 
       scalation.crop(this);
 

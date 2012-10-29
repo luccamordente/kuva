@@ -9,7 +9,7 @@ class Directorizer
   end
 
   def name
-    "P#{count}_#{size}_#{color}#{paper}#{border}#{margin}"
+    "P#{count}_#{size}_#{color}#{paper}#{margin}#{border}"
   end
 
   def count

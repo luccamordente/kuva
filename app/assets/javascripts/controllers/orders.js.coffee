@@ -430,6 +430,12 @@ control =
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
+  error_uncaughted: (event, gadget) ->
+    message  = "Error uncaughted. Order ##{order._id}. \n"
+    message += "Event details: #{JSON.stringify event} \n"
+    alert "Ops... aconteceu um erro e ainda não sabemos o motivo. Já fomos notificados e vamos resolver logo! Que tal tentar mais uma vez? Se o erro persistir, fale com a gente no chat alí embaixo, por favor!"
+    throw message
+
   closed: ->
     aside.progress.status.text = "Concluído!"
     kuva.overlay().dynamic().at(document.body)
@@ -518,6 +524,7 @@ initialize = ->
   .on('send.completed'           , control.send_completed                                       )
   .on('order.closed'             , control.closed                                               )
   .on('order.canceled'           , control.cancel_completed                                     )
+  .on('error.uncaughted'         , control.error_uncaughted                                     )
 
 
 templates =

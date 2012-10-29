@@ -5,8 +5,8 @@
   .row-fluid
     .span12
       %h1
-        Ordem:
-        = @order.id
+        \#
+        = @order.pretty_id
 
 
 
@@ -24,11 +24,12 @@
       %p
         %b Cliente:
         = @order.user.try :name
-      %br
 
-      %p
-        %b Observações:
-        = @order.observations
+      = if @order.observations.present?
+        %p
+          %b Observações:
+          = @order.observations
+
       %br
 
 
@@ -47,8 +48,8 @@
                 %th
                 %th Tamanho
                 %th Papel
-                %th Borda
                 %th Margem
+                %th Borda
                 %th Preço unitário
                 %th Preço total
 
@@ -59,8 +60,8 @@
                   %td &times;
                   %td= specs[:product].name
                   %td= t "photo.specs.paper.#{specs[:paper]}"
-                  %td= specs[:border] ? "Sim" : "Não"
                   %td= specs[:margin] ? "Sim" : "Não"
+                  %td= specs[:border] ? "Sim" : "Não"
                   %td= number_to_currency specs[:product].price
                   %td= number_to_currency specs[:product].price * count
 

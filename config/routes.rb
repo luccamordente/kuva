@@ -22,6 +22,14 @@ Kuva::Application.routes.draw do
   end
 
 
+  namespace :api do
+    resources :orders, only: [:show] do
+      get :closed  , on: :collection
+      get :download, on: :member
+    end
+  end
+
+
 
   devise_for :users, controllers: { sessions: "sessions" }
 

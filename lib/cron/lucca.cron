@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# crontab:
+# * * * * * /bin/sh -l -c 'cd ~/Kuva/www && ./lib/cron/lucca.cron >> log/search.log 2>> log/search.log'
+
+cd /Users/luccamordente/Kuva/www
+
+# load rvm ruby
+source /Users/luccamordente/.rvm/environments/ruby-1.9.3-p194@kuva
+
+date
+echo
+
+bundle exec thor orders:search >> log/search.log 2>> log/search.log

@@ -224,7 +224,12 @@ describe Order do
 
       subject{ order.compressed }
 
-      after { system "rm -rf #{ order.tmp_zip_path }" }
+      after do
+        system "rm -f #{order.tmp_zip_path}"
+        system "rm -rf /tmp/#{order.tmp_identifier}"
+        Dir.chdir Rails.root # pro rspec não ficar locao
+      end
+
 
       it         { should_not be_nil          }
       its(:class){ should == File             }
@@ -234,14 +239,22 @@ describe Order do
         expect{ Dir.new order.tmp_path }.to raise_error Errno::ENOENT
       end
 
-      it "should delete the zip file"
+      it "should delete the zip file" do
+        expect{ Dir.new order.tmp_zip_path }.to raise_error Errno::ENOENT
+      end
 
 
       context "decompressed" do
         before do
           Dir.chdir Order.tmp_path
-          system "unzip #{subject.path} -d . > /dev/null"
-          Dir.chdir order.tmp_path
+          system "unzip #{subject.path} -d /tmp > /dev/null"
+          Dir.chdir "/tmp/#{order.tmp_identifier}"
+        end
+
+        after do
+          system "rm -f #{order.tmp_zip_path}"
+          system "rm -rf /tmp/#{order.tmp_identifier}"
+          Dir.chdir Rails.root # pro rspec não ficar locao
         end
 
         it "should contain 2 dirs" do
@@ -267,15 +280,12 @@ describe Order do
           files[2].should match /rgb\[2\].jpg$/
         end
 
-        after { system "if [ -d #{order.tmp_path} ]; then rm -rf #{order.tmp_path}; fi;" }
       end
-
-
-      it "should delete the original dir when anything wrong happens in between"
     end
 
 
-    context "originals" do
+
+    context "with originals" do
       let!(:product){ Fabricate :product, name: "10x15" }
       let!(:order){ Fabricate :order }
       let!( :rgb_image){ order.images.create image: image_fixture( 'rgb.jpg') }
@@ -286,10 +296,16 @@ describe Order do
       ]}
       subject{ order.compressed originals: true }
 
+      after do
+        system "rm -f #{order.tmp_zip_path}"
+        system "rm -rf /tmp/#{order.tmp_identifier}"
+        Dir.chdir Rails.root # pro rspec não ficar locao
+      end
+
       it "should include the original images when stored" do
         Dir.chdir Order.tmp_path
-        system "unzip #{subject.path} -d . > /dev/null"
-        Dir.chdir order.tmp_path
+        system "unzip #{subject.path} -d /tmp > /dev/null"
+        Dir.chdir "/tmp/#{order.tmp_identifier}"
         photos.each do |photo|
           image    = photo.reload.image.image
           original = image.original
@@ -301,9 +317,26 @@ describe Order do
             Dir["#{photo.directory.name}/*"].should_not include(File.join(photo.directory.name, File.basename(original.current_path)))
           end
         end
-        # system "rm -r #{order.tmp_path}"
       end
 
+    end
+
+
+
+
+    context "compression error" do
+      let!(:product){ Fabricate :product, name: "10x15" }
+      let!(:order){ Fabricate :order }
+      let!(:image){ order.images.create image: image_fixture('rgb.jpg') }
+      let!(:photos){[
+        # with no image_id to force error
+        order.photos.create(count: 5, specification_attributes: { paper: Specification::GLOSSY_PAPER }, product_id: product.id, image_id: nil)
+      ]}
+
+      it "should delete the original temporary dir when anything wrong happen in between" do
+        expect{ order.compressed }.to raise_error
+        expect{ Dir.new order.tmp_path }.to raise_error Errno::ENOENT
+      end
     end
 
 

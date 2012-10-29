@@ -152,8 +152,8 @@ cancel =
 
 # module
 gadgets = do ->
-  that = (key, options) ->
-    instances[key] ||= gadget(options)
+  that = (key, options = {}) ->
+    instances[key] ||= gadget null, $.extend(options, key: key)
 
   instances = {}
 
@@ -162,7 +162,9 @@ gadgets = do ->
     key: -> multiton.id++
     all: instances
     duplicated: (copy) ->
-      instances[multiton.key()] = copy
+      key = multiton.key()
+      copy.key = key
+      instances[key] = copy
       photo = copy.photo
 
       # TODO automatcally eager load
@@ -172,6 +174,20 @@ gadgets = do ->
       # Create next photo
       control.photos.create(1)
       copy.show()
+
+      original = this
+
+      # original.listen 'uploading', (event) ->
+      #   if copy.key == event.key
+      #     gadget.handlers.uploading.call copy, event
+
+      original.listen 'uploaded', (event) ->
+        if !copy.uploaded
+          gadget.handlers.uploaded.call copy, event
+
+          unless copy.photo.image_id?
+            photo.image_id = event.data.id
+            photo.save()
 
       # Display fotos in summary
       aside.summary.add photo
@@ -199,8 +215,6 @@ control =
 
     # Create a new gadget and display it
     gadget = gadgets(key).show()
-
-    gadget.listen 'duplicated', gadgets.duplicated
 
     # Criar uma photo para arquivo selecionado
     gadget.photo = photo = order.photos.build
@@ -365,6 +379,8 @@ control =
       break
 
     uploader.upload {}
+
+
   photos:
     create: (count) ->
       $.ajax
@@ -472,6 +488,8 @@ initialize = ->
   aside.hide()
 
   shelf = kuva.shelf('#add-more','#add-button', 'object:last')
+
+  gadget.listen 'duplicated', gadgets.duplicated
 
   # Setup drag and drop
   dropper.overlay.element = $('#overlay')

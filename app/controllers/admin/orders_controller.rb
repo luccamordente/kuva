@@ -40,7 +40,7 @@ class Admin::OrdersController < Admin::ApplicationController
 
     @order.compressed originals: originals do |file|
       @order.update_status Order::CATCHING
-      send_data file.read, filename: "#{@order.id}.zip"
+      send_data file.read, filename: @order.tmp_zip_identifier(human: true)
       @order.update_status Order::CAUGHT
     end
 

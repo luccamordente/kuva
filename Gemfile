@@ -26,6 +26,7 @@ gem "rmagick"
 gem "thor"
 gem "pdfkit"
 gem "wkhtmltopdf-binary"
+gem 'mongoid_auto_increment'
 
 gem 'haml-rails', '~> 0.3.4'
 

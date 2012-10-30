@@ -25,13 +25,13 @@ class Api::OrdersController < Api::BaseController
 
     @order.compressed do |file|
       @order.update_status Order::CATCHING
-      send_data file.read, filename: "#{@order.id}.zip"
+      send_data file.read, filename: @order.tmp_zip_identifier
       @order.update_status Order::CAUGHT
     end
   end
 
   def closed
-    ids = Order.where(status: Order::CLOSED).order_by(:closed_at.asc).only(:_id).map(&:_id)
+    ids = Order.where(status: Order::CLOSED).order_by(:closed_at.asc).only(:_id, :sequence).map{ |order| { id: order.id, name: order.identifier(human: true) } }
     respond_to do |format|
       format.json { render json: ids }
     end

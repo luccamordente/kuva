@@ -31,15 +31,17 @@ class Orders < Thor
   method_option :environment, :aliases => "-e", :desc => "Sets the app environment"
 
   def search
-    id  = nil
-    ids = JSON.parse(closed_orders_ids)
+    order  = nil
+    orders = JSON.parse(closed_orders_ids)
 
-    puts "#{ids.count} ordens de serviço encontradas! \n\n" if ids.count > 0
-    ids.each { |id| capture_order id }
-    puts "\n\n\n" if ids.count > 0
+    puts "#{orders.count} ordens de serviço encontradas! \n\n" if orders.count > 0
+    orders.each do |order|
+      capture_order order
+    end
+    puts "\n\n\n" if orders.count > 0
 
   rescue => e
-    notify e, parameters: { order_id: id }
+    notify e, parameters: { order_id: order['id'] }
     raise e
   end
 
@@ -66,7 +68,10 @@ private
   end
 
 
-  def capture_order id
+  def capture_order order
+    id   = order['id']
+    name = order['name']
+
     puts "Capturando ordem de serviço #{id}\n"
 
     tmp_path         = "/tmp/#{id}.zip"
@@ -79,19 +84,29 @@ private
 
     system "mkdir -p #{destination_path}"
 
-    # unzip
+    # unzip and use name instead of id
     if system "unzip #{tmp_path} -d #{destination_path}"
+
+      # rename to a readable id
+      if name != id
+        system "mv #{destination_path}/#{id} #{destination_path}/#{name}"
+        puts "  Alterando nome de #{id} para #{name}"
+      end
 
       # print
       puts "  Imprimindo..."
 
-      pdf_name = "#{id}.pdf"
-      pdf_path = "#{destination_path}/#{id}/#{pdf_name}"
+      pdf_name = "#{name}.pdf"
+      pdf_path = "#{destination_path}/#{name}/#{pdf_name}"
 
-      # download pdf
-      system "curl -o #{pdf_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{pdf_name}"
-      # print pdf
-      system "lp -d os #{pdf_path}" if environment == :production
+      if environment == :production
+        # download pdf
+        system "curl -o #{pdf_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}.pdf"
+        # print pdf
+        system "lp -d os #{pdf_path}"
+      else
+        puts "    Simulando impressão."
+      end
 
       puts "  Impressão concluída.\n"
     else

@@ -23,6 +23,9 @@ class Order
   field :canceled_at , type: DateTime
   field :observations, type: String
 
+  auto_increment :sequence
+  index sequence: 1
+
   # relationships
   embeds_many :photos
   belongs_to  :user  , index: true
@@ -122,20 +125,25 @@ class Order
     end
   end
 
-  def tmp_path
-    File.join self.class.tmp_path, tmp_identifier
+  def identifier options = {}
+    options.symbolize_keys!
+    (options[:human] ? (sequence || id) : id).to_s
   end
 
-  def tmp_zip_path
-    "#{tmp_path}.zip"
+  def tmp_path options = {}
+    File.join self.class.tmp_path, tmp_identifier(options)
   end
 
-  def tmp_identifier
-    id.to_s
+  def tmp_zip_path options = {}
+    "#{tmp_path(options)}.zip"
   end
 
-  def tmp_zip_identifier
-    "#{id}.zip"
+  def tmp_identifier options = {}
+    identifier(options)
+  end
+
+  def tmp_zip_identifier options = {}
+    "#{tmp_identifier(options)}.zip"
   end
 
   def self.tmp_path

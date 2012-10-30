@@ -2,6 +2,10 @@
 
 module OrderDecorator
 
+  def sequence
+    super || pretty_id
+  end
+
   def pretty_id
     start, finish = id.to_s.partition(/.{8}/)[1..2]
     "<b>#{start}</b><small>#{finish}</small>".html_safe

@@ -1,5 +1,5 @@
 %tr
-  %td.id= order.pretty_id
+  %td.id= order.identifier human: true
   %td= labeled_status order
   %td= number_to_currency order.price
   %td.hidden-phone{ title: l(order.created_at, format: :medium) }= time_ago_in_words order.created_at

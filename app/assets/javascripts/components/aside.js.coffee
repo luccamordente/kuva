@@ -110,16 +110,12 @@
     template: """
       <div id=\"summary\" class=\"faded\">
         <div class=\"items\">
-          <div class=\"item\" data-each-item=\"summary.items\">
-            <div data-show="item.show">
-              <div class=\"block count\" data-text=\"item.count\">0</div>
-              <div class=\"block times\">x</div>
-              <div class=\"block product\">
-                <div class=\"thumb\">
-                  <img alt=\"Generic Temporary Small Photo Pile\" src=\"/assets/generic-temporary-small-photo-pile.png\" />
-                  <div class=\"name\" data-text=\"item.product_name\"></div>
-                </div>
-              </div>
+          <div class=\"item\" data-each-item=\"summary.items\" data-show="item.show">
+            <div class=\"block count\" data-text=\"item.count\">0</div>
+            <div class=\"block times\">x</div>
+            <div class=\"block product\">
+              <div class=\"block name\" data-text=\"item.product_name\"></div>
+              <img class=\"block\" alt=\"Generic Temporary Small Photo Pile\" src=\"/assets/generic-temporary-small-photo-pile.png\" />
             </div>
           </div>
         </div>

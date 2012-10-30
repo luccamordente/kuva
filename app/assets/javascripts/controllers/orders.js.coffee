@@ -458,7 +458,7 @@ control =
     $(window).off 'beforeunload'
 
     modal
-      order: order._id.substr 0, 8
+      order: "# #{order.sequence}"
       confirm: ->
         document.location = document.location
       ,

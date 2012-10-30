@@ -48,8 +48,8 @@ class Order
   # filters
   before_validation :set_empty_status, on: :create
   # notifications
-  before_create :admin_notify_opened
-  before_save   :admin_notify_closed, if: lambda{ closed? and not was_closed? }
+  #before_create :admin_notify_opened
+  #before_save   :admin_notify_closed, if: lambda{ closed? and not was_closed? }
   before_save   :user_notify_closed , if: lambda{ closed? and not was_closed? }
 
 
@@ -156,7 +156,7 @@ private
     end
 
     def admin_notify_opened
-      # AdminMailer.order_opened(self).deliver unless Rails.env.development?
+      AdminMailer.order_opened(self).deliver unless Rails.env.development?
     end
 
     def admin_notify_closed

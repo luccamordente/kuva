@@ -40,9 +40,9 @@ describe Order do
     end
 
     context "open" do
-      it "should notify the staff and the user" do
+      it "should notify the user" do
         order = Fabricate :order
-        expect { order.update_status Order::CLOSED }.to change(ActionMailer::Base.deliveries, :count).by(2)
+        expect { order.update_status Order::CLOSED }.to change(ActionMailer::Base.deliveries, :count).by(1)
       end
     end
 

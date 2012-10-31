@@ -53,7 +53,8 @@ class Order
   # notifications
   #before_create :admin_notify_opened
   #before_save   :admin_notify_closed, if: lambda{ closed? and not was_closed? }
-  before_save   :user_notify_closed , if: lambda{ closed? and not was_closed? }
+  before_save   :admin_notify_closed_ios, if: lambda{ closed? and not was_closed? }
+  before_save   :user_notify_closed ,     if: lambda{ closed? and not was_closed? }
 
 
   def update_price
@@ -170,6 +171,12 @@ private
     def admin_notify_closed
       AdminMailer.order_closed(self).deliver unless Rails.env.development?
     end
+
+    def admin_notify_closed_ios
+      AdminMailer.order_closed_ios(self) if Rails.env.production?
+    end
+
+
 
     def user_notify_closed
       UserMailer.order_closed(self).deliver unless Rails.env.development?

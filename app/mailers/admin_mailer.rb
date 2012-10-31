@@ -1,6 +1,7 @@
 require 'notifiable'
 
 class AdminMailer < ActionMailer::Base
+
   include Notifiable
 
   helper :orders
@@ -21,8 +22,11 @@ class AdminMailer < ActionMailer::Base
     @user = @order.user
     @name  = @user.try :name
 
-    notify ['luccamordente','pickachu','ricardo1216'], "Ordem enviada por #{@order.user.name}", nil, admin_order_url(@order) if Rails.env.production?
-
     mail subject: "Ordem enviada por #{@order.user.name}! [#{@order.id}]"
   end
+
+  def order_closed_ios order
+    notify ['luccamordente','pickachu','ricardo1216'], "OS ##{order.identifier human: true} enviada por #{order.user.name} no valor de #{view_context.number_to_currency order.price}"
+  end
+
 end

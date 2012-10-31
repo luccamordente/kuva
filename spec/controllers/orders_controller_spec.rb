@@ -34,17 +34,9 @@ describe OrdersController do
 
     login_user
 
-    describe "open" do
-      it "opens a new order" do
-        get :new
-        order = assigns[:order]
-        order.should_not be_nil
-        order.should be_persisted
-        order.user_id.should == current_user.id
-      end
-
-      it "creates a new order for current user each time" do
-        expect { 2.times { get :new } }.to change(current_user.orders, :count).by 2
+    describe "new" do
+      it "should not create a new order anymore" do
+        expect { get :new }.not_to change(Order, :count)
       end
 
       it "loads photos specs" do
@@ -57,6 +49,23 @@ describe OrdersController do
       it "loads the products" do
         get :new
         assigns[:products].should_not be_nil
+      end
+    end
+
+    describe "open" do
+      it "creates a new order" do
+        expect { post :create }.to change(Order, :count).by(1)
+      end
+
+      it "creates a new order for current user each time" do
+        expect { 2.times { post :create } }.to change(current_user.orders, :count).by 2
+      end
+
+      it "returns the order id and sequence" do
+        post :create
+        res = ActiveSupport::JSON.decode(response.body)
+        res['id'      ].should_not be_nil
+        res['sequence'].should_not be_nil
       end
     end
 

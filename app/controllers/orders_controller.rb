@@ -4,9 +4,12 @@ class OrdersController < ApplicationController
   before_filter :load_specs, :load_products, only: :new
 
   def new
-    @order = current_user.orders.create
-
     render layout: false
+  end
+
+  def create
+    @order = current_user.orders.create
+    success id: @order.id.to_s, sequence: @order.sequence
   end
 
   def index

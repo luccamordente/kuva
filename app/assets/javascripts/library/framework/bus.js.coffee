@@ -3,11 +3,33 @@
 bus = ->
 flash = null
 
+
+controller =
+
+  queue: []
+
+  enqueue: (params...) ->
+    console.log "enqueueing", params[0]
+    controller.queue.push params
+
+  pause: ->
+    console.log "bus paused"
+    bus.trigger = bus.publish = controller.enqueue
+
+  resume: ->
+    console.log "bus resumed"
+    bus.trigger = bus.publish = publisher.publish
+    publisher.publish.apply bus, event for event in controller.queue
+    controller.queue = []
+    true
+
+
+
 # Private module components
 listener =
   listen: (type, listener) ->
     @listeners[type] ||= []
-    @listeners[type].push listener
+    @listeners[type].unshift listener
     @
   mute: (type, listener) ->
     throw "bus.off Listener for event of type #{type}, does not exist" if !@listeners[type]
@@ -87,6 +109,8 @@ bus.trigger = bus.publish = publisher.publish
 bus.on = bus.listen = listener.listen
 bus.off = bus.mute = listener.mute
 bus.listeners = {}
+bus.pause  = controller.pause
+bus.resume = controller.resume
 
 # Application wild initialization
 initialize = ->

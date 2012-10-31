@@ -38,7 +38,7 @@
         $(function () {
           library.flash.session( { token: '#{current_user.authentication_token}' } );
           kuva.orders({
-            order: #{raw @order.to_json},
+            order: {},
             default_product: #{raw @products.select{|p| p.name == '10x15' }.first.to_json},
             products: #{raw @products.to_json},
             specifications: #{raw @specs.to_json}

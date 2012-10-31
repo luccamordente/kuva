@@ -6,7 +6,7 @@ order_model = model.call resource: 'order', has_many: 'images', route: 'pedidos'
 
 @order = (data) ->
   # TODO improve model method support
-  cancelable.call closeable.call associations.call order_model data
+  openable.call cancelable.call closeable.call associations.call order_model data
 
 # TODO Make association a generic method
 associations = ->
@@ -40,15 +40,40 @@ associations = ->
 open = ->
   # requisição para abrir ordem
 
-opened = ->
-  # salvar dados da ordem
-  # dispachar evento de abertura de ordem, bus.publish(order.opened)
+
+openable = ->
+  @open = (callback) ->
+    $.ajax
+      url: "#{@route}"
+      type: "POST"
+      success: (params...) ->
+        opened.apply @, params
+        callback.call @ if callback?
+      statusCode:
+        422: unprocessable
+        500: error
+      context: @
+
+  opened = (response) ->
+    @_id      = response.id
+    @sequence = response.sequence
+    bus.publish 'order.opened'
+
+  unprocessable = (xhr, status) ->
+    alert "Erro ao abrir pedido!"
+    throw "order.open.unprocessable: {id: #{@_id}} Error '#{status}' processing request"
+
+  error = (xhr, status) ->
+    alert "Erro ao accessar o servidor."
+    throw "order.open.error: {id: #{@_id}} Error '#{status}' processing request"
+
+  @
 
 errored = ->
   # dispachar evento de falha na abertura de ordem, bus.publish(order.opened)
 
 closeable = ->
-  @close = (response) ->
+  @close = ->
     $.ajax
       url: "#{@route}/#{@_id}/close"
       type: "POST"
@@ -72,7 +97,7 @@ closeable = ->
   @
 
 cancelable = ->
-  @cancel = (response) ->
+  @cancel = ->
     $.ajax
       url: "#{@route}/#{@_id}/cancel"
       type: "POST"

@@ -32,10 +32,8 @@ kuva.orders = (options) ->
   kuva.orders.products       = products = window.product.cache = options.products
   window.gadgets = gadgets
 
-  window.domo = uploader = window.uploader
-    url: "/pedidos/#{order._id}/images/"
-    data:
-      order_id: order._id
+  kuva.order = order
+
 
 # TODO Move droppable to a component
 dropper =
@@ -207,6 +205,17 @@ control =
       $('#main-add').fadeIn 2000
       shelf.overlay 'button'
 
+
+  order_opened: (event) ->
+    uploader = window.uploader
+      url: "/pedidos/#{order._id}/images/"
+      data:
+        order_id: order._id
+
+  first_choosed: (event) ->
+    bus.pause()
+    order.open bus.resume
+    bus.off 'choosed', @callee
 
   file_selected: (event) ->
     file  = event.file
@@ -502,11 +511,13 @@ initialize = ->
   #      and move inside gadget initializer
   bus
   .on('application.initialized'  , control.initialized                                          )
+  .on('choosed'                  , control.first_choosed                                        )
   .on('file.selected'            , control.file_selected                                        )
   .on('files.selected'           , control.files_selected                                       )
   .on('files.selected'           , control.first_files_selection                                )
   .on('files.selection_confirmed', control.selection_confirmed                                  )
   .on('files.selection_confirmed', control.first_selection_confirmed                            )
+  .on('order.opened'             , control.order_opened                                         )
   .on('reader.loadstart'         , (event) -> gadgets(event.key).dispatch('loadstart'   , event))
   .on('reader.progress'          , (event) -> gadgets(event.key).dispatch('progress'    , event))
   .on('reader.loadend'           , (event) -> gadgets(event.key).dispatch('loadend'     , event))

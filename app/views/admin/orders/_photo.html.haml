@@ -12,9 +12,9 @@
 
   %td= photo.margin ? "Sim" : "Não"
 
-  %td= number_to_currency photo.product.price
+  %td.right= number_to_currency photo.product.price, unit: ""
 
-  %td= number_to_currency photo.product.price * photo.count
+  %td.right= number_to_currency photo.product.price * photo.count, unit: ""
 
   %td.action
     - if photo.image.present? && photo.image.image.present?

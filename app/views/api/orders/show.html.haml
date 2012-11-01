@@ -21,6 +21,9 @@
         %p
           %b Cliente:
           = @order.user.try :name
+        %p
+          %b Enviado em:
+          = l @order.closed_at, format: :medium  if @order.closed_at
 
         - if @order.observations.present?
           %p
@@ -45,8 +48,8 @@
                     %th Papel
                     %th Margem
                     %th Borda
-                    %th Preço unitário
-                    %th Preço total
+                    %th.right Valor unitário R$
+                    %th.right Valor total R$
 
                   - @photos.each_pair do |specs, photos|
                     - count = photos.sum(&:count)
@@ -57,8 +60,8 @@
                       %td= t "photo.specs.paper.#{specs[:paper]}"
                       %td= specs[:margin] ? "Sim" : "Não"
                       %td= specs[:border] ? "Sim" : "Não"
-                      %td= number_to_currency specs[:product].price
-                      %td= number_to_currency specs[:product].price * count
+                      %td.right= number_to_currency specs[:product].price, unit: ""
+                      %td.right= number_to_currency specs[:product].price * count, unit: ""
 
 
           %p

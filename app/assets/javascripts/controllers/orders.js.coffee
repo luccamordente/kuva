@@ -215,7 +215,7 @@ control =
   first_choosed: (event) ->
     bus.pause()
     order.open bus.resume
-    bus.off 'choosed', @callee
+    bus.off 'choose false', @callee
 
   file_selected: (event) ->
     file  = event.file
@@ -510,7 +510,7 @@ initialize = ->
   #      and move inside gadget initializer
   bus
   .on('application.initialized'  , control.initialized                                          )
-  .on('choosed'                  , control.first_choosed                                        )
+  .on('choose false'             , control.first_choosed                                        )
   .on('file.selected'            , control.file_selected                                        )
   .on('files.selected'           , control.files_selected                                       )
   .on('files.selected'           , control.first_files_selection                                )

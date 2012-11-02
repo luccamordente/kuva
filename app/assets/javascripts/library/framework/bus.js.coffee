@@ -15,8 +15,8 @@ timeflow =
 
 process = ->
   if controller.queue.length > 0
-    publisher.publish.apply bus, controller.queue.shift()
     controller.next()
+    publisher.publish.apply bus, controller.queue.shift()
 
 
 controller =
@@ -80,7 +80,7 @@ publisher =
     #   listener.listen ("complete.#{event.key}", response) ->
     #     event.complete.call(event.target || event.context || event, event);
 
-    console.log('publishing[' + event.key + ']', event.type, event) if (event.type !=  'thumbnailer.progress');
+    console.log('publishing[' + event.key + ']', event.type, event)# if (event.type !=  'thumbnailer.progress');
 
     switch event.destination
       when 'flash'

@@ -270,9 +270,10 @@ control =
     assigns =
       title       : "Você selecionou <span class=\"amount\"><b data-text=\"modal.amount\">#{event.amount}</b> <span data-text=\"modal.amount_label\">foto</span></span>"
       confirm     : ->
-        bus.publish 'files.selection_confirmed'
         kuva.overlay().close()
         mass.element.find('[rel=tooltip]').tooltip('destroy')
+        control.modal.close()
+        bus.publish 'files.selection_confirmed'
       amount      : 1
       copies      : '1 cópia'
       size        : photo.size || '10x15'
@@ -350,8 +351,6 @@ control =
           main.width 'auto'
       , 20
     , 100
-
-    control.modal.close()
 
     # TODO change json to a getter to_json
     defaults = control.defaults.photo.json()

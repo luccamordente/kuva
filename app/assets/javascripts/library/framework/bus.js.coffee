@@ -1,26 +1,46 @@
 #= require library/framework/flash
 
 bus = ->
+
 flash = null
 
+
+timeflow =
+  speed: 10
+
+
+
+process = ->
+  if controller.queue.length > 0
+    publisher.publish.apply bus, controller.queue.shift()
+    controller.next()
 
 controller =
 
   queue: []
 
+  check_speed: ->
+    console.log "changing bus speed to #{timeflow.speed}"
+    bus.trigger = bus.publish = if timeflow.speed == 0 then publisher.publish else controller.enqueue
+
+  next: -> setTimeout controller.process, timeflow.speed
+
   enqueue: (params...) ->
     console.log "enqueueing", params[0]
     controller.queue.push params
+    controller.next() if controller.queue.length == 1
+
+  process: process
 
   pause: ->
     console.log "bus paused"
-    bus.trigger = bus.publish = controller.enqueue
+    controller.process = $.noop
+    true
 
   resume: ->
     console.log "bus resumed"
-    bus.trigger = bus.publish = publisher.publish
-    publisher.publish.apply bus, event for event in controller.queue
-    controller.queue = []
+    controller.process = process
+    controller.next()
     true
 
 
@@ -78,7 +98,6 @@ publisher =
           while(i--)
             listeners[i].call(event.target || event.context || event, event)
         catch e
-          console.error "#{e.message} #{e} on listener #{listeners[i]}\n #{e.stack}"
           throw "#{e.message} #{e} on listener #{listeners[i]}\n #{e.stack}"
           return false
 
@@ -105,12 +124,15 @@ errored = (event = {type: 'unknown'}) ->
 
 # Set public methods
 bus.key = publisher.key
-bus.trigger = bus.publish = publisher.publish
+bus.trigger = bus.publish = controller.enqueue
 bus.on = bus.listen = listener.listen
 bus.off = bus.mute = listener.mute
 bus.listeners = {}
 bus.pause  = controller.pause
 bus.resume = controller.resume
+Object.defineProperty bus, 'speed',
+  get:        -> timeflow.speed
+  set: (speed)-> timeflow.speed = speed; controller.check_speed()
 
 # Application wild initialization
 initialize = ->
@@ -125,4 +147,4 @@ initialize = ->
 
 $ initialize
 
-this.bus = bus;
+this.bus = bus

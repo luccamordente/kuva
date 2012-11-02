@@ -93,7 +93,7 @@ var gadget = (function declare_gadget (sorts) {
       var options = {
           data: {
             source: this.image.source(),
-            title : this.data.title
+            title : this.data.titletransport
           },
           orientation: this.orientation,
           parent: this.element,

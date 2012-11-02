@@ -25,7 +25,7 @@ gem "httparty"
 gem "rmagick"
 gem "thor"
 gem "pdfkit"
-gem "wkhtmltopdf-binary"
+# gem "wkhtmltopdf-binary"
 
 gem 'haml-rails', '~> 0.3.4'
 

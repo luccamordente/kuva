@@ -12,7 +12,6 @@ var uploader = (function declare_uploader (reader) {
         if (selector) instance = $(selector)
         else instance = {}
 
-
         // TODO remover split e colocar array
         $('progress finish error abort'.split(' ')).each(function (index, value) {
             settings[value] && (uploader[value + 'ed'] = settings[value]);
@@ -76,10 +75,9 @@ var uploader = (function declare_uploader (reader) {
                         console.log('settings are', settings)
                         settings.data = '&' + settings.data;
                         var event = {
-                            controller: 'images',
-                            action: 'send',
+                            type: 'command',
+                            command: 'upload.enqueue',
                             destination: 'flash',
-                            type: 'request',
                             headers: headers,
                             url: settings.url,
                             settings: settings

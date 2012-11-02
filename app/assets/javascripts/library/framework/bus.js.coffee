@@ -7,7 +7,10 @@ flash = null
 
 timeflow =
   speed: 10
-
+  regulate: (speed) ->
+    console.log "changing bus speed to #{speed}"
+    this.speed = speed
+    bus.trigger = bus.publish = if this.speed == 0 then publisher.publish else controller.enqueue
 
 
 process = ->
@@ -15,13 +18,10 @@ process = ->
     publisher.publish.apply bus, controller.queue.shift()
     controller.next()
 
+
 controller =
 
   queue: []
-
-  check_speed: ->
-    console.log "changing bus speed to #{timeflow.speed}"
-    bus.trigger = bus.publish = if timeflow.speed == 0 then publisher.publish else controller.enqueue
 
   next: -> setTimeout controller.process, timeflow.speed
 
@@ -132,7 +132,7 @@ bus.pause  = controller.pause
 bus.resume = controller.resume
 Object.defineProperty bus, 'speed',
   get:        -> timeflow.speed
-  set: (speed)-> timeflow.speed = speed; controller.check_speed()
+  set: (speed)-> timeflow.regulate(speed)
 
 # Application wild initialization
 initialize = ->

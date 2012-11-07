@@ -49,15 +49,18 @@ model.restfulable = ->
     $.extend true, recordable, resource
 
   model.associable && model.associable.mix (singular_association,  plural_association) ->
-   plural_association.post = rest.post
+    plural_association.post = ->
+      @route ||= "#{@parent.route}/#{@parent._id}/#{model.pluralize @resource}" if @parent?
+      rest.post.apply @, arguments
 
 
 rest =
-  put : -> rest.request.call @, 'put' , "#{@route}/#{@_id}"
-  post: -> rest.request.call @, 'post', @route
-  request: (method, url) ->
-    data = {}
-    data[@resource] = @json()
+  put : -> rest.request.call @, 'put' , "#{@route}/#{@_id}", arguments...
+  post: -> rest.request.call @, 'post', @route, arguments...
+  request: (method, url, data) ->
+    unless data
+     data = {}
+     data[@resource] = @json()
 
     $.ajax
       url    : url

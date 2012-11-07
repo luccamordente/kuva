@@ -391,19 +391,14 @@ control =
 
   photos:
     create: (count) ->
-      $.ajax
-        url      : "/pedidos/#{order._id}/photos"
-        type     : 'post'
-        dataType : 'json'
-        error    : @failed
-        success  : @created
-        data:
-          count: count
-          photo:
-            count     : 1
-            product_id: control.defaults.product._id
-            specification_attributes:
-              paper: 'glossy'
+      order.photos.post
+        count: count
+        photo:
+          count     : 1
+          product_id: control.defaults.product._id
+          specification_attributes:
+            paper: 'glossy'
+      .done(@created).fail(@failed)
       true
 
     created: (response) ->

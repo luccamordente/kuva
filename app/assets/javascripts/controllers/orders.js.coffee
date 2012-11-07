@@ -383,11 +383,7 @@ control =
 
   thumbnailed: (event) ->
     # todas miniaturas construidas
-    for key, gadget of gadgets.all
-      break
-
     uploader.upload {}
-
 
   photos:
     create: (count) ->

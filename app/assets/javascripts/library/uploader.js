@@ -59,16 +59,18 @@ var uploader = (function declare_uploader (reader) {
                 });
             }
         },
-        success: function (response) {
+      success: function (response) {
+		    // TODO Better status support
             this.status = 'idle';
             // TODO In response remove especific uploaded files
-            this.queue.splice(0, response.amount);
+            // this.queue.splice(0, response.amount);
+            this.queue.splice(0, 1);
             this.queue.length && uploader.next();
         }
     };
 
     var transport = {
-        flash: function ( settings, original, xhr ) {
+      flash: function ( settings, original, xhr ) {
             if ( settings.type === "POST" ) {
                 return {
                     send: function ( headers, completeCallback ) {
@@ -76,7 +78,7 @@ var uploader = (function declare_uploader (reader) {
                         settings.data = '&' + settings.data;
                         var event = {
                             type: 'command',
-                            command: 'upload.enqueue',
+                            command: 'upload.enqueued',
                             destination: 'flash',
                             headers: headers,
                             url: settings.url,
@@ -85,14 +87,15 @@ var uploader = (function declare_uploader (reader) {
 
                         event.key = bus.key(event);
                         if (settings.success)
-                            type = event.controller + '.' + event.action + '(' + event.key + ')'
-                            bus.listen(type + '.success',
+                            type = event.command + '(' + event.key + ')'
+                            bus.on(type + '.success',
                                        function request_succeeded (data) {
                                            data.response && (data.response.original_event = event)
                                            settings.success.call(settings.context || window, data.response);
                                            bus.mute(type + '.success');
                                        }
                                       );
+					  
                         bus.publish(event);
 
                     },

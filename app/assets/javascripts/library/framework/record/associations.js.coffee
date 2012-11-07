@@ -2,8 +2,40 @@ model = window.model
 
 model.associable = ->
   model.mix (modelable) ->
-    modelable.after_initialize.unshift associable.model
+    modelable.after_mix.unshift associable.model
     modelable.record.after_initialize.unshift associable.record
+
+model.associable.mix = (blender) ->
+  blender singular, plural
+
+
+# Store association methods
+# TODO Implement setter for route
+plural = # has_many
+  add   : (params...) -> @push @build attributes for attributes in params
+  create: (params...) ->
+    for attributes in params
+      record = @build attributes
+      @push record
+      record.save()
+  build: (data = {}) ->
+    data.parent_resource = @parent_resource
+
+    # TODO Setup a before save callback to generate rout when there is no id
+    data.route ||= "#{@parent.route}/#{@parent._id}/#{model.pluralize @resource}" if @parent?
+    throw "associable.has_many: cannot redefine route of association #{@parent_resource}.#{@resource} from #{@route} to #{data.route}" if @route isnt data.route and @route
+
+    model[@resource] data
+  push : Array.prototype.push
+  length : 0
+  # TODO throught:
+
+
+singular = # belongs_to, has_one
+  create: (data) -> model[@resource].create $.extend {}, @, data
+  build : (data) -> model[@resource]        $.extend {}, @, data
+
+
 
 # TODO Better association segregation
 associable =
@@ -22,7 +54,7 @@ associable =
                 association = @[model.pluralize association_name]
 
                 unless association
-                  message = "has_many.nest_attributes: Association not found for #{association_name}. \n"
+                  message  = "has_many.nest_attributes: Association not found for #{association_name}. \n"
                   message += "did you set it on model declaration? \n  has_many: #{association_name} "
                   throw message
 
@@ -54,31 +86,6 @@ associable =
         autosave: ->
           @save()
 
-    # Store association methods
-    # TODO Implement setter for route
-    has_many =
-      add   : (params...) -> @push @build attributes for attributes in params
-      create: (params...) ->
-        for attributes in params
-          record = @build attributes
-          @push record
-          record.save()
-      build: (data = {}) ->
-        data.parent_resource = @parent_resource
-
-        # TODO Setup a before save callback to generate rout when there is no id
-        data.route ||= "/#{@parent_resource}/#{@parent._id}/#{@resource}" if @parent?
-        throw "associable.has_many: cannot redefine route of association #{@parent_resource}.#{@resource} from #{@route} to #{data.route}" if @route isnt data.route and @route
-
-        model[@parent_resource] data
-      push : Array.prototype.push
-      length : 0
-      # TODO throught:
-
-    singular =
-      create: (data) -> model[@resource].create $.extend {}, @, data
-      build : (data) -> model[@resource]        $.extend {}, @, data
-
     # TODO autosave
     # @after_save.push ->
     #   model[@resource] =
@@ -89,7 +96,7 @@ associable =
 
 
     # inside this function: @ = record (running on after_initialize)
-    @create_association = ->
+    @create_associations = ->
       # Create association methods
       # Setup one to many association in model
       if options.has_many
@@ -98,7 +105,7 @@ associable =
         for resource in options.has_many
           # TODO Remember to cleaer association proxy when object is destroied
           association_proxy = resource: resource, parent_resource: @resource, parent: @
-          @[model.pluralize resource] = $.extend association_proxy, has_many
+          @[model.pluralize resource] = $.extend association_proxy, plural
 
         # Update association attribute
         @after_save.push callbacks.has_many.update_association
@@ -131,4 +138,4 @@ associable =
   # @ = record
   record: (options) ->
     console.error 'resource must be defined in order to associate' unless @resource?
-    model[@resource].create_association.call @
+    model[@resource].create_associations.call @

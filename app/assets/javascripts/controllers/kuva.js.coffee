@@ -6,12 +6,17 @@
 #= require json2
 #= require library/framework/record/adapters/rivets
 #= require library/framework/record/associations
+#= require library/framework/record/resource
+#= require library/framework/record/restful
 
 kuva = ->
 
 # Framework wide configuration
 model.rivets()
+model.resourceable()
+model.restfulable()
 model.associable()
+
 $.jqotetag('*')
 
 

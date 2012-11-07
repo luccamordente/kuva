@@ -2,7 +2,7 @@
 #= require models/photo
 #= require models/image
 
-order_model = model.call resource: 'order', has_many: 'images', route: 'pedidos'
+order_model = model.call resource: 'order', has_many: ['image', 'photo'], route: 'pedidos'
 
 @order = (data) ->
   # TODO improve model method support
@@ -15,31 +15,28 @@ associations = ->
     photo.save() for photo in @photos
   )
 
-  record = @
-  mixin_images =
-    add: (record) -> @push(@build(record))
-    build: (data = {}) ->
-      data.order = record
-      data.parent_resource = "order"
-      data.route = "/pedidos/#{record._id}/images"
-      window.image(data)
-    push: Array.prototype.push
-
-  mixin_photos =
-    add: (record) -> @push(@build(record))
-    build: (data = {}) ->
-      data.order = record
-      data.parent_resource = "order"
-      data.route = "/pedidos/#{record._id}/photos"
-      photo = window.photo(data)
-    push: Array.prototype.push
-
-
-  $.extend(@, images: mixin_images, photos: mixin_photos)
-
-open = ->
-  # requisição para abrir ordem
-
+  # record = @
+  # mixin_images =
+  #   add: (record) -> @push(@build(record))
+  #   build: (data = {}) ->
+  #     data.order = record
+  #     data.parent_resource = "order"
+  #     data.route = "/pedidos/#{record._id}/images"
+  #     window.image(data)
+  #   push: Array.prototype.push
+  #
+  # mixin_photos =
+  #   add: (record) -> @push(@build(record))
+  #   build: (data = {}) ->
+  #     data.order = record
+  #     data.parent_resource = "order"
+  #     data.route = "/pedidos/#{record._id}/photos"
+  #     photo = window.photo(data)
+  #   push: Array.prototype.push
+  #
+  #
+  # $.extend(@, images: mixin_images, photos: mixin_photos)
+  @
 
 openable = ->
   @open = (callback) ->

@@ -404,8 +404,8 @@ control =
             product_id: control.defaults.product._id
             specification_attributes:
               paper: 'glossy'
-
       true
+
     created: (response) ->
       ids = response.photo_ids
 

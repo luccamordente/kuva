@@ -96,7 +96,7 @@ associable =
         options.has_many = [options.has_many] unless $.type(options.has_many) == 'array'
 
         for resource in options.has_many
-          # TODO Remember to cleaer association proxy when object is destroied
+          # TODO Remember to clear association proxy when object is destroied
           association_proxy = resource: resource, parent_resource: @resource, parent: @
           @[model.pluralize resource] = $.extend association_proxy, has_many
 

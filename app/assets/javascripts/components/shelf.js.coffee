@@ -14,7 +14,7 @@ do (parent = kuva, overlay = kuva.overlay) ->
   configuration =
     flash:
       css:
-        position: 'absolute'
+        position: 'fixed'
 
 
   shelfer = (part) ->
@@ -27,8 +27,7 @@ do (parent = kuva, overlay = kuva.overlay) ->
     current   : null
     buttonzin: ->
       @overlaying = inputzin
-      flash.css width: 1, height: 1
-      # overlay(flash).at inputzin
+      overlay(flash).at inputzin
     button: ->
       @overlaying = input
       overlay(flash).at input

@@ -33,6 +33,7 @@ model.restfulable = ->
           json[name] = value
 
       # TODO Store reserved words in a array
+      # TODO User _.omit functions
       # Remove model reserved words
       delete json.resource
       delete json.route

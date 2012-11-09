@@ -215,7 +215,7 @@ control =
   first_choosed: (event) ->
     bus.pause()
     order.open bus.resume
-    bus.off 'choose false', @callee
+    bus.off 'selection.choosed', @callee
 
   file_selected: (event) ->
     file  = event.file
@@ -400,14 +400,16 @@ control =
     created: (response) ->
       ids = response.photo_ids
 
-      for key, gadget of gadgets.all
-        photo = gadget.photo
+      setTimeout ->
+        for key, gadget of gadgets.all
+          photo = gadget.photo
 
-        continue if photo._id?
+          continue if photo._id?
 
-        gadget.tie ids.shift()
+          gadget.tie ids.shift()
 
-        # TODO photo.gadget().unlock()
+          # TODO photo.gadget().unlock()
+      , 0
 
 
     failed: (xhr, status, error) ->
@@ -501,7 +503,7 @@ initialize = ->
   #      and move inside gadget initializer
   bus
   .on('application.initialized'  , control.initialized                                          )
-  .on('choose false'             , control.first_choosed                                        )
+  .on('selection.choosed'        , control.first_choosed                                        )
   .on('file.selected'            , control.file_selected                                        )
   .on('files.selected'           , control.files_selected                                       )
   .on('files.selected'           , control.first_files_selection                                )

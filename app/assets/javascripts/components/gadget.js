@@ -12,7 +12,8 @@ var gadget = (function declare_gadget (sorts) {
     listeners: {},
     show: function() {
       !this.element && control.create.call(this);
-      this.element.css(configuration.size).fadeIn();
+      // this.element.css(configuration.size).fadeIn();
+      this.element.css(configuration.size).show();
       return this;
     },
     dispatch: function(name, event) {
@@ -37,48 +38,51 @@ var gadget = (function declare_gadget (sorts) {
       return this;
     },
     tie: function (photo_id) {
-      var photo, subscription;
-      if (this.tied) console.error('Gadget ', this.key, ' already tied');
+      var self = this;
+      setTimeout(function() {
+        var photo, subscription;
+        if (self.tied) console.error('Gadget ', self.key, ' already tied');
 
-      photo = this.photo;
-      photo._id = photo_id;
+        photo = self.photo;
+        photo._id = photo_id;
 
-      (!photo.specification) && (photo.specification = window.specification());
+        (!photo.specification) && (photo.specification = window.specification());
 
-      photo.specification.subscribe('paper', view.subscriptions.paper);
-      photo.subscribe('product_id', view.subscriptions.size  );
-      photo.subscribe('count'     , view.subscriptions.count );
-      photo.subscribe('border'    , view.subscriptions.border);
-      photo.subscribe('margin'    , view.subscriptions.margin);
-      photo.gadget = photo.specification.gadget = this;
+        photo.specification.subscribe('paper', view.subscriptions.paper);
+        photo.subscribe('product_id', view.subscriptions.size  );
+        photo.subscribe('count'     , view.subscriptions.count );
+        photo.subscribe('border'    , view.subscriptions.border);
+        photo.subscribe('margin'    , view.subscriptions.margin);
+        photo.gadget = photo.specification.gadget = self;
 
 
-      // TODO Better proxy binding on event bindings
-      bound = {};
-      for (property in view) {
-        if ($.type(view[property]) == 'function')
-          bound[property] = $.proxy(view[property], this);
-      }
+        // TODO Better proxy binding on event bindings
+        bound = {};
+        for (property in view) {
+          if ($.type(view[property]) == 'function')
+            bound[property] = $.proxy(view[property], self);
+        }
 
-      this.view = rivets.bind(this.element, {
-          photo: photo,
-          specification: photo.specification,
-          gadget: observable.call(bound)
-      });
+        self.view = rivets.bind(self.element, {
+            photo: photo,
+            specification: photo.specification,
+            gadget: observable.call(bound)
+        });
 
-      // Save changes when relavant data changes
-      // TODO better change event support on record
-      subscription = function(){ setTimeout(function(){ photo.save(); }, 500); };
-      photo.subscribe('product_id', subscription);
-      photo.subscribe('count'     , subscription);
-      photo.subscribe('border'    , subscription);
-      photo.subscribe('margin'    , subscription);
-      photo.specification.subscribe('paper', subscription);
+        // Save changes when relavant data changes
+        // TODO better change event support on record
+        // subscription = function(){ setTimeout(function(){ photo.save(); }, 500); };
+        photo.subscribe              ('product_id', function(value){ if(value != photo.product_id         ) setTimeout(function(){ photo.save(); }, 500); });
+        photo.subscribe              ('count'     , function(value){ if(value != photo.count              ) setTimeout(function(){ photo.save(); }, 500); });
+        photo.subscribe              ('border'    , function(value){ if(value != photo.border             ) setTimeout(function(){ photo.save(); }, 500); });
+        photo.subscribe              ('margin'    , function(value){ if(value != photo.margin             ) setTimeout(function(){ photo.save(); }, 500); });
+        photo.specification.subscribe('paper'     , function(value){ if(value != photo.specification.paper) setTimeout(function(){ photo.save(); }, 500); });
 
-      // TODO Make rivets view.sync work!
-      this.update();
+        self.tied = true;
 
-      this.tied = true;
+        self.update();
+
+      }, 0);
     },
     // TODO Make rivets view.sync work!
     update: function () {
@@ -152,7 +156,7 @@ var gadget = (function declare_gadget (sorts) {
       this.orientation || (this.orientation = "vertical");
       this.element.find("[rel=tooltip]").tooltip();
 
-	  // TODO automatically forward thos property to view layer
+      // TODO automatically forward thos property to view layer
       this.element.find('.pomp.info-pomp:first').html(this.data.title);
 
       delete this.render;
@@ -260,6 +264,7 @@ var gadget = (function declare_gadget (sorts) {
 
       if (now - this.thumbnail_bar.updated > 200) {
         this.thumbnail_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
+        this.thumbnail_bar.stop().css({width: percentage + '%'});
         this.thumbnail_bar.updated = now;
       }
     },
@@ -388,7 +393,7 @@ var gadget = (function declare_gadget (sorts) {
         ).tooltip('destroy').tooltip();
 
         // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
-        setTimeout(function(){ scalation.crop(gadget); }, 10);
+        scalation.crop(gadget);
       },
       margin: function photo_margin(margin) {
         // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
@@ -398,7 +403,7 @@ var gadget = (function declare_gadget (sorts) {
         element[margin ? 'addClass' : 'removeClass']('margin');
         element.find(".canvas .control.margin:first")[margin ? 'addClass' : 'removeClass']('active');
 
-        setTimeout(function(){ scalation.crop(gadget); }, 10);
+        scalation.crop(gadget);
       }
     },
     decrement: function() { this.photo.count--; },
@@ -462,6 +467,28 @@ var gadget = (function declare_gadget (sorts) {
   },
 
 
+
+
+  manipulable = function(name) {
+    var original = this;
+    return function() {
+      var gadget = arguments[0],
+          args   = arguments,
+          manipulation;
+      gadget.manipulations || (gadget.manipulations = {});
+      gadget.manipulations[name] || (gadget.manipulations[name] = {fn:original, args: args});
+      gadget.manipulated && clearTimeout(gadget.manipulated);
+      gadget.manipulated = setTimeout(function(){
+        for (name in gadget.manipulations) {
+          manipulation = gadget.manipulations[name];
+          manipulation.fn.apply(gadget, manipulation.args);
+        };
+        gadget.manipulations = {};
+      }, 100);
+    };
+  },
+
+
   resolution = {
     // must be in descendent order by ppi
     ranges: [
@@ -470,14 +497,14 @@ var gadget = (function declare_gadget (sorts) {
       { ppi:   0, quality: 'bad'     }
     ],
     unit: 'centimeters',
-    check: function check_resolution(gadget) {
+    check: manipulable.call(function check_resolution(gadget) {
       var photo   = gadget.photo,
           product = photo.product,
           quality, pomp;
 
       if (gadget.default || (!photo.width && !photo.height)) return;
 
-      quality = this.quality(photo.width * photo.height, product.dimensions);
+      quality = resolution.quality(photo.width * photo.height, product.dimensions);
       pomp    = gadget.element.find('.canvas .resolution-pomp:first');
 
       pomp.remove();
@@ -493,11 +520,11 @@ var gadget = (function declare_gadget (sorts) {
           break;
       };
 
-    },
+    }, 'check_resolution'),
     quality: function quality_resolution(pixels, dimensions, unit) {
       var ppi, range;
 
-      unit || (unit = this.unit);
+      unit || (unit = resolution.unit);
       if ( !pixels ) throw "Pixels cannnot be " + pixels;
       if ( !$.isArray(dimensions) || dimensions.length != 2 ) throw "Dimensions should be like [10, 15]";
 
@@ -510,8 +537,8 @@ var gadget = (function declare_gadget (sorts) {
       };
 
       // TODO accept ranges in any order
-      for (var i=0; i < this.ranges.length; i++) {
-        range = this.ranges[i];
+      for (var i=0; i < resolution.ranges.length; i++) {
+        range = resolution.ranges[i];
         if (ppi > range.ppi) return range.quality;
       };
     }
@@ -519,7 +546,7 @@ var gadget = (function declare_gadget (sorts) {
 
 
   scalation = {
-    crop: function(gadget) {
+    crop: manipulable.call(function(gadget) {
       var dimensions    = gadget.photo.product[gadget.orientation + "_dimensions"],
           photo_height  = gadget.photo.height,
           photo_width   = gadget.photo.width,
@@ -573,7 +600,7 @@ var gadget = (function declare_gadget (sorts) {
       // TODO rivetize !!
       product_dimensions.filter(".height").children(".count").html(dimensions.height);
       product_dimensions.filter(".width ").children(".count").html(dimensions.width );
-    }
+    }, 'crop')
   },
 
 
@@ -615,6 +642,7 @@ var gadget = (function declare_gadget (sorts) {
 
   that.listen = gadget.listen;
   that.handlers = handlers;
+
 
   return that;
 }).call(kuva, kuva.fn.sorts);

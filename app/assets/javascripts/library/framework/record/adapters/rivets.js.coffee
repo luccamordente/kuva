@@ -27,6 +27,7 @@ model.rivets = ->
         #console.log 'publish', record, attribute_path, value
         # TODO if (value != record[attribute_path]) record.changed()
         record[attribute_path] = value
+    preloadData: true
 
   model.mix (modelable) ->
     modelable.record ||= {}

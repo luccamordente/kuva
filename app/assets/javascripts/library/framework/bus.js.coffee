@@ -21,13 +21,16 @@ process = ->
 
 controller =
 
+  paused: false
+
   queue: []
 
-  next: -> setTimeout controller.process, timeflow.speed
+  next: -> controller.timeout = setTimeout controller.process, timeflow.speed
 
-  enqueue: (params...) ->
-    console.log "enqueueing", params[0]
-    controller.queue.push params
+  enqueue: ->
+    event = arguments[0]
+    console.log "⥤ enqueueing", event.type, event, arguments
+    controller.queue.push arguments
     controller.next() if controller.queue.length == 1
 
   process: process
@@ -35,6 +38,7 @@ controller =
   pause: ->
     console.log "bus paused"
     controller.process = $.noop
+    clearTimeout controller.timeout
     true
 
   resume: ->
@@ -80,7 +84,7 @@ publisher =
     #   listener.listen ("complete.#{event.key}", response) ->
     #     event.complete.call(event.target || event.context || event, event);
 
-    console.log('publishing[' + event.key + ']', event.type, event)# if (event.type !=  'thumbnailer.progress');
+    console.log('⬇ publishing[' + event.key + ']', event.type, event)# if (event.type !=  'thumbnailer.progress');
 
     switch event.destination
       when 'flash'

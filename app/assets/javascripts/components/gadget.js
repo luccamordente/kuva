@@ -69,6 +69,8 @@ var gadget = (function declare_gadget (sorts) {
             gadget: observable.call(bound)
         });
 
+        self.element.find("[rel=tooltip]").tooltip();
+
         // Save changes when relavant data changes
         // TODO better change event support on record
         // subscription = function(){ setTimeout(function(){ photo.save(); }, 500); };
@@ -86,11 +88,8 @@ var gadget = (function declare_gadget (sorts) {
     },
     // TODO Make rivets view.sync work!
     update: function () {
-      var photo = this.photo;
-      photo.count      = photo.count;
-      photo.margin     = photo.margin;
-      photo.product_id = photo.product_id;
-      photo.specification && (photo.specification.paper = photo.specification.paper);
+      this.photo.publish();
+      this.photo.specification.publish();
     },
     duplicate: function () {
       // TODO less memory leaking copy
@@ -154,7 +153,6 @@ var gadget = (function declare_gadget (sorts) {
       this.upload_bar    = this.element.find('.upload.bar   ');
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
       this.orientation || (this.orientation = "vertical");
-      this.element.find("[rel=tooltip]").tooltip();
 
       // TODO automatically forward thos property to view layer
       this.element.find('.pomp.info-pomp:first').html(this.data.title);
@@ -351,7 +349,7 @@ var gadget = (function declare_gadget (sorts) {
   },
   view = {
     subscriptions: {
-      count: function photo_count (value) {
+      count: function photo_count (prop, value, old) {
         value = +value;
 
         var element = this.gadget.element;
@@ -362,21 +360,21 @@ var gadget = (function declare_gadget (sorts) {
         if (value == 0) element.addClass   ("zero");
         else            element.removeClass("zero");
 
-        if (this.count == 1) element.find(".canvas .control.count .subcontrol.minus").html("-");
-        if (value      == 1) element.find(".canvas .control.count .subcontrol.minus")
-                               .html("<span style='font-size: 0.7em; position:relative; top: -2px;'>&times;</span>");
+        if (old   == 1) element.find(".canvas .control.count .subcontrol.minus").html("-");
+        if (value == 1) element.find(".canvas .control.count .subcontrol.minus")
+                          .html("<span style='font-size: 0.7em; position:relative; top: -2px;'>&times;</span>");
       },
-      paper: function specification_paper (value) {
+      paper: function specification_paper (prop, value, old) {
         this.gadget.element.find(".canvas .control.paper").data('title',"Papel "+specification.paper[value]+"<br /><small>clique para alterar</small>").tooltip('destroy').tooltip();
-        this.gadget.element.removeClass("paper-" + this.paper).addClass("paper-" + value);
+        this.gadget.element.removeClass("paper-" + old).addClass("paper-" + value);
       },
-      size: function photo_product_id (value) {
+      size: function photo_product_id (prop, value, old) {
         var selected, current, width, height,
             gadget = this.gadget;
 
-        products = window.product.where({id: [value, this.product_id]});
+        products = window.product.where({id: [value, old]});
 
-        if ( products[0]._id !== this.product_id )
+        if ( products[0]._id !== old )
           products.reverse();
 
         current  = products.shift();
@@ -388,7 +386,7 @@ var gadget = (function declare_gadget (sorts) {
         scalation.crop(gadget);
         resolution.check(gadget);
       },
-      border: function photo_border(border) {
+      border: function photo_border(prop, border, old) {
         var gadget = this.gadget;
 
         gadget.element.find(".canvas .control.border").data('title',
@@ -398,7 +396,7 @@ var gadget = (function declare_gadget (sorts) {
         // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
         scalation.crop(gadget);
       },
-      margin: function photo_margin(margin) {
+      margin: function photo_margin(prop, margin, old) {
         // TODO fix this: setting timeout because we need the new value of gadget.photo.border inside crop()
         var gadget  = this.gadget,
             element = gadget.element;
@@ -448,7 +446,7 @@ var gadget = (function declare_gadget (sorts) {
       element.addClass("sizing");
       element.append(templates.modal);
 
-      rivets.bind(this.element, { size: observable.call({
+      rivets.bind(this.element.find('.modal-size:first'), { size: observable.call({
         change: function(event) {
           photo.product_id = $(event.currentTarget).data("product-id");
           close();
@@ -633,7 +631,7 @@ var gadget = (function declare_gadget (sorts) {
         <div class=\"title\">Escolha um tamanho:</div>                                                                                   \
         <div class=\"sizes\">                                                                                                            \
           <div data-each-product=\"size.products\">                                                                                      \
-            <a class=\"size selected\" href=\"javascript:void(0);\" data-data-product-id=\"product.id\" data-on-click=\"size.change\" data-html=\"product.option\"></a>                                                                                                        \
+            <a class=\"size selected\" href=\"javascript:void(0);\" data-data-product-id=\"product._id\" data-on-click=\"size.change\" data-html=\"product.option\"></a>                                                                                                        \
           </div>                                                                                                                         \
         </div>                                                                                                                           \
         <a class=\"back\" href=\"javascript:void(0);\" data-on-click=\"size.close\">← voltar</a>                                         \

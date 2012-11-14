@@ -290,7 +290,7 @@ control =
 
     # Forward photo updates to resume
     # TODO Add support to extended keypaths to observable
-    photo.subscribe 'count', (count) ->
+    photo.subscribe 'count', (prop, count, old_count) ->
 
       confirm.copies = if +count
         word = 'cópia'
@@ -299,16 +299,16 @@ control =
       else
         'nenhuma cópia'
 
-    photo.specification.subscribe 'paper', (paper) ->
+    photo.specification.subscribe 'paper', (prop, paper, old_paper) ->
       confirm.paper = specification.paper[paper]
 
-    photo.subscribe 'product_id', (product_id) ->
+    photo.subscribe 'product_id', (prop, product_id, old_product_id) ->
       confirm.size = product.find(product_id).name
 
-    photo.subscribe 'border', (border) ->
+    photo.subscribe 'border', (prop, border, old_border) ->
       confirm.border = border
 
-    photo.subscribe 'margin', (margin) ->
+    photo.subscribe 'margin', (prop, margin, old_margin) ->
       confirm.margin = margin
 
     # Positionate and display modal and gadget
@@ -322,10 +322,10 @@ control =
     photo.specification.paper = photo.specification.paper
     photo.product_id          = photo.product_id
     photo.count               = photo.count
-
+    
     # Confirmation animation
     control.modal = confirm
-
+    
     interval = setInterval ->
       if control.modal.amount < event.amount
         control.modal.amount++

@@ -215,7 +215,7 @@ control =
   first_choosed: (event) ->
     bus.pause()
     order.open bus.resume
-    bus.off 'selection.choosed', @callee
+    bus.off 'selection.choosed', arguments.callee
 
   file_selected: (event) ->
     file  = event.file
@@ -338,6 +338,7 @@ control =
     # Create photos records
     control.photos.create event.amount
 
+    # TODO See witch photos have aready been selected and only add those to aside
     aside('#aside', photos);
 
   selection_confirmed: ->
@@ -374,11 +375,11 @@ control =
 
   first_selection_confirmed: ->
     shelf.overlay 'buttonzin'
-    bus.off 'files.selection_confirmed', @callee
+    bus.off 'files.selection_confirmed', arguments.callee
 
   first_files_selection: ->
     $('#main-add').slideUp()
-    bus.off 'files.selected', @callee
+    bus.off 'files.selected', arguments.callee
     $(window).on 'beforeunload', -> 'Seu pedido será cancelado!'
 
   thumbnailed: (event) ->
@@ -515,6 +516,12 @@ initialize = ->
   .on('reader.loadend'           , (event) -> gadgets(event.key).dispatch('loadend'     , event))
   .on('reader.abort'             , (event) -> gadgets(event.key).dispatch('abort'       , event))
   .on('reader.errored'           , (event) ->
+    gadget = gadgets(event.key)
+    gadget.dispatch('reader_errored', event)
+    control.reader_errored event, gadget
+  )
+  # TODO Replace with a beautiful image
+  .on('thumbnailer.corrupt'           , (event) ->
     gadget = gadgets(event.key)
     gadget.dispatch('reader_errored', event)
     control.reader_errored event, gadget

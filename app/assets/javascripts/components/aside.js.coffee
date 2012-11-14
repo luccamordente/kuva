@@ -23,7 +23,7 @@
       count: 0
       total: 0
       text : "Preparando fotos..."
-    change: (count) ->
+    change: (prop, count, old_count) ->
       $('#send-progress .bar').css width: (count / progress.status.total * 100) + '%'
 
       if progress.confirmed and count == progress.status.total
@@ -51,7 +51,7 @@
         group.count = 0
 
         @items.push group
-        @items = @items         # TODO add support to rivets on array bindings
+        # @items = @items         # TODO add support to rivets on array bindings
 
       group
     grouped: {}
@@ -83,25 +83,25 @@
         total += item.count * +item.product.price
 
       @total = total
-    update_product: (value) ->
-      return if @product_id == value
+    update_product: (prop, product_id, old_product_id) ->
+      return if old_product_id == product_id
 
       # TODO Eager load association when
       # product_id changes
-      old_product = window.product.find @product_id
+      old_product = window.product.find old_product_id
       old_item = summary.group old_product
       old_item.remove @
       old_item.show = old_item.count > 0
 
-      product = window.product.find value
+      product = window.product.find product_id
       item = summary.group product
       item.add @
       item.show = item.count > 0
 
       summary.calculate_total()
-    update_count: (value) ->
+    update_count: (prop, count, old_count) ->
       item = summary.grouped[@product.name]
-      item.count += +value - +@count
+      item.count += +count - ~~old_count
       item.show   = item.count > 0
 
       summary.calculate_total() # TODO Only recalculate the changed price

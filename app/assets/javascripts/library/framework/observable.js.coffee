@@ -1,36 +1,28 @@
+#= require watch
 #= require library/framework/shims/defineProperty
 
+
 @observable = (($) ->
+
   mixin =
-    subscribe: (keypath, callback) ->
-      @["_#{keypath}"] = @[keypath] unless @["_#{keypath}"]
 
-      current_setter = @__lookupSetter__ keypath
-      current_getter = @__lookupGetter__ keypath
+    subscribe: (property_or_watcher, watcher) -> watch @, property_or_watcher, watcher
 
-      if current_setter
-        setter = (value) ->
-          callback.call @, value
-          current_setter.call @, value
+    unsubscribe: (property_or_watcher, watcher) -> unwatch @, property_or_watcher, watcher
+
+    publish: (property, new_value, old_value) ->
+      if arguments.length
+        callWatchers @, property, new_value, old_value if @watchers?
       else
-        setter = (value) ->
-          callback.call @, value
-          @["_#{keypath}"] = value
+        callWatchers @, keypath, @[keypath], @[keypath] for keypath of @watchers
 
-      # TODO onpropertychange
-      Object.defineProperty @, keypath,
-        get: current_getter || -> @["_#{keypath}"]
-        set: setter
-
-    unsubscribe: (object, keypath, callback) ->
-
-      # TODO look up getter
-      ->
-        console.log(object, keypath, callback)
-
-    publish: (object, keypath, value) ->
-      object[keypath] = value
 
   -> $.extend @, mixin
 
 )(jQuery)
+
+
+
+
+
+

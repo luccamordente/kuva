@@ -97,7 +97,7 @@ var gadget = (function declare_gadget (sorts) {
       var options = {
           data: {
             source: this.image.source(),
-            title : this.data.titletransport
+            title : this.data.title
           },
           orientation: this.orientation,
           parent: this.element,
@@ -260,7 +260,7 @@ var gadget = (function declare_gadget (sorts) {
       }
     },
     thumbnailing: function thumbnailer_thumbnailing (event) {
-      var percentage = Math.round(100 - (event.parsed / event.total) * 100), now = (new Date()).getTime();
+      var percentage = event.percentage, now = (new Date()).getTime();
 
       if (now - this.thumbnail_bar.updated > 200) {
         this.thumbnail_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
@@ -327,12 +327,15 @@ var gadget = (function declare_gadget (sorts) {
       var element = this.element;
       element.addClass('errored reader-errored');
       element.find('.image:first').append($(
-        '<div class="error-message">'                             +
-        '  Não conseguimos ler a imagem'                          +
+        '<div class="error-message">'                                 +
+        '  Não conseguimos ler a imagem'                              +
         '  <div class="file-name">' + this.files[0].name + '</div>'   +
-        '  Este arquivo não será enviado.'                        +
+        '  Este arquivo não será enviado.'                            +
         '</div>'
       ));
+
+	  // TODO automatically forward thos property to view layer
+      this.element.find('.pomp.info-pomp:first').html('');
     },
     thumbnailer_errored: function reader_errored(event) {
       var element = this.element;
@@ -340,7 +343,7 @@ var gadget = (function declare_gadget (sorts) {
       element.find('.image:first').append($(
         '<div class="error-message">'                                                     +
         '  Não conseguimos gerar a miniatura da imagem'                                   +
-        '  <div class="file-name">' + this.files[0].name + '</div>'                           +
+        '  <div class="file-name">' + this.files[0].name + '</div>'                       +
         '  Este arquivo SERÁ enviado, você ainda pode definir como vai querer revelá-lo.' +
         '</div>'
       ));

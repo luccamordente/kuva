@@ -59,7 +59,7 @@ listener =
     throw "bus.off Listener for event of type #{type}, does not exist" if !@listeners[type]
 
     if listener
-      channel = @listener[type]
+      channel = @listeners[type]
       index = channel.indexOf(listener)
 
       if index != -1

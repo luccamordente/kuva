@@ -20,6 +20,10 @@ model.restfulable = ->
       callback.call @, data for callback in @after_save
     failed: ->
       throw "#{@resource}.save: Failed to save record: #{@}\n"
+    toString: ->
+      serialized = {}
+      serialized[@resource] = @json()
+      JSON.stringify serialized
     json: ->
       json = {}
 

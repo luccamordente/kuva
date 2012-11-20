@@ -31,9 +31,6 @@
         progress.status.text = "Fechando pedido..."
 
 
-
-
-
   summary = observable.call
     group: (product) ->
 
@@ -60,6 +57,8 @@
     initialize: (photos) ->
       @add.apply @, photos
 
+      return if @initialized;
+  
       # Render element
       aside.element.children('.normal').jqoteapp summary.template, summary
       @element = aside.element.find '#summary'
@@ -67,6 +66,8 @@
 
       @calculate_total()
       @view = view
+      @initialized = true
+      
     add: (photos...) ->
        # Group photos by size on @groups
       for photo in photos
@@ -127,11 +128,11 @@
       </div>
       """
 
-  aside.show = ->
+  aside.show = (complete) ->
     # TODO Use animations only when css3 animations
     # is not possible
     # Animate sidebar
-    $('#aside').animate width: '9em', padding: '1em' # TODO Move to aside component
+    $('#aside').animate {width: '9em', padding: '1em'}, complete: complete
 
   aside.hide = ->
 

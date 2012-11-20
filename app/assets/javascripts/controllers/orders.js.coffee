@@ -14,15 +14,15 @@
 #= require components/shelf
 #= require components/aside
 
-reader         = lib.reader()
-photos         = []                     # Proposital array for automatic counting of length
+reader          = lib.reader()
+selected_photos = []                     # Proposital array for automatic counting of length
 
 
-products       = null
-order          = null
-shelf          = null
-uploader       = null
-specifications = null
+products        = null
+order           = null
+shelf           = null
+uploader        = null
+specifications  = null
 
 kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of record
@@ -238,7 +238,7 @@ control =
     gadget.files.push file
 
     # Store photo for later usage
-    photos.push photo
+    selected_photos.push photo
 
     # update other interface
     # counters, order price, etc
@@ -339,42 +339,49 @@ control =
     control.photos.create event.amount
 
     # TODO See witch photos have aready been selected and only add those to aside
-    aside('#aside', photos);
+    aside('#aside', selected_photos);
 
   selection_confirmed: ->
-    aside.show()
-
-    main = $ '#main'
-    main.animate padding: '0 11em 0 0'
-    setTimeout ->
-      main.css 'width', main.width() - 10
-      setTimeout ->
-          main.width 'auto'
-      , 20
-    , 100
-
     # TODO change json to a getter to_json
     defaults = control.defaults.photo.json()
 
     delete defaults.width
     delete defaults.height
 
+    for photo in selected_photos
+      unless photo.defaulted
+        photo.defaulted = true
+        
+        for name, value of defaults
+          # TODO make record support setting of association attributes
+          if name.indexOf('_attributes') != -1
+            association_name = name.replace '_attributes', ''
+            for attribute, value of defaults[name]
+              photo[association_name][attribute] = value
+          else
+            photo[name] = value
 
-    for photo in photos
-      for name, value of defaults
-        # TODO make record support setting of association attributes
-        if name.indexOf('_attributes') != -1
-          association_name = name.replace '_attributes', ''
-          for attribute, value of defaults[name]
-            photo[association_name][attribute] = value
-        else
-          photo[name] = value
-
-
+    # Empty selection
+    selected_photos = []
     false
 
   first_selection_confirmed: ->
-    shelf.overlay 'buttonzin'
+    # Display aside and fix main app container
+    aside.show ->
+      shelf.overlay 'buttonzin'
+
+      # Use css animations when available
+      main = $ '#main'
+      main.animate padding: '0 11em 0 0'
+      setTimeout ->
+        main.css 'width', main.width() - 10
+        setTimeout ->
+          main.width 'auto'
+        , 20
+      , 100
+
+
+    # Prevent future calls for this event
     bus.off 'files.selection_confirmed', arguments.callee
 
   first_files_selection: ->

@@ -114,7 +114,7 @@ send =
 
     rivets.bind $('#aside .sending'), progress: observable.call progress.status
     progress.status.subscribe 'count', progress.change
-    progress.status.count = progress.status.count
+    progress.status.publish()
 
     $(document.body).addClass('sending').removeClass('normal')
     $('#gadgets .gadget').addClass('uploading')
@@ -322,10 +322,10 @@ control =
     photo.specification.paper = photo.specification.paper
     photo.product_id          = photo.product_id
     photo.count               = photo.count
-    
+
     # Confirmation animation
     control.modal = confirm
-    
+
     interval = setInterval ->
       if control.modal.amount < event.amount
         control.modal.amount++
@@ -511,48 +511,48 @@ initialize = ->
   .on('files.selection_confirmed', control.selection_confirmed                                  )
   .on('files.selection_confirmed', control.first_selection_confirmed                            )
   .on('order.opened'             , control.order_opened                                         )
-  .on('reader.loadstart'         , (event) -> gadgets(event.key).dispatch('loadstart'   , event))
-  .on('reader.progress'          , (event) -> gadgets(event.key).dispatch('progress'    , event))
-  .on('reader.loadend'           , (event) -> gadgets(event.key).dispatch('loadend'     , event))
-  .on('reader.abort'             , (event) -> gadgets(event.key).dispatch('abort'       , event))
+  .on('reader.loadstarted'       , (event) -> gadgets(event.key).dispatch('loadstart'   , event))
+  .on('reader.progressed'        , (event) -> gadgets(event.key).dispatch('progress'    , event))
+  .on('reader.loadended'         , (event) -> gadgets(event.key).dispatch('loadend'     , event))
+  .on('reader.aborted'           , (event) -> gadgets(event.key).dispatch('abort'       , event))
   .on('reader.errored'           , (event) ->
     gadget = gadgets(event.key)
     gadget.dispatch('reader_errored', event)
     control.reader_errored event, gadget
   )
   # TODO Replace with a beautiful image
-  .on('thumbnailer.corrupt'           , (event) ->
+  .on('thumbnailer.corrupted'       , (event) ->
     gadget = gadgets(event.key)
     gadget.dispatch('reader_errored', event)
     control.reader_errored event, gadget
   )
-  .on('thumbnailer.progress'     , (event) -> gadgets(event.key).dispatch('thumbnailing', event))
-  .on('thumbnailer.encoding'     , (event) -> gadgets(event.key).dispatch('encoding'    , event))
-  .on('thumbnailer.thumbnailed'  , (event) ->
+  .on('thumbnailer.progressed'      , (event) -> gadgets(event.key).dispatch('thumbnailing', event))
+  .on('thumbnailer.encoded'         , (event) -> gadgets(event.key).dispatch('encoding'    , event))
+  .on('thumbnailer.thumbnailed'     , (event) ->
     gadget = gadgets event.key
     gadget.dispatch 'thumbnailed', event
   )
-  .on('thumbnailer.finished'     , control.thumbnailed                                          )
-  .on('thumbnailer.errored'      , (event) ->
+  .on('thumbnailer.finished'        , control.thumbnailed                                          )
+  .on('thumbnailer.errored'         , (event) ->
     gadget = gadgets(event.key)
     gadget.dispatch('thumbnailer_errored', event)
     control.thumbnailer_errored event, gadget
   )
-  .on('upload.complete.data'     , (event) ->
+  .on('upload.completed.data'       , (event) ->
     # TODO figure out how get image id control.file_uploaded(event);
     gadgets(event.key).dispatch 'uploaded', event
     control.file_uploaded event
   )
-  .on('upload.errored'      , (event) ->
+  .on('upload.errored'              , (event) ->
     gadget = gadgets(event.key)
     # TODO deal with upload errors on gadgets
     # gadget.dispatch('upload_errored', event)
     control.upload_errored event, gadget
   )
-  .on('send.completed'           , control.send_completed                                       )
-  .on('order.closed'             , control.closed                                               )
-  .on('order.canceled'           , control.cancel_completed                                     )
-  .on('error.uncaughted'         , control.error_uncaughted                                     )
+  .on('send.completed'              , control.send_completed                                       )
+  .on('order.closed'                , control.closed                                               )
+  .on('order.canceled'              , control.cancel_completed                                     )
+  .on('error.uncaughted'            , control.error_uncaughted                                     )
 
 
 templates =

@@ -10,11 +10,10 @@ var gadget = (function declare_gadget (sorts) {
   }, id = 0,
   gadget = {
     listeners: {},
-    show: function() {
+    show: function (delay) {
       !this.element && control.create.call(this);
       // this.element.css(configuration.size).fadeIn();
-      this.element.css(configuration.size).show();
-      return this;
+      return this.element.css(configuration.size).show(delay).promise();
     },
     dispatch: function(name, event) {
       var listeners = gadget.listeners[name] || [],

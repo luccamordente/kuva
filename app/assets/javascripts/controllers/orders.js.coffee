@@ -159,6 +159,16 @@ gadgets = do ->
     id: 0
     key: -> multiton.id++
     all: instances
+    queue: []
+    defer: $.when()
+    next: ->
+      if multiton.defer.state() == 'resolved' && multiton.queue.length > 0
+        task = multiton.queue.shift()
+        multiton.defer = task()
+        multiton.queue.length && multiton.defer.done(multiton.next)
+    pile: (task) ->
+      @queue.push task
+      @next()
     duplicated: (copy) ->
       key = multiton.key()
       copy.key = key
@@ -212,9 +222,10 @@ control =
       data:
         order_id: order._id
 
-  first_choosed: (event) ->
+  first_selection_choosed: (event) ->
     bus.pause()
-    order.open bus.resume
+    $.when(order.open(), $('#main-add').slideUp()).then bus.resume
+    
     bus.off 'selection.choosed', arguments.callee
 
   file_selected: (event) ->
@@ -223,7 +234,8 @@ control =
     count = 0
 
     # Create a new gadget and display it
-    gadget = gadgets(key).show()
+    gadget = gadgets key
+    gadgets.pile -> gadget.show()
 
     # Criar uma photo para arquivo selecionado
     gadget.photo = photo = order.photos.build
@@ -369,10 +381,11 @@ control =
     # Display aside and fix main app container
     aside.show ->
       shelf.overlay 'buttonzin'
-
+      
       # Use css animations when available
       main = $ '#main'
       main.animate padding: '0 11em 0 0'
+      
       setTimeout ->
         main.css 'width', main.width() - 10
         setTimeout ->
@@ -385,7 +398,6 @@ control =
     bus.off 'files.selection_confirmed', arguments.callee
 
   first_files_selection: ->
-    $('#main-add').slideUp()
     bus.off 'files.selected', arguments.callee
     $(window).on 'beforeunload', -> 'Seu pedido será cancelado!'
 
@@ -511,7 +523,7 @@ initialize = ->
   #      and move inside gadget initializer
   bus
   .on('application.initialized'  , control.initialized                                          )
-  .on('selection.choosed'        , control.first_choosed                                        )
+  .on('selection.choosed'        , control.first_selection_choosed                              )
   .on('file.selected'            , control.file_selected                                        )
   .on('files.selected'           , control.files_selected                                       )
   .on('files.selected'           , control.first_files_selection                                )

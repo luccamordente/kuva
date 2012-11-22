@@ -8,9 +8,9 @@
 
     subscribe: (property_or_watcher, watcher) ->
       if watcher?
-        watch @, property_or_watcher, watcher
+        watch @, property_or_watcher, watcher, 0
       else
-        watch @, property_or_watcher
+        watch @, property_or_watcher, 0
 
     unsubscribe: (property_or_watcher, watcher) ->
       if !arguments.length

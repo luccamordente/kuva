@@ -225,7 +225,7 @@ control =
   first_selection_choosed: (event) ->
     bus.pause()
     $.when(order.open(), $('#main-add').slideUp()).then bus.resume
-    
+
     bus.off 'selection.choosed', arguments.callee
 
   file_selected: (event) ->
@@ -287,17 +287,21 @@ control =
         control.modal.close()
         bus.publish 'files.selection_confirmed'
       amount      : 1
+      amount_label: 'foto'
       copies      : '1 cópia'
       size        : photo.size || '10x15'
-      paper       : 'Brilhante',
+      paper       : 'Brilhante'
       border      : false
       margin      : false
+      product     : null
+      product_id  : null
 
     # Display modal and gadget
     kuva.overlay().dynamic().at(document.body)
     confirm = modal assigns, buttons, template: templates.modal.files_selected, minWidth: 950, minHeight: 680
     mass.photo = photo
-    mass.show()
+    shown = mass.show()
+
     mass.dispatch 'loadend', photo
 
     # Forward photo updates to resume
@@ -329,12 +333,6 @@ control =
     # Bind photo to gadget
     mass.tie()
 
-    # TODO check why binding is not working when instantiated
-    # Note: this is not a programming error
-    photo.specification.paper = photo.specification.paper
-    photo.product_id          = photo.product_id
-    photo.count               = photo.count
-
     # Confirmation animation
     control.modal = confirm
 
@@ -351,7 +349,7 @@ control =
     control.photos.create event.amount
 
     # TODO See witch photos have aready been selected and only add those to aside
-    aside('#aside', selected_photos);
+    aside '#aside', selected_photos
 
   selection_confirmed: ->
     # TODO change json to a getter to_json
@@ -364,7 +362,7 @@ control =
     for photo in selected_photos
       unless photo.defaulted
         photo.defaulted = true
-        
+
         for name, value of defaults
           # TODO make record support setting of association attributes
           if name.indexOf('_attributes') != -1
@@ -382,11 +380,11 @@ control =
     # Display aside and fix main app container
     aside.show ->
       shelf.overlay 'buttonzin'
-      
+
       # Use css animations when available
       main = $ '#main'
       main.animate padding: '0 11em 0 0'
-      
+
       setTimeout ->
         main.css 'width', main.width() - 10
         setTimeout ->

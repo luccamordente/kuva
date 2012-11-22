@@ -251,21 +251,20 @@ var gadget = (function declare_gadget (sorts) {
       }
     },
     thumbnailing: function thumbnailer_thumbnailing (event) {
-      var percentage = event.percentage, now = (new Date()).getTime();
+      var percentage = 100-event.percentage, now = (new Date()).getTime();
 
       if (now - this.thumbnail_bar.updated > 200) {
-        this.thumbnail_bar.stop().animate({width: percentage + '%'}, 1000, 'linear');
-        this.thumbnail_bar.stop().css({width: percentage + '%'});
+        this.thumbnail_bar.stop().animate({width: percentage + '%'}, 500, 'linear');
         this.thumbnail_bar.updated = now;
       }
     },
     encoding: function thumbnailer_encoding (event) {
-      this.thumbnail_bar.animate({width: '0%'});
+      this.thumbnail_bar.css({width: '0%'});
     },
     thumbnailed: function thumbnailer_thumbnailed (event) {
       var gadget = this;
 
-      this.thumbnail_bar.animate({width: '0%'}, 1000, 'linear', function () {
+      this.thumbnail_bar.stop().animate({width: '0%'}, 500, function(){
         gadget.image.hide();
         gadget.original_image.hide();
 
@@ -282,10 +281,10 @@ var gadget = (function declare_gadget (sorts) {
             gadget.thumbnail_bar.hide();
           }, 1);
         });
-
-        // TODO resizer.unload();
-        gadget.thumbnailed && gadget.thumbnailed();   // Execute callback if any
       });
+
+      // TODO resizer.unload();
+      gadget.thumbnailed && gadget.thumbnailed();   // Execute callback if any
 
     },
     upload: function upload_start (event) {
@@ -365,6 +364,7 @@ var gadget = (function declare_gadget (sorts) {
         var selected, current, width, height,
             gadget = this.gadget;
 
+
         products = window.product.where({id: [value, old]});
 
         if ( products[0]._id !== old )
@@ -372,7 +372,11 @@ var gadget = (function declare_gadget (sorts) {
 
         current  = products.shift();
         selected = products.shift() || current;
+
+        // TOOD implement lazy load
+        WatchJS.noMore = true;
         this.product = selected;
+        WatchJS.noMore = false;
 
         gadget.element.removeClass("size-" + current.name).addClass("size-" + selected.name);
 

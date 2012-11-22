@@ -71,14 +71,8 @@ var gadget = (function declare_gadget (sorts) {
 
         self.element.find("[rel=tooltip]").tooltip();
 
-        // Save changes when relavant data changes
-        // TODO better change event support on record
-        // subscription = function(){ setTimeout(function(){ photo.save(); }, 500); };
-        photo.subscribe              ('product_id', function(value){ if(value != photo.product_id         ) setTimeout(function(){ photo.save(); }, 500); });
-        photo.subscribe              ('count'     , function(value){ if(value != photo.count              ) setTimeout(function(){ photo.save(); }, 500); });
-        photo.subscribe              ('border'    , function(value){ if(value != photo.border             ) setTimeout(function(){ photo.save(); }, 500); });
-        photo.subscribe              ('margin'    , function(value){ if(value != photo.margin             ) setTimeout(function(){ photo.save(); }, 500); });
-        photo.specification.subscribe('paper'     , function(value){ if(value != photo.specification.paper) setTimeout(function(){ photo.save(); }, 500); });
+        photo.subscribe(              'dirty', function(prop, dirty){ dirty && setTimeout(function(){ photo.save() }, 500); });
+        photo.specification.subscribe('dirty', function(prop, dirty){ if(dirty){ photo.dirty = true; this.dirty = false; } });
 
         self.tied = true;
 
@@ -109,12 +103,12 @@ var gadget = (function declare_gadget (sorts) {
         gadget = that(this.element, options), photo = this.photo.json();
 
       // Create a brand new model
-      gadget.photo = window.photo(photo);
-      // TODO copy automatically (implement nested attributes for has_one)
-      gadget.photo.specification = window.specification(this.photo.specification.json());
-
       photo._id = null;
       delete photo._id;
+      gadget.photo = window.photo(photo);
+
+      // TODO copy automatically (implement nested attributes for has_one)
+      gadget.photo.specification = window.specification(this.photo.specification.json());
 
       gadget.photo.route  = this.photo.route;
       gadget.photo.width  = this.photo.width;

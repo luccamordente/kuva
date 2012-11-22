@@ -3,21 +3,18 @@ model = window.model
 model.restfulable = ->
   resource =
     save: () ->
-      # TODO Dirty
-      self = @
-      @delay && clearTimeout @delay
-      @delay = setTimeout ->
-        promise = rest[if self._id then 'put' else 'post'].call self
-        promise.done self.saved
-        promise.fail self.failed
-        # Bind one time save callbacks
-        promise.done argument for argument in arguments when $.type(argument) is 'function'
-        promise
-      , 20
+      promise = rest[if @_id then 'put' else 'post'].call @
+      promise.done @saved
+      promise.fail @failed
+      # Bind one time save callbacks
+      promise.done argument for argument in arguments when $.type(argument) is 'function'
+      promise
+
     saved: (data) ->
+      @dirty = false
       # parsear resposta do servidor e popular dados no modelo atual
       # dispatchar evento de registro salvo, usando o nome do resource
-      callback.call @, data for callback in @after_save
+      throw "Not supported after_save callback: " + callback for callback in @after_save if @after_save
     failed: ->
       throw "#{@resource}.save: Failed to save record: #{@}\n"
     json: ->
@@ -32,6 +29,8 @@ model.restfulable = ->
         else
           json[name] = value
 
+      observable.unobserve json
+
       # TODO Store reserved words in a array
       # TODO User _.omit functions
       # Remove model reserved words
@@ -40,7 +39,6 @@ model.restfulable = ->
       delete json.parent_resource
       delete json.nested_attributes
       delete json.on_save
-      delete json.after_save
       delete json.element
 
       json

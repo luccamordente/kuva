@@ -356,6 +356,7 @@ control =
     # TODO change json to a getter to_json
     defaults = control.defaults.photo.json()
 
+    delete defaults.name
     delete defaults.width
     delete defaults.height
 

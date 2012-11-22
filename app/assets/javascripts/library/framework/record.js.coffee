@@ -5,7 +5,7 @@
   modelable =
     after_mix: []
     record:
-      after_save      : []
+      # TODO usar deferred
       after_initialize: []
     all: ->
       # TODO transform model in a array like object and store cache in root
@@ -33,7 +33,9 @@
     data.route             ||= @route
     data.nested_attributes   = @nested_attributes || []
 
-    instance = record.call $.extend data, @record # TODO remove @record from outside scop
+    # instance = record.call $.extend data, @record # TODO remove @record from outside scop
+    after_initialize = (data.after_initialize || []).concat(@record.after_initialize)
+    instance = record.call $.extend data, @record, after_initialize: after_initialize # TODO remove @record from outside scope
 
     # Call and remove used callbacks
     callback.call instance, instance for callback in instance.after_initialize
@@ -69,22 +71,28 @@
 
 
 @record = do -> # mixin
-  temporary_callbacks = (record, callbacks) ->
-      callbacks = Array.prototype.slice.call(callbacks, 0) unless $.type(callbacks) == 'array'
 
-      callbacks.push ->
-        # This code assumes that all bound callbacks in the same slice!
-        index = record.after_save.indexOf(callbacks[0])
-        record.after_save.splice(index, callbacks.length)
+  callbacks =
+    dirtify: ->
+      @subscribe (prop, value, old) ->
+        if prop isnt 'dirty' and not @dirty and value isnt old
+          console.groupCollapsed "◉ Property '#{prop}' dirtied a #{@resource}"
+          console.log old, "→", value
+          console.log @
+          console.groupEnd()
+          @dirty = true
 
-      record.after_save = record.after_save.concat callbacks
-
-  recordable = {}
+  recordable =
+    # TODO usar deferred
+    dirty: false
+    after_initialize: [ callbacks.dirtify ]
 
   that = (data) ->
     throw "Mixin called incorrectly, call mixin with call method: record.call(object, data)" if @ == window
-    advisable.call @
-    $.extend @, recordable, data
+
+    data ||= {}
+    after_initialize = @after_initialize.concat(data.after_initialize || []).concat(recordable.after_initialize)
+    $.extend @, recordable, advisable.call(observable.call data), after_initialize: after_initialize
 
 
   that.mix = (blender) ->

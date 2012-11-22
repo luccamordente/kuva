@@ -108,7 +108,7 @@ associable =
           @[model.pluralize resource] = $.extend association_proxy, plural
 
         # Update association attribute
-        @after_save.push callbacks.has_many.update_association
+        @after 'saved', callbacks.has_many.update_association
 
         # Forward nested attributes
         callbacks.has_many.nest_attributes.call @

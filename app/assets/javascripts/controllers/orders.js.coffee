@@ -539,7 +539,7 @@ initialize = ->
     control.reader_errored event, gadget
   )
   # TODO Replace with a beautiful image
-  .on('thumbnailer.corrupt'       , (event) ->
+  .on('thumbnailer.corrupted'       , (event) ->
     gadget = gadgets(event.key)
     gadget.dispatch('thumbnailer_errored', event)
     control.thumbnailer_errored event, gadget

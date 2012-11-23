@@ -564,38 +564,45 @@ control-style(color)
 
 
     &.errored
-      .canvas .image
-        color = #000
-        background-color color
-
-        img
+      .canvas
+        .bar
           display none
 
-        .error-message
-          color lighten(color, 50%)
-          font-size 0.7em
-          max-width 80%
-          padding 30% 10% 0
-          position absolute
-          top 0
-          z-index 2
+        .image
+          color = #000
+          background-color color
 
-          .file-name
-            color #FFF
-            font-weight bold
-            padding 1em 0 2em
-            word-break break-word
-            width 100%
+          img
+            display none
+
+          .error-message
+            color lighten(color, 50%)
+            font-size 0.7em
+            max-width 80%
+            padding 30% 10% 0
+            z-index 2
+
+            .file-name
+              color #FFF
+              font-weight bold
+              padding 1em 0 2em
+              word-break break-word
+              width 100%
 
 
     &.errored.reader-errored
-      .canvas .image
-        color = #A33
-        background-color color
-        .error-message
-          color lighten(color, 50%)
-          .file-name
-            color #FFF
+      &.ruler-pomp
+        background none
+      .canvas
+        .control, .control.hideable, .pomp
+            display none
+        .image
+          color = #A33
+          background-color color
+          .error-message
+            color lighten(color, 50%)
+            .file-name
+              color #FFF
 
     &.errored.thumbnailer-errored
       .canvas .image

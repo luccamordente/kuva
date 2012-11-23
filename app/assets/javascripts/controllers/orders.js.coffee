@@ -539,10 +539,10 @@ initialize = ->
     control.reader_errored event, gadget
   )
   # TODO Replace with a beautiful image
-  .on('thumbnailer.corrupted'       , (event) ->
+  .on('thumbnailer.corrupt'       , (event) ->
     gadget = gadgets(event.key)
-    gadget.dispatch('reader_errored', event)
-    control.reader_errored event, gadget
+    gadget.dispatch('thumbnailer_errored', event)
+    control.thumbnailer_errored event, gadget
   )
   .on('thumbnailer.progressed'      , (event) -> gadgets(event.key).dispatch('thumbnailing', event))
   .on('thumbnailer.encoded'         , (event) -> gadgets(event.key).dispatch('encoding'    , event))

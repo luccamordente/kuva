@@ -78,12 +78,10 @@ dropper =
   bind: ->
 
     $(window).bind('dragenter', (event) ->
-       console.log('entered')
        dropper.overlay.show()
      ).bind('drop', @droped)
 
      @overlay.element.bind('dragleave', (event) ->
-        console.log('leaved')
         dropper.overlay.hide()
      ).bind('dragover', @dragover).bind('drop', @droped)
 

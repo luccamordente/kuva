@@ -75,11 +75,11 @@ var gadget = (function declare_gadget (sorts) {
 
     },
     empty: function() {
-      this.canvas = this.element.find(".canvas").detach();
+      this.elements.canvas = this.element.find(".canvas").detach();
       this.element.addClass("empty");
     },
     recompose: function() {
-      this.element.append(this.canvas);
+      this.element.append(this.elements.canvas);
       this.element.removeClass("empty");
     },
     wakeup: function() {
@@ -195,7 +195,7 @@ var gadget = (function declare_gadget (sorts) {
       var element  = this.element,
           photo    = this.photo,
           controls = element.find('.control'),
-          canvas   = element.find('.canvas '),
+          canvas   = this.elements.canvas,
           paper;
 
       this.default = true;

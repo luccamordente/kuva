@@ -38,46 +38,77 @@ var gadget = (function declare_gadget (sorts) {
     },
     tie: function (photo_id) {
       var self = this;
-      setTimeout(function() {
-        var photo, subscription;
-        if (self.tied) console.error('Gadget ', self.key, ' already tied');
 
-        photo = self.photo;
-        photo._id = photo_id;
+      var photo, subscription, bound;
+      if (self.tied) console.error('Gadget ', self.key, ' already tied');
 
-        (!photo.specification) && (photo.specification = window.specification());
+      photo = self.photo;
+      photo._id = photo_id;
 
-        photo.specification.subscribe('paper', view.subscriptions.paper);
-        photo.subscribe('product_id', view.subscriptions.size  );
-        photo.subscribe('count'     , view.subscriptions.count );
-        photo.subscribe('border'    , view.subscriptions.border);
-        photo.subscribe('margin'    , view.subscriptions.margin);
-        photo.gadget = photo.specification.gadget = self;
+      (!photo.specification) && (photo.specification = window.specification());
 
 
-        // TODO Better proxy binding on event bindings
-        bound = {};
-        for (property in view) {
-          if ($.type(view[property]) == 'function')
-            bound[property] = $.proxy(view[property], self);
-        }
-
-        self.view = rivets.bind(self.element, {
-            photo: photo,
-            specification: photo.specification,
-            gadget: observable.call(bound)
+      if (self.default) {
+        self.recompose();
+        self.wakeup();
+      }
+      else {
+        self.element.bind('inview', function(event, visible){
+          setTimeout(function(){
+            if (visible) self.recompose();
+            else         self.empty();
+          },0);
+        });
+        self.element.one('inview', function(event, visible){
+          if(visible && !self.inview) {
+            setTimeout(function(){
+              self.wakeup();
+            }, 0);
+          }
         });
 
-        self.element.find("[rel=tooltip]").tooltip();
-
         photo.subscribe(              'dirty', function(prop, dirty){ dirty && setTimeout(function(){ photo.save() }, 500); });
-        photo.specification.subscribe('dirty', function(prop, dirty){ if(dirty){ photo.dirty = true; this.dirty = false; } });
+        photo.specification.subscribe('dirty', function(prop, dirty){ if(dirty){ photo.dirty = true; this.dirty = false; }  });
+      }
 
-        self.tied = true;
+      self.tied = true;
 
-        self.update();
+    },
+    empty: function() {
+      this.canvas = this.element.find(".canvas").detach();
+      this.element.addClass("empty");
+    },
+    recompose: function() {
+      this.element.append(this.canvas);
+      this.element.removeClass("empty");
+    },
+    wakeup: function() {
+      var self = this, photo = self.photo, bound;
 
-      }, 0);
+      bound = {};
+      for (property in view) {
+        if ($.type(view[property]) == 'function')
+          bound[property] = $.proxy(view[property], self);
+      }
+
+      self.view = rivets.bind(self.element, {
+          photo: photo,
+          specification: photo.specification,
+          gadget: observable.call(bound)
+      });
+
+
+      photo.specification.subscribe('paper', view.subscriptions.paper);
+      photo.subscribe('product_id', view.subscriptions.size  );
+      photo.subscribe('count'     , view.subscriptions.count );
+      photo.subscribe('border'    , view.subscriptions.border);
+      photo.subscribe('margin'    , view.subscriptions.margin);
+      photo.gadget = photo.specification.gadget = self;
+
+      self.element.find("[rel=tooltip]").tooltip();
+
+      self.inview = true;
+      self.update();
     },
     // TODO Make rivets view.sync work!
     update: function () {
@@ -119,10 +150,10 @@ var gadget = (function declare_gadget (sorts) {
 
       gadget.tied = false;
 
-	  if (gadget.photo.image) {
+      if (gadget.photo.image) {
         this.element.find('.pomp.info-pomp:first').html();
-		gadget.photo.image.name = gadget.photo.image.name;
-	  }
+        gadget.photo.image.name = gadget.photo.image.name;
+      }
 
       this.dispatch('duplicated', gadget);
 
@@ -145,10 +176,13 @@ var gadget = (function declare_gadget (sorts) {
       this.original_image= library.image(this.element.find('.original-image img'), this.data.title); // TODO best support for original image
       this.upload_bar    = this.element.find('.upload.bar   ');
       this.thumbnail_bar = this.element.find('.thumbnail.bar');
+      this.info_pomp     = this.element.find('.pomp.info-pomp:first');
       this.orientation || (this.orientation = "vertical");
 
       // TODO automatically forward thos property to view layer
       this.element.find('.pomp.info-pomp:first').html(this.data.title);
+
+      this.empty();
 
       delete this.render;
     },
@@ -244,7 +278,8 @@ var gadget = (function declare_gadget (sorts) {
 
       if (event.file) {
         // TODO create association photo.image & rivetize!
-        this.element.find('.pomp.info-pomp:first').html(event.file.name);
+        this.info_pomp.html(event.file.name);
+        delete this.info_pomp;
         this.image.title(event.file.name);
         this.data.title = event.file.name;
         this.original_image.title("Esta parte da imagem será cortada.");
@@ -467,24 +502,34 @@ var gadget = (function declare_gadget (sorts) {
 
 
 
-  manipulable = function(name) {
-    var original = this;
-    return function() {
-      var gadget = arguments[0],
-          args   = arguments,
-          manipulation;
-      gadget.manipulations || (gadget.manipulations = {});
-      gadget.manipulations[name] || (gadget.manipulations[name] = {fn:original, args: args});
-      gadget.manipulated && clearTimeout(gadget.manipulated);
-      gadget.manipulated = setTimeout(function(){
-        for (name in gadget.manipulations) {
-          manipulation = gadget.manipulations[name];
-          manipulation.fn.apply(gadget, manipulation.args);
-        };
-        gadget.manipulations = {};
-      }, 100);
+  manipulable = (function() {
+    var that = function(name) {
+      var original = this;
+
+      return function() {
+        var gadget   = arguments[0],
+            args     = arguments,
+            manipulation;
+        gadget.manipulations || (gadget.manipulations = {});
+        gadget.manipulations[name] || (gadget.manipulations[name] = {fn:original, args: args});
+        gadget.manipulated && clearTimeout(gadget.manipulated);
+        gadget.manipulated = setTimeout(function(){
+          if (gadget.inview) manipulable.manipulate(gadget);
+        }, 100);
+      };
     };
-  },
+
+
+    that.manipulate = function(gadget) {
+      for (name in gadget.manipulations) {
+        manipulation = gadget.manipulations[name];
+        manipulation.fn.apply(gadget, manipulation.args);
+      };
+      gadget.manipulations = {};
+    };
+
+    return that;
+  }()),
 
 
   resolution = {
@@ -588,9 +633,13 @@ var gadget = (function declare_gadget (sorts) {
       canvas_left = (gadget.element.innerWidth()  - canvas_width ) / 2;
       canvas_top  = (gadget.element.innerHeight() - canvas_height) / 2;
 
-      canvas.css({width: canvas_width, height: canvas_height});
-      canvas.css({top: canvas_top, left: canvas_left});
+      canvas.css({top: canvas_top, left: canvas_left, width: canvas_width, height: canvas_height});
+      // canvas[0].style.cssText = "width: " + canvas_width + "px;" + "height: " + canvas_height + "px; " + "top: " + canvas_top + "px; " + "left: " + canvas_left + "px;";
+
+      // image[0].style.cssText  = "width: " + image_width + "px;" + "height: " + image_height + "px;";
       image.css({width: image_width, height: image_height});
+
+      // img[0].style.cssText = "width: " + img_width + "px;" + "height: " + img_height + "px; " + "top: " + img_top + "px; " + "left: " + img_left + "px; ";
       img.css({left: img_left, top: img_top, height: img_height, width: img_width});
 
       product_dimensions = gadget.element.find(".dimension");
@@ -598,6 +647,7 @@ var gadget = (function declare_gadget (sorts) {
       // TODO rivetize !!
       product_dimensions.filter(".height").children(".count").html(dimensions.height);
       product_dimensions.filter(".width ").children(".count").html(dimensions.width );
+
     }, 'crop')
   },
 

@@ -1,5 +1,6 @@
 #= require jquery
 #= require jquery_ujs
+#= require jquery.inview
 #= require modernizr
 #= require jqote2
 #= require lodash

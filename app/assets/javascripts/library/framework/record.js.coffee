@@ -35,7 +35,7 @@
 
     # instance = record.call $.extend data, @record # TODO remove @record from outside scop
     after_initialize = (data.after_initialize || []).concat(@record.after_initialize)
-    instance = record.call $.extend data, @record, after_initialize: after_initialize # TODO remove @record from outside scope
+    instance = record.call $.extend {}, @record, data, after_initialize: after_initialize # TODO remove @record from outside scope
 
     # Call and remove used callbacks
     callback.call instance, instance for callback in instance.after_initialize

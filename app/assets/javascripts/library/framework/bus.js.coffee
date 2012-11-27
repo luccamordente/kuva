@@ -29,6 +29,10 @@ controller =
 
   enqueue: ->
     event = arguments[0]
+    # skiping thumbnailer.progressed event when queue is too large
+    if event.type ==  'thumbnailer.progressed' and controller.queue.length > 20
+      console.log controller.queue.length
+      return
     console.log "⥤ enqueueing", event.type, event, arguments
     controller.queue.push arguments
     controller.next() if controller.queue.length == 1

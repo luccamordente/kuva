@@ -180,7 +180,10 @@ gadgets = do ->
       photo.product = product.find photo.product_id unless photo.product
 
       # Create next photo
-      control.photos.create(1)
+      control.photos.create(1).done ->
+        copy.recompose();
+        copy.wakeup();
+
       copy.show()
 
       original = this
@@ -235,7 +238,9 @@ control =
 
     # Create a new gadget and display it
     gadget = gadgets key
-    gadgets.pile -> gadget.show()
+    setTimeout ->
+      gadgets.pile -> gadget.show()
+    , 0
 
     # Criar uma photo para arquivo selecionado
     gadget.photo = photo = order.photos.build
@@ -282,6 +287,7 @@ control =
     assigns =
       title       : "Você selecionou <span class=\"amount\"><b data-text=\"modal.amount\">#{event.amount}</b> <span data-text=\"modal.amount_label\">foto</span></span>"
       confirm     : ->
+        $(window).scroll() # TODO do it right to show some gadgets before the user manually scroll
         kuva.overlay().close()
         mass.element.find('[rel=tooltip]').tooltip('destroy')
         control.modal.close()
@@ -336,14 +342,16 @@ control =
     # Confirmation animation
     control.modal = confirm
 
-    interval = setInterval ->
-      if control.modal.amount < event.amount
-        control.modal.amount++
-      else
-        clearInterval interval
-      if control.modal.amount <= 2
-        control.modal.amount_label = if control.modal.amount == 1 then "foto" else "fotos"
-    , 30
+    control.modal.amount = event.amount
+    control.modal.amount_label = if control.modal.amount == 1 then "foto" else "fotos"
+    # interval = setInterval ->
+    #  if control.modal.amount < event.amount
+    #    control.modal.amount++
+    #  else
+    #    clearInterval interval
+    #  if control.modal.amount <= 2
+    #    control.modal.amount_label = if control.modal.amount == 1 then "foto" else "fotos"
+    # , 30
 
     # Create photos records
     control.photos.create event.amount
@@ -414,21 +422,18 @@ control =
           specification_attributes:
             paper: 'glossy'
       .done(@created).fail(@failed)
-      true
 
     created: (response) ->
       ids = response.photo_ids
 
-      setTimeout ->
-        for key, gadget of gadgets.all
-          photo = gadget.photo
+      for key, gadget of gadgets.all
+        photo = gadget.photo
 
-          continue if photo._id?
+        continue if photo._id?
 
-          gadget.tie ids.shift()
+        gadget.tie ids.shift()
 
-          # TODO photo.gadget().unlock()
-      , 0
+        # TODO photo.gadget().unlock()
 
 
     failed: (xhr, status, error) ->

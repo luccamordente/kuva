@@ -469,6 +469,14 @@ control =
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
+  upload_errored_maximum: (event, gadget) ->
+    aside.progress.status.total--
+    gadget.photo.count = 0
+    message  = "Maximum upload errors reached in #{order._id}. \n"
+    message += "Event details: #{JSON.stringify event} \n"
+    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    throw message
+
   error_uncaughted: (event, gadget) ->
     message  = "Error uncaughted. Order ##{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
@@ -569,6 +577,11 @@ initialize = ->
     # TODO deal with upload errors on gadgets
     # gadget.dispatch('upload_errored', event)
     control.upload_errored event, gadget
+  )
+  .on('upload.errored.maximum'      , (event) ->
+    gadget = gadgets(event.key)
+    gadget.dispatch 'upload_errored_maximum', event
+    control.upload_errored_maximum event, gadget
   )
   .on('send.completed'              , control.send_completed                                       )
   .on('order.closed'                , control.closed                                               )

@@ -171,13 +171,15 @@ var gadget = (function declare_gadget (sorts) {
       (this.render) || (this.render = control.render);
       this.parent && this.render(templates.gadget);
 
-      this.element       = $('#gadget-' + this.data.id);
-      this.image         = library.image(this.element.find('.image img'), this.data.title); // TODO REMOVE title
-      this.original_image= library.image(this.element.find('.original-image img'), this.data.title); // TODO best support for original image
-      this.upload_bar    = this.element.find('.upload.bar   ');
-      this.thumbnail_bar = this.element.find('.thumbnail.bar');
-      this.info_pomp     = this.element.find('.pomp.info-pomp:first');
-      this.orientation || (this.orientation = "vertical");
+      this.element        = $('#gadget-' + this.data.id);
+      this.elements       = {}
+      this.image          = library.image(this.element.find('.image img'), this.data.title); // TODO REMOVE title
+      this.original_image = library.image(this.element.find('.original-image img'), this.data.title); // TODO best support for original image
+      this.upload_bar     = this.element.find('.upload.bar   ');
+      this.thumbnail_bar  = this.element.find('.thumbnail.bar');
+      this.elements.info  = this.element.find('.pomp.info-pomp:first');
+      this.elements.image = this.element.find('.image:first');
+      this.orientation   || (this.orientation = "vertical");
 
       // TODO automatically forward thos property to view layer
       this.element.find('.pomp.info-pomp:first').html(this.data.title);
@@ -278,8 +280,8 @@ var gadget = (function declare_gadget (sorts) {
 
       if (event.file) {
         // TODO create association photo.image & rivetize!
-        this.info_pomp.html(event.file.name);
-        delete this.info_pomp;
+        this.elements.info.html(event.file.name);
+        delete this.elements.info;
         this.image.title(event.file.name);
         this.data.title = event.file.name;
         this.original_image.title("Esta parte da imagem será cortada.");
@@ -351,7 +353,7 @@ var gadget = (function declare_gadget (sorts) {
     reader_errored: function reader_errored(event) {
       var element = this.element;
       element.addClass('errored reader-errored');
-      element.find('.image:first').append($(
+      this.elements.image.append($(
         '<div class="error-message">'                                 +
         '  Não conseguimos ler a imagem'                              +
         '  <div class="file-name">' + this.files[0].name + '</div>'   +
@@ -359,19 +361,34 @@ var gadget = (function declare_gadget (sorts) {
         '</div>'
       ));
 
-	  // TODO automatically forward thos property to view layer
+      // TODO automatically forward thos property to view layer
       this.element.find('.pomp.info-pomp:first').html('');
     },
     thumbnailer_errored: function reader_errored(event) {
       var element = this.element;
       element.addClass('errored thumbnailer-errored');
-      element.find('.image:first').append($(
+      this.elements.image.append($(
         '<div class="error-message">'                                                     +
         '  Não conseguimos gerar a miniatura da imagem'                                   +
         '  <div class="file-name">' + this.files[0].name + '</div>'                       +
         '  Este arquivo SERÁ enviado, você ainda pode definir como vai querer revelá-lo.' +
         '</div>'
       ));
+    },
+    upload_errored_maximum: function upload_errored_maximum(event) {
+      var element = this.element;
+      element.addClass('errored reader-errored');
+      this.elements.image.append($(
+        '<div class="error-message">'                                       +
+        '  Não conseguimos enviar esta foto. O arquivo está com problemas.' +
+        '  <div class="file-name">' + this.files[0].name + '</div>'         +
+        '  Tente enviá-la em outro pedido.'                                 +
+        '  Caso continue com problemas entre em contato conosco.'           +
+        '</div>'
+      ));
+
+      // TODO automatically forward thos property to view layer
+      this.element.find('.pomp.info-pomp:first').html('');
     }
   },
   view = {

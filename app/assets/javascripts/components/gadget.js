@@ -623,7 +623,7 @@ var gadget = (function declare_gadget (sorts) {
           img_scale     = (img_ratio > canvas_ratio) && !gadget.photo.border ?
                             Math[!gadget.photo.border ? 'min' : 'max'](configuration.size.width / photo_width, configuration.size.height / photo_height) :
                             Math[!gadget.photo.border ? 'max' : 'min'](canvas_width / photo_width, canvas_height / photo_height),
-          canvas        = gadget.element.find('.canvas'),
+          canvas        = gadget.elements.canvas,
           image         = canvas.find('.image, .original-image'),
           img           = canvas.find('.image img, .original-image img'),
           left          = 0,
@@ -659,7 +659,7 @@ var gadget = (function declare_gadget (sorts) {
       // img[0].style.cssText = "width: " + img_width + "px;" + "height: " + img_height + "px; " + "top: " + img_top + "px; " + "left: " + img_left + "px; ";
       img.css({left: img_left, top: img_top, height: img_height, width: img_width});
 
-      product_dimensions = gadget.element.find(".dimension");
+      product_dimensions = canvas.find(".dimension");
 
       // TODO rivetize !!
       product_dimensions.filter(".height").children(".count").html(dimensions.height);

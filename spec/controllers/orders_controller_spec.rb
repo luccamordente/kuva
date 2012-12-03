@@ -80,6 +80,8 @@ describe OrdersController do
         order.reload.status.should == Order::CLOSED
       end
 
+      it "updates the order price again to make sure it's correct"
+
     end
 
 

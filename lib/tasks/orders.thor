@@ -41,7 +41,7 @@ class Orders < Thor
     puts "\n\n\n" if orders.count > 0
 
   rescue => e
-    notify e, parameters: { order_id: order['id'] }
+    notify e, parameters: { order_id: (order && order['id']) }
     raise e
   end
 

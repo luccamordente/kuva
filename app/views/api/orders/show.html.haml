@@ -18,12 +18,12 @@
 
       .row-fluid
 
+        %p.closed-at
+          = l @order.closed_at, format: :medium  if @order.closed_at
+
         %p
           %b Cliente:
           = @order.user.try :name
-        %p
-          %b Enviado em:
-          = l @order.closed_at, format: :medium  if @order.closed_at
 
         - if @order.observations.present?
           %p

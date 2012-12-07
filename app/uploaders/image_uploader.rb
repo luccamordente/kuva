@@ -26,9 +26,9 @@ class ImageUploader < CarrierWave::Uploader::Base
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
     if Rails.env.production?
-      "#{Rails.root}/../../shared/uploads/orders/#{model.order_id}"
+      "#{Rails.root}/../../shared/uploads/orders/#{model.order_id}/#{model.id}"
     else
-      "#{Rails.root}/tmp/uploads/orders/#{model.order_id}"
+      "#{Rails.root}/tmp/uploads/orders/#{model.order_id}/#{model.id}"
     end
   end
 

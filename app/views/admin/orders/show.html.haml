@@ -21,12 +21,15 @@
         %span.status-actions.unprintable
           = link_to "Marcar como executada", 'javascript:void(0);', class: 'btn btn-mini btn-inverse disabled' if @order.executable?
           = link_to "Marcar como entregue" , 'javascript:void(0);', class: 'btn btn-mini btn-inverse disabled' if @order.deliverable?
+
+      - if @order.closed_at
+        %p.closed-at
+          %b.unprintable Enviado em:
+          = l @order.closed_at, format: :medium  if @order.closed_at
+
       %p
         %b Cliente:
         = @order.user.try :name
-      %p
-        %b Enviado em:
-        = l @order.closed_at, format: :medium  if @order.closed_at
 
       = if @order.observations.present?
         %p

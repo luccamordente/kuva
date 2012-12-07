@@ -18,6 +18,7 @@ class OrdersController < ApplicationController
 
   def close
     @order = current_user.orders.find params[:id]
+    @order.update_price
     @order.update_status Order::CLOSED
 
     success id: @order.id.to_s

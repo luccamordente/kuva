@@ -59,6 +59,11 @@ listener =
     @listeners[type] ||= []
     @listeners[type].unshift listener
     @
+  one: (type, listener) ->
+    bus.listen type, ->
+      listener()
+      bus.mute type, arguments.callee
+    @
   mute: (type, listener) ->
     throw "bus.off Listener for event of type #{type}, does not exist" if !@listeners[type]
 
@@ -131,13 +136,17 @@ errored = (event = {type: 'unknown'}) ->
 
 
 # Set public methods
-bus.key = publisher.key
+bus.key     = publisher.key
 bus.trigger = bus.publish = controller.enqueue
-bus.on = bus.listen = listener.listen
-bus.off = bus.mute = listener.mute
+bus.on      = bus.listen  = listener.listen
+bus.off     = bus.mute    = listener.mute
+bus.one     = listener.one
+bus.pause   = controller.pause
+bus.resume  = controller.resume
+
 bus.listeners = {}
-bus.pause  = controller.pause
-bus.resume = controller.resume
+
+
 Object.defineProperty bus, 'speed',
   get:        -> timeflow.speed
   set: (speed)-> timeflow.regulate(speed)

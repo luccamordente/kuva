@@ -15,7 +15,6 @@
 #= require components/aside
 
 reader          = lib.reader()
-selected_photos = []                     # Proposital array for automatic counting of length
 
 
 products        = null
@@ -97,9 +96,8 @@ send =
     progress.confirmed = true
 
     bus
-      .on('upload.start', (event) ->
+      .one('upload.start', (event) ->
         aside.progress.status.text = "Enviando fotos..."
-        bus.off 'upload.start', @callee
       )
       .on('upload.start', (event) ->
         gadgets(event.key).dispatch('upload', event)
@@ -205,60 +203,16 @@ gadgets = do ->
   $.extend that, multiton
   that
 
-control =
-  defaults:
-    photo: undefined
-    product: undefined
-  modal: undefined
 
-  initialized: ->
-    $('#initializing').fadeOut 'fast', ->
-      $('#main-add').fadeIn 2000
-      shelf.overlay 'button'
+# TODO move to another file
+selection_control =
+  defaults : []
+  deferreds: []
+  photos   : []
 
-
-  order_opened: (event) ->
-    uploader = window.uploader
-      url: "/pedidos/#{order._id}/images/"
-      data:
-        order_id: order._id
-
-  first_selection_choosed: (event) ->
-    bus.pause()
-    $.when(order.open(), $('#main-add').slideUp()).then bus.resume
-
-    bus.off 'selection.choosed', arguments.callee
-
-  file_selected: (event) ->
-    file  = event.file
-    key   = event.key
+  modal: ->
     count = 0
-
-    # Create a new gadget and display it
-    gadget = gadgets key
-    setTimeout ->
-      gadgets.pile -> gadget.show()
-    , 0
-
-    # Criar uma photo para arquivo selecionado
-    gadget.photo = photo = order.photos.build
-      name       : file.name
-      border     : false
-      margin     : false
-      count      : 1
-      product    : control.defaults.product
-      product_id : control.defaults.product._id
-
-    gadget.files ||= []
-    gadget.files.push file
-
-    # Store photo for later usage
-    selected_photos.push photo
-
-    # update other interface
-    # counters, order price, etc
-  files_selected: (event) ->
-    aside.progress.status.total += event.amount
+    selection_control.photos.push []
 
     # Create default model
     control.defaults.photo = photo = order.photos.build
@@ -283,9 +237,8 @@ control =
         title : "Foto de exemplo"
 
     assigns =
-      title       : "Você selecionou <span class=\"amount\"><b data-text=\"modal.amount\">#{event.amount}</b> <span data-text=\"modal.amount_label\">foto</span></span>"
+      title       : "Você selecionou <span class=\"amount\"><b data-text=\"modal.amount\"></b> <span data-text=\"modal.amount_label\">foto</span></span>"
       confirm     : ->
-        $(window).scroll() # TODO do it right to show some gadgets before the user manually scroll
         kuva.overlay().close()
         mass.element.find('[rel=tooltip]').tooltip('destroy')
         control.modal.close()
@@ -340,22 +293,97 @@ control =
     # Confirmation animation
     control.modal = confirm
 
+
+  first_selection_choosed: (event) ->
+    bus.pause()
+    $.when(order.open(), $('#main-add').slideUp()).then bus.resume
+
+
+  selection_choosed: (event) ->
+    selection_control.modal()
+
+    # TODO deferred must be stored to be retrieved later by control.create
+    $.when(
+      (->
+        d = $.Deferred()
+        bus.one 'files.selected', -> d.resolve()
+        d.promise()
+      )(),
+      (->
+        d = $.Deferred()
+        bus.one 'files.selection_confirmed', -> d.resolve()
+        d.promise()
+      )(),
+      (->
+        # resolved after control.create
+        d = $.Deferred()
+        d.done -> $(window).scroll()
+        selection_control.deferreds.push d
+        d.promise()
+      )()
+    ).then ->
+
+      selected = selection_control.photos.shift()
+      defaults = selection_control.defaults.shift()
+
+      for photo in selected
+        unless photo.defaulted
+          photo.defaulted = true
+
+          for name, value of defaults
+            # TODO make record support setting of association attributes
+            if name.indexOf('_attributes') != -1
+              association_name = name.replace '_attributes', ''
+              for attribute, value of defaults[name]
+                photo[association_name][attribute] = value
+            else
+              photo[name] = value
+
+      # TODO See witch photos have aready been selected and only add those to aside
+      aside '#aside'
+
+
+  file_selected: (event) ->
+    file  = event.file
+    key   = event.key
+
+    # Create a new gadget and display it
+    gadget = gadgets key
+    setTimeout ->
+      gadgets.pile -> gadget.show()
+    , 0
+
+    # Criar uma photo para arquivo selecionado
+    gadget.photo = photo = order.photos.build
+      name       : file.name
+      border     : false
+      margin     : false
+      count      : 1
+      product    : control.defaults.product
+      product_id : control.defaults.product._id
+
+    gadget.files ||= []
+    gadget.files.push file
+
+    # Store photo for later usage
+    selection_control.photos[selection_control.photos.length - 1].push photo
+
+    if control.modal and control.modal.amount
+      control.modal.amount++
+      if control.modal.amount <= 2
+        control.modal.amount_label = if control.modal.amount == 1 then "foto" else "fotos"
+
+    # update other interface
+    # counters, order price, etc
+  files_selected: (event) ->
+    aside.progress.status.total += event.amount
+
+
     control.modal.amount = event.amount
     control.modal.amount_label = if control.modal.amount == 1 then "foto" else "fotos"
-    # interval = setInterval ->
-    #  if control.modal.amount < event.amount
-    #    control.modal.amount++
-    #  else
-    #    clearInterval interval
-    #  if control.modal.amount <= 2
-    #    control.modal.amount_label = if control.modal.amount == 1 then "foto" else "fotos"
-    # , 30
 
     # Create photos records
     control.photos.create event.amount
-
-    # TODO See witch photos have aready been selected and only add those to aside
-    aside '#aside', selected_photos
 
   selection_confirmed: ->
     # TODO change json to a getter to_json
@@ -365,21 +393,8 @@ control =
     delete defaults.width
     delete defaults.height
 
-    for photo in selected_photos
-      unless photo.defaulted
-        photo.defaulted = true
+    selection_control.defaults.push defaults
 
-        for name, value of defaults
-          # TODO make record support setting of association attributes
-          if name.indexOf('_attributes') != -1
-            association_name = name.replace '_attributes', ''
-            for attribute, value of defaults[name]
-              photo[association_name][attribute] = value
-          else
-            photo[name] = value
-
-    # Empty selection
-    selected_photos = []
     false
 
   first_selection_confirmed: ->
@@ -399,12 +414,31 @@ control =
       , 100
 
 
-    # Prevent future calls for this event
-    bus.off 'files.selection_confirmed', arguments.callee
-
   first_files_selection: ->
-    bus.off 'files.selected', arguments.callee
     $(window).on 'beforeunload', -> 'Seu pedido será cancelado!'
+
+
+
+
+control =
+  defaults:
+    photo: undefined
+    product: undefined
+  modal: undefined
+
+  initialized: ->
+    $('#initializing').fadeOut 'fast', ->
+      $('#main-add').fadeIn 2000
+      shelf.overlay 'button'
+
+
+  order_opened: (event) ->
+    uploader = window.uploader
+      url: "/pedidos/#{order._id}/images/"
+      data:
+        order_id: order._id
+
+
 
   thumbnailed: (event) ->
     # todas miniaturas construidas
@@ -419,7 +453,7 @@ control =
           product_id: control.defaults.product._id
           specification_attributes:
             paper: 'glossy'
-      .done(@created).fail(@failed)
+      .done(@created).fail(@failed).promise()
 
     created: (response) ->
       ids = response.photo_ids
@@ -430,8 +464,11 @@ control =
         continue if photo._id?
 
         gadget.tie ids.shift()
+        aside.summary.add photo
 
         # TODO photo.gadget().unlock()
+
+      selection_control.deferreds.shift().resolve()
 
 
     failed: (xhr, status, error) ->
@@ -532,19 +569,20 @@ initialize = ->
   # TODO Better listeners interface, put key on event listener
   #      and move inside gadget initializer
   bus
-  .on('application.initialized'  , control.initialized                                          )
-  .on('selection.choosed'        , control.first_selection_choosed                              )
-  .on('file.selected'            , control.file_selected                                        )
-  .on('files.selected'           , control.files_selected                                       )
-  .on('files.selected'           , control.first_files_selection                                )
-  .on('files.selection_confirmed', control.selection_confirmed                                  )
-  .on('files.selection_confirmed', control.first_selection_confirmed                            )
-  .on('order.opened'             , control.order_opened                                         )
-  .on('reader.loadstarted'       , (event) -> gadgets(event.key).dispatch('loadstart'   , event))
-  .on('reader.progressed'        , (event) -> gadgets(event.key).dispatch('progress'    , event))
-  .on('reader.loadended'         , (event) -> gadgets(event.key).dispatch('loadend'     , event))
-  .on('reader.aborted'           , (event) -> gadgets(event.key).dispatch('abort'       , event))
-  .on('reader.errored'           , (event) ->
+  .on('application.initialized'   , control.initialized                                          )
+  .on('selection.choosed'         , selection_control.selection_choosed                          )
+  .one('selection.choosed'        , selection_control.first_selection_choosed                    )
+  .on('file.selected'             , selection_control.file_selected                              )
+  .on('files.selected'            , selection_control.files_selected                             )
+  .one('files.selected'           , selection_control.first_files_selection                      )
+  .on('files.selection_confirmed' , selection_control.selection_confirmed                        )
+  .one('files.selection_confirmed', selection_control.first_selection_confirmed                  )
+  .on('order.opened'              , control.order_opened                                         )
+  .on('reader.loadstarted'        , (event) -> gadgets(event.key).dispatch('loadstart'   , event))
+  .on('reader.progressed'         , (event) -> gadgets(event.key).dispatch('progress'    , event))
+  .on('reader.loadended'          , (event) -> gadgets(event.key).dispatch('loadend'     , event))
+  .on('reader.aborted'            , (event) -> gadgets(event.key).dispatch('abort'       , event))
+  .on('reader.errored'            , (event) ->
     gadget = gadgets(event.key)
     gadget.dispatch('reader_errored', event)
     control.reader_errored event, gadget

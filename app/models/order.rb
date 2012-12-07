@@ -53,7 +53,7 @@ class Order
   # notifications
   #before_create :admin_notify_opened
   #before_save   :admin_notify_closed, if: lambda{ closed? and not was_closed? }
-  before_save   :admin_notify_closed_ios, if: lambda{ closed? and not was_closed? }
+  #before_save   :admin_notify_closed_ios, if: lambda{ closed? and not was_closed? }
   #before_save   :user_notify_closed ,     if: lambda{ closed? and not was_closed? }
 
 

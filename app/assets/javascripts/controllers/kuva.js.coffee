@@ -9,6 +9,7 @@
 #= require library/framework/record/associations
 #= require library/framework/record/resource
 #= require library/framework/record/restful
+#= require library/framework/record/maid
 
 kuva = ->
 
@@ -17,6 +18,7 @@ model.rivets()
 model.resourceable()
 model.restfulable()
 model.associable()
+model.maid()
 
 $.jqotetag('*')
 

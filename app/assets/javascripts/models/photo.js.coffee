@@ -1,4 +1,5 @@
 @photo = model.call
   resource: 'photo',
   nested_attributes: ['specification']
-  has_many: 'image'
+  has_many: 'image',
+  washing: true

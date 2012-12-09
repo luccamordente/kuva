@@ -3,6 +3,7 @@ model = window.model
 model.restfulable = ->
   resource =
     save: () ->
+      return unless @dirty
       promise = rest[if @_id then 'put' else 'post'].call @
       promise.done @saved
       promise.fail @failed

@@ -1,0 +1,27 @@
+
+
+#login
+  - if alert
+    #error
+      = alert
+
+  %h2 Login
+
+  = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+    .field
+      = f.label :email, class: 'icon email'
+      = f.email_field :email, placeholder: 'seu@email.com.br'
+
+    .field
+      = f.label :password, class: 'icon password'
+      = f.password_field :password, placeholder: 'sua senha'
+
+    - if devise_mapping.rememberable?
+      .remember
+        = f.check_box :remember_me
+        = f.label :remember_me, "Lembrar meu login", style: "display: inline"
+
+    .actions= f.submit "Entrar", class: 'submit'
+
+
+  = render "links"

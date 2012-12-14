@@ -32,13 +32,16 @@
         =raw "#{current_user.email} (#{link_to "sair", destroy_user_session_path, method: "delete"})"
 
 
-    #logo
-      = image_tag "pedrocinefoto.png"
+    #main
+      #photographs
+        #header
+          #logo
+            = image_tag "pedrocinefoto.png"
 
-    #container
-      - if notice.present?
-        %p#flash_notice.notice= notice
-      - if alert
-        %p#flash_alert.alert=  alert
+        #content
+          = yield
 
-      = yield
+    #footer
+
+    :javascript
+      document.getElementById('user_email').focus();

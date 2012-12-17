@@ -172,8 +172,8 @@ var gadget = (function declare_gadget (sorts) {
 
       this.element        = $('#gadget-' + this.data.id);
       this.elements       = {}
-      this.image          = library.image(this.element.find('.image img'), this.data.title); // TODO REMOVE title
-      this.original_image = library.image(this.element.find('.original-image img'), this.data.title); // TODO best support for original image
+      this.image          = library.image(this.element.find('.image img')); // TODO REMOVE title
+      this.original_image = library.image(this.element.find('.original-image img')); // TODO best support for original image
       this.upload_bar     = this.element.find('.upload.bar   ');
       this.thumbnail_bar  = this.element.find('.thumbnail.bar');
       this.elements.info  = this.element.find('.pomp.info-pomp:first');
@@ -281,7 +281,6 @@ var gadget = (function declare_gadget (sorts) {
         // TODO create association photo.image & rivetize!
         this.elements.info.html(event.file.name);
         delete this.elements.info;
-        this.image.title(event.file.name);
         this.data.title = event.file.name;
         this.original_image.title("Esta parte da imagem será cortada.");
       }

@@ -2,6 +2,8 @@
 
 (function () {
     var that = function (element, options) {
+    if (!options) options = '';
+
 	var element = (element && element[0] || element) || new Image(),
 	    instance = {
 	    element: element
@@ -9,7 +11,7 @@
 
 	if (typeof options === 'string') options = {title: options};
 
-	if (options.title) {
+	if (options.title || options.title === '') {
 	    element.setAttribute('title', options.title);
 	    if (!options.alt) element.setAttribute('alt', options.title);
 	    delete options.title;

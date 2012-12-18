@@ -176,9 +176,15 @@ gadgets = do ->
       photo.product = product.find photo.product_id unless photo.product
 
       # Create next photo
+
+      # TODO isso tá mto feio!
+      # control.photos.create needs a deferred
+      d = $.Deferred()
+      d.done -> $(window).scroll()
+      selection_control.deferreds.push d
+
       control.photos.create(1).done ->
         copy.recompose();
-        copy.wakeup();
 
       copy.show()
 
@@ -197,7 +203,7 @@ gadgets = do ->
             photo.save()
 
       # Display fotos in summary
-      aside.summary.add photo
+      # aside.summary.add photo
 
 
   $.extend that, multiton

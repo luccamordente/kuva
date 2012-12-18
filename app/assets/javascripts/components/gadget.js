@@ -61,9 +61,8 @@ var gadget = (function declare_gadget (sorts) {
         });
         self.element.one('inview', function(event, visible){
           if(visible && !self.inview) {
-            setTimeout(function(){
-              self.wakeup();
-            }, 0);
+            setTimeout(function(){ self.wakeup(); }, 0);
+            setTimeout(function(){ self.element.removeClass('static'); }, 500); // avoid animation
           }
         });
 
@@ -164,7 +163,7 @@ var gadget = (function declare_gadget (sorts) {
       this.data = $.extend({
         id: id++,
         source: kuva.service.url + '/assets/blank.gif',
-        title: 'Gerando miniatura...'
+        title: ''
       }, this.data);
 
       (this.render) || (this.render = control.render);
@@ -199,7 +198,7 @@ var gadget = (function declare_gadget (sorts) {
 
       this.default = true;
 
-      element.addClass('controlable');
+      element.addClass('controlable').removeClass('static');
 
       // TODO clear timeouts upon confirmation
       setTimeout(function(){

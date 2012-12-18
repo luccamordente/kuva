@@ -1,5 +1,5 @@
 @photo = model.call
-  resource: 'photo',
+  resource: 'photo'
   nested_attributes: ['specification']
-  has_many: 'image',
+  has_one: 'image' # TODO change to belongs_to and make it work
   washing: true

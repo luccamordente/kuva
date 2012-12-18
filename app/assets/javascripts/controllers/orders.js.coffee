@@ -361,10 +361,11 @@ selection_control =
 
     # Criar uma photo para arquivo selecionado
     gadget.photo = photo = order.photos.build
-      name       : file.name
       border     : false
-      margin     : false
       count      : 1
+      image_id   : null
+      margin     : false
+      name       : file.name
       product    : control.defaults.product
       product_id : control.defaults.product._id
 
@@ -489,9 +490,8 @@ control =
 
     photo = gadgets(event.key).photo
 
-    # associate and save image
+    # associate
     photo.image_id = event.data.id
-    photo.save()
 
   reader_errored: (event, gadget) ->
     aside.progress.status.total--

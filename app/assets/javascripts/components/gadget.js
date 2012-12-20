@@ -108,7 +108,6 @@ var gadget = (function declare_gadget (sorts) {
       self.inview = true;
       self.update();
     },
-    // TODO Make rivets view.sync work!
     update: function () {
       this.photo.publish();
       this.photo.specification.publish();
@@ -171,8 +170,8 @@ var gadget = (function declare_gadget (sorts) {
 
       this.element        = $('#gadget-' + this.data.id);
       this.elements       = {}
-      this.image          = library.image(this.element.find('.image img')); // TODO REMOVE title
-      this.original_image = library.image(this.element.find('.original-image img')); // TODO best support for original image
+      this.image          = library.image(this.element.find('.image img'));
+      this.original_image = library.image(this.element.find('.original-image img'));
       this.upload_bar     = this.element.find('.upload.bar   ');
       this.thumbnail_bar  = this.element.find('.thumbnail.bar');
       this.elements.info  = this.element.find('.pomp.info-pomp:first');

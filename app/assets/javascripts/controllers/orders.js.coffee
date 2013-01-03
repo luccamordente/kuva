@@ -24,7 +24,7 @@ uploader        = null
 specifications  = null
 
 kuva.orders = (options) ->
-  # TODO pass order details from rails, this must be a instance of record
+  # TODO pass order details from rails, this must be a instance of recordhot
   order                    ||= window.order(options.order)
   control.defaults.product ||= window.product(options.default_product)
   specifications           ||= window.specification(options.specifications)
@@ -298,6 +298,7 @@ selection_control =
 
     # Confirmation animation
     control.modal = confirm
+    kuva.modal = control.modal
 
 
   first_selection_choosed: (event) ->
@@ -305,7 +306,9 @@ selection_control =
     $.when(order.open(), $('#main-add').slideUp()).then bus.resume
 
 
-  selection_choosed: (event) ->
+  files_validated: (event) ->
+    return alert 'Todas fotos selecionadas já foram adicionadas.' unless event.valid
+    
     selection_control.modal()
 
     # TODO deferred must be stored to be retrieved later by control.create
@@ -368,6 +371,8 @@ selection_control =
       name       : file.name
       product    : control.defaults.product
       product_id : control.defaults.product._id
+    
+    window.domo = photo;
 
     gadget.files ||= []
     gadget.files.push file
@@ -383,8 +388,10 @@ selection_control =
     # update other interface
     # counters, order price, etc
   files_selected: (event) ->
+    # in case of duplicated photos the amount can be 0
+    return unless event.amount
+    
     aside.progress.status.total += event.amount
-
 
     control.modal.amount = event.amount
     control.modal.amount_label = if control.modal.amount == 1 then "foto" else "fotos"
@@ -576,8 +583,8 @@ initialize = ->
   #      and move inside gadget initializer
   bus
   .on('application.initialized'   , control.initialized                                          )
-  .on('selection.choosed'         , selection_control.selection_choosed                          )
   .one('selection.choosed'        , selection_control.first_selection_choosed                    )
+  .on('files.validated'           , selection_control.files_validated                            )
   .on('file.selected'             , selection_control.file_selected                              )
   .on('files.selected'            , selection_control.files_selected                             )
   .one('files.selected'           , selection_control.first_files_selection                      )
@@ -638,7 +645,7 @@ templates =
     files_selected: $.jqotec """
         <div class="modal" id="selected-modal">
           <h1><img src="/assets/structure/modal-summary-checkmark.png" /> <*= this.title *></h1>
-          <div class="content">
+          <div class="content" data-hidden="modal.content_hidden">
             <h2>
               <!--div class="call">Como vai querer a maioria delas?</div-->
               <div class="choose">Escolha o tamanho, tipo de papel e quantidade de cópias abaixo para todas as fotos. </div>

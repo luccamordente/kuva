@@ -18,7 +18,7 @@ model.rivets()
 model.resourceable()
 model.restfulable()
 model.associable()
-model.maid()
+# model.maid()
 
 $.jqotetag('*')
 

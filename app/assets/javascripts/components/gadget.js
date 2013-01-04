@@ -66,6 +66,7 @@ var gadget = (function declare_gadget (sorts) {
           }
         });
 
+        photo.subscribe(              'dirty', function(prop, dirty){ dirty && setTimeout(function(){ photo.save() }, 500); });
         photo.specification.subscribe('dirty', function(prop, dirty){ if(dirty){ photo.dirty = true; this.dirty = false; }  });
       }
 

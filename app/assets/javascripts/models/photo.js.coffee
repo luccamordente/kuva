@@ -2,4 +2,4 @@
   resource: 'photo'
   nested_attributes: ['specification']
   has_one: 'image' # TODO change to belongs_to and make it work
-  washing: true
+  # washing: true

@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 gem 'therubyracer'
+gem 'libv8'
 
 gem 'rails', '3.2.2'
 

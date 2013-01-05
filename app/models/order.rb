@@ -51,20 +51,20 @@ class Order
   # filters
   before_validation :set_empty_status, on: :create
   # notifications
-  #before_create :admin_notify_opened
-  #before_save   :admin_notify_closed, if: lambda{ closed? and not was_closed? }
-  #before_save   :admin_notify_closed_ios, if: lambda{ closed? and not was_closed? }
-  #before_save   :user_notify_closed ,     if: lambda{ closed? and not was_closed? }
+  # before_create :admin_notify_opened
+  # before_save   :admin_notify_closed,     if: lambda{ closed? and not was_closed? }
+  # before_save   :admin_notify_closed_ios, if: lambda{ closed? and not was_closed? }
+  # before_save   :user_notify_closed ,     if: lambda{ closed? and not was_closed? }
 
+  def close
+    self.update_price
+    self.update_status Order::CLOSED
+  end
 
   def update_price
     new_price = photos.map { |photo| photo.product.price * photo.count }.sum
     return if new_price == self.price
     update_attribute :price, new_price
-  end
-
-  def delta_update_price difference
-    update_attribute :price, price + difference
   end
 
   def promised_for

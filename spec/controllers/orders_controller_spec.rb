@@ -80,7 +80,11 @@ describe OrdersController do
         order.reload.status.should == Order::CLOSED
       end
 
-      it "updates the order price again to make sure it's correct"
+      it "updates the order price again to make sure it's correct" do
+        order.update_attribute :price, 100000
+        post :close, id: order.id
+        order.reload.price.should_not == 100000
+      end
 
     end
 

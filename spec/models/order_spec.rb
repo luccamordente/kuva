@@ -122,80 +122,81 @@ describe Order do
       end
     end
 
+
+    describe "executable" do
+      orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING READY DELIVERED CANCELED } do |order, status|
+        it "should not be executable when #{status}" do
+          order.should_not be_executable
+        end
+      end
+
+      orders_with_each_status %W{ CAUGHT } do |order, status|
+        it "should be executable when #{status}" do
+          order.should be_executable
+        end
+      end
+    end
+
+
+    describe "deliverable" do
+      orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING CAUGHT DELIVERED CANCELED } do |order, status|
+        it "should not be deliverable when #{status}" do
+          order.should_not be_deliverable
+        end
+      end
+
+      orders_with_each_status %W{ READY } do |order, status|
+        it "should be deliverable when #{status}" do
+          order.should be_deliverable
+        end
+      end
+    end
+
+
+    describe "downloadable" do
+      orders_with_each_status %W{ EMPTY PROGRESS CANCELED } do |order, status|
+        it "should not be downloadable when #{status}" do
+          order.should_not be_downloadable
+        end
+      end
+
+      orders_with_each_status %W{ CLOSED CATCHING CAUGHT READY DELIVERED } do |order, status|
+        it "should be downloadable when #{status}" do
+          order.should be_downloadable
+        end
+      end
+    end
+
+
+    describe "downloaded" do
+      orders_with_each_status %W{ EMPTY PROGRESS CLOSED } do |order, status|
+        it "should not be downloaded when #{status}" do
+          order.should_not be_downloaded
+        end
+      end
+
+      orders_with_each_status %W{ CATCHING CAUGHT READY DELIVERED } do |order, status|
+        it "should be downloaded when #{status}" do
+          order.should be_downloaded
+        end
+      end
+    end
+
+    describe "canceled" do
+      orders_with_each_status %W{ CANCELED } do |order, status|
+        it "should be canceled when status is #{status}" do
+          order.should be_canceled
+        end
+        it "should be canceled if canceled at any time" do
+          order.update_status Order::READY
+          order.should be_canceled
+        end
+      end
+    end
+
   end
 
 
-
-  describe "executable" do
-    orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING READY DELIVERED CANCELED } do |order, status|
-      it "should not be executable when #{status}" do
-        order.should_not be_executable
-      end
-    end
-
-    orders_with_each_status %W{ CAUGHT } do |order, status|
-      it "should be executable when #{status}" do
-        order.should be_executable
-      end
-    end
-  end
-
-
-  describe "deliverable" do
-    orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING CAUGHT DELIVERED CANCELED } do |order, status|
-      it "should not be deliverable when #{status}" do
-        order.should_not be_deliverable
-      end
-    end
-
-    orders_with_each_status %W{ READY } do |order, status|
-      it "should be deliverable when #{status}" do
-        order.should be_deliverable
-      end
-    end
-  end
-
-
-  describe "downloadable" do
-    orders_with_each_status %W{ EMPTY PROGRESS CANCELED } do |order, status|
-      it "should not be downloadable when #{status}" do
-        order.should_not be_downloadable
-      end
-    end
-
-    orders_with_each_status %W{ CLOSED CATCHING CAUGHT READY DELIVERED } do |order, status|
-      it "should be downloadable when #{status}" do
-        order.should be_downloadable
-      end
-    end
-  end
-
-
-  describe "downloaded" do
-    orders_with_each_status %W{ EMPTY PROGRESS CLOSED } do |order, status|
-      it "should not be downloaded when #{status}" do
-        order.should_not be_downloaded
-      end
-    end
-
-    orders_with_each_status %W{ CATCHING CAUGHT READY DELIVERED } do |order, status|
-      it "should be downloaded when #{status}" do
-        order.should be_downloaded
-      end
-    end
-  end
-
-  describe "canceled" do
-    orders_with_each_status %W{ CANCELED } do |order, status|
-      it "should be canceled when status is #{status}" do
-        order.should be_canceled
-      end
-      it "should be canceled if canceled at any time" do
-        order.update_status Order::READY
-        order.should be_canceled
-      end
-    end
-  end
 
 
 
@@ -204,8 +205,8 @@ describe Order do
     context "normal" do
 
       let!(:product){ Fabricate :product, name: "10x15" }
-      let!(:order){ Fabricate :order }
-      let!(:image){ order.images.create image: image_fixture('rgb.jpg') }
+      let!(:order  ){ Fabricate :order }
+      let!(:image  ){ order.images.create image: image_fixture('rgb.jpg') }
       let!(:zero_photo      ){ order.photos.create(count: 0, specification_attributes: { paper: Specification::MATTE_PAPER  },
                                 product_id: product.id, image_id: image.id) }
       let!(:duplicated_photo){ order.photos.create(count: 2, specification_attributes: { paper: Specification::MATTE_PAPER  },

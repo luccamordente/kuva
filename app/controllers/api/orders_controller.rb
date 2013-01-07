@@ -3,9 +3,9 @@ class Api::OrdersController < Api::BaseController
   def show
     @order = Order.includes(:user).find(params[:id])
 
-    @total_count = @order.photos.sum &:count
+    @total_count = @order.not_failed.photos.sum &:count
 
-    @photos = @order.photos.group_by do |photo|
+    @photos = @order.not_failed.photos.group_by do |photo|
       {
         paper:    photo.specification.paper,
         border:   photo.border,

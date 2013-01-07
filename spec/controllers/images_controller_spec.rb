@@ -4,9 +4,9 @@ describe ImagesController do
 
   describe "create" do
     login_user
-    
+
     let!(:order){ Fabricate :order, user_id: current_user.id }
-    
+
     context "with correct image" do
       it "should upload an image" do
         expect {
@@ -16,7 +16,7 @@ describe ImagesController do
         expect { order.images.find(ActiveSupport::JSON.decode(response.body)['id']) }.not_to raise_error
       end
     end
-    
+
     context "with no image" do
       it "should respond unprocessable entity" do
         expect {
@@ -27,7 +27,7 @@ describe ImagesController do
         ActiveSupport::JSON.decode(response.body).should have_key "errors"
       end
     end
-    
+
   end
 
 end

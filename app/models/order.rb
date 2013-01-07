@@ -45,7 +45,7 @@ class Order
   # validations
   validates :status, inclusion: { in: STATUSES }, allow_blank: false
 
-  #scopes
+  # scopes
   scope :last_updated, order_by(:updated_at.desc)
 
   # filters
@@ -57,12 +57,15 @@ class Order
   # before_save   :user_notify_closed ,     if: lambda{ closed? and not was_closed? }
 
   def close
-    self.update_price
-    self.update_status Order::CLOSED
+    check_failed
+    update_price
+    update_status Order::CLOSED
+    self
   end
 
+  # updates price with not failed images
   def update_price
-    new_price = photos.map { |photo| photo.product.price * photo.count }.sum
+    new_price = photos.not_failed.map { |photo| photo.product.price * photo.count }.sum
     return if new_price == self.price
     update_attribute :price, new_price
   end
@@ -116,6 +119,7 @@ class Order
   # download
 
   def compressed options = {}, &block
+    raise "Cannot compress order because it has not been closed" if closed_at.blank?
     orderizer = Orderizer.new(self)
     if block_given?
       orderizer.compressed options do |file|
@@ -155,6 +159,10 @@ class Order
 
 
 private
+
+    def check_failed
+      self.photos.without_image.update_all failed: true
+    end
 
     def set_empty_status
       set_status EMPTY unless self.status.present?

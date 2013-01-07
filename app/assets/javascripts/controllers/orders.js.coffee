@@ -307,8 +307,12 @@ selection_control =
 
 
   files_validated: (event) ->
-    return alert 'Todas fotos selecionadas já foram adicionadas.' unless event.valid
-    
+    unless event.valid
+      alerty.warn 'Todas fotos selecionadas já haviam sido adicionadas e foram ignoradas.<br><small>Caso queira as mesmas fotos em outro tamanho/papel/etc, duplique-as individualmente.</small>'
+      return
+
+    event.invalid && alerty.warn "#{event.invalid} das #{event.valid+event.invalid} fotos selecionadas já haviam sido adicionadas e foram ignoradas.<br><small>Caso queira as mesmas fotos em outro tamanho/papel/etc, duplique-as individualmente.</small>"
+
     selection_control.modal()
 
     # TODO deferred must be stored to be retrieved later by control.create
@@ -371,8 +375,6 @@ selection_control =
       name       : file.name
       product    : control.defaults.product
       product_id : control.defaults.product._id
-    
-    window.domo = photo;
 
     gadget.files ||= []
     gadget.files.push file
@@ -390,7 +392,7 @@ selection_control =
   files_selected: (event) ->
     # in case of duplicated photos the amount can be 0
     return unless event.amount
-    
+
     aside.progress.status.total += event.amount
 
     control.modal.amount = event.amount
@@ -502,6 +504,7 @@ control =
 
   reader_errored: (event, gadget) ->
     aside.progress.status.total--
+    alerty.error "Não conseguimos ler a imagem <a href=\"##{gadget.element.attr('id')}\">#{event.file.name}</a>. Este arquivo não será enviado."
     message  = "Reader error with order #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
@@ -520,6 +523,7 @@ control =
     throw message
 
   upload_errored_maximum: (event, gadget) ->
+    alerty.error "Não conseguimos enviar a imagem <a href=\"##{gadget.element.attr('id')}\">#{event.file.name}</a>."
     aside.progress.status.total--
     gadget.photo.count = 0
     message  = "Maximum upload errors reached in #{order._id}. \n"

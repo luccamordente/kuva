@@ -39,11 +39,11 @@
       %br
 
 
-      %ul.nav.nav-tabs.unprintable
-        %li.active
-          %a{ data: { toggle: 'tab' }, href: '#simple'   } Simples
-        %li
-          %a{ data: { toggle: 'tab' }, href: '#advanced' } Avançado
+      -# %ul.nav.nav-tabs.unprintable
+      -#   %li.active
+      -#     %a{ data: { toggle: 'tab' }, href: '#simple'   } Simples
+      -#   %li
+      -#     %a{ data: { toggle: 'tab' }, href: '#advanced' } Avançado
 
       .tab-content
         - unless @order.photos.empty?
@@ -72,8 +72,21 @@
                   %td.right= number_to_currency specs[:product].price * count, unit: ""
 
 
+
+      %p
+        %b Total de impressões:
+        = @total_count
+      %p
+        %b Preço:
+        = number_to_currency @order.price
+
+
+      .tab-content
+        %br
+        %br
+
         - unless @order.photos.empty?
-          #advanced.tab-pane
+          #advanced.tab-pane.active
             %table#photos.table.table-striped
               %tr
                 %th
@@ -88,15 +101,6 @@
                 %th
 
               = render partial: 'admin/orders/photo', collection: @order.photos, as: :photo
-
-
-
-      %p
-        %b Total de impressões:
-        = @total_count
-      %p
-        %b Preço:
-        = number_to_currency @order.price
 
       %br
       %br

@@ -39,6 +39,7 @@ model.restfulable = ->
       # TODO Store reserved words in a array
       # TODO User _.omit functions
       # Remove model reserved words
+      delete json.dirty
       delete json.resource
       delete json.route
       delete json.parent_resource

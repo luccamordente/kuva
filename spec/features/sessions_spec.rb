@@ -15,7 +15,7 @@ describe "Sessions" do
         login_user_now do |user|
           user.orders << Fabricate(:order)
         end
-        page.current_path.should == orders_path
+        page.current_path.should == new_order_path
       end
     end
   end

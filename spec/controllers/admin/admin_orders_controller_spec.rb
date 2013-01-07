@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe Admin::OrdersController do
 
+  before :each do
+    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials('pedrocinefoto', 'bahia')
+  end
 
   describe "download closed order" do
 

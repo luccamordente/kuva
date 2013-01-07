@@ -48,7 +48,7 @@ private
   end
 
   def place_photos_to directory, originals = false
-    @order.photos.each do |photo|
+    @order.photos.not_failed.each do |photo|
 
       next if photo.count.zero?
       raise "Photo has no Image" unless photo.image.present?

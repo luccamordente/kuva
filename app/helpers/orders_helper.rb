@@ -19,13 +19,9 @@ module OrdersHelper
       klass = "warning"
     when Order::CLOSED
       klass = "success"
-    when Order::CATCHING
+    when Order::CATCHING, Order::RECATCH
       klass = "info"
-    when Order::CAUGHT
-      klass = "inverse"
-    when Order::READY
-      klass = "inverse"
-    when Order::DELIVERED
+    when Order::CAUGHT, Order::READY, Order::DELIVERED
       klass = "inverse"
     when Order::CANCELED
       klass = "important"

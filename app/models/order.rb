@@ -21,6 +21,7 @@ class Order
   field :ready_at    , type: DateTime
   field :delivered_at, type: DateTime
   field :canceled_at , type: DateTime
+  field :recatch_at  , type: DateTime
   field :observations, type: String
 
   auto_increment :sequence
@@ -40,31 +41,35 @@ class Order
   READY     = :ready     # was excecuted and is ready to deliver to customer
   DELIVERED = :delivered # in its way to customer
   CANCELED  = :canceled  # canceled by the customer
-  STATUSES  = [ EMPTY, PROGRESS, CLOSED, CATCHING, CAUGHT, READY, DELIVERED, CANCELED ]
+  RECATCH   = :recatch   # must be caught again
+  STATUSES  = [ EMPTY, PROGRESS, CLOSED, CATCHING, CAUGHT, READY, DELIVERED, CANCELED, RECATCH ]
 
   # validations
   validates :status, inclusion: { in: STATUSES }, allow_blank: false
 
-  #scopes
+  # scopes
   scope :last_updated, order_by(:updated_at.desc)
 
   # filters
   before_validation :set_empty_status, on: :create
   # notifications
-  #before_create :admin_notify_opened
-  #before_save   :admin_notify_closed, if: lambda{ closed? and not was_closed? }
-  #before_save   :admin_notify_closed_ios, if: lambda{ closed? and not was_closed? }
-  #before_save   :user_notify_closed ,     if: lambda{ closed? and not was_closed? }
+  # before_create :admin_notify_opened
+  # before_save   :admin_notify_closed,     if: lambda{ closed? and not was_closed? }
+  # before_save   :admin_notify_closed_ios, if: lambda{ closed? and not was_closed? }
+  # before_save   :user_notify_closed ,     if: lambda{ closed? and not was_closed? }
 
-
-  def update_price
-    new_price = photos.map { |photo| photo.product.price * photo.count }.sum
-    return if new_price == self.price
-    update_attribute :price, new_price
+  def close
+    check_failed
+    update_price
+    update_status Order::CLOSED
+    self
   end
 
-  def delta_update_price difference
-    update_attribute :price, price + difference
+  # updates price with not failed images
+  def update_price
+    new_price = photos.not_failed.map { |photo| photo.product.price * photo.count }.sum
+    return if new_price == self.price
+    update_attribute :price, new_price
   end
 
   def promised_for
@@ -116,6 +121,7 @@ class Order
   # download
 
   def compressed options = {}, &block
+    raise "Cannot compress order because it has not been closed" if closed_at.blank?
     orderizer = Orderizer.new(self)
     if block_given?
       orderizer.compressed options do |file|
@@ -155,6 +161,10 @@ class Order
 
 
 private
+
+    def check_failed
+      self.photos.without_image.update_all failed: true
+    end
 
     def set_empty_status
       set_status EMPTY unless self.status.present?

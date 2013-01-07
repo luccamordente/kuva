@@ -1,4 +1,4 @@
-%tr
+%tr{ class: "#{'failed' if photo.failed?}" }
 
   %td= photo.count
 
@@ -19,9 +19,12 @@
   %td.action
     - if photo.image.present? && photo.image.image.present?
       = photo.basename
+    - elsif photo.failed?
+      %span.label.label-important{ :rel => 'tooltip', :title => 'O upload desta imagem falhou.', :'data-placement' => 'right' }
+        %i.icon-exclamation-sign.icon-white
 
 
-  %td.visible-desktop
+  %td
 
     - if photo.image.present?
       %span.btn-group.download

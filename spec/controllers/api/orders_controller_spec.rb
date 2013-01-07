@@ -8,16 +8,20 @@ describe Api::OrdersController do
 
   describe "GET 'show'" do
     it "returns http success" do
-      get 'download'
+      get :download, id: Fabricate(:order).close.id
       response.should be_success
     end
+
+    it "download only closed or orders marked to recatch"
   end
 
   describe "GET 'closed'" do
     it "returns http success" do
-      get 'closed'
+      get 'closed', id: Fabricate(:order).id, format: :json
       response.should be_success
     end
+
+    it "returns only closed or orders marked to recatch"
   end
 
 end

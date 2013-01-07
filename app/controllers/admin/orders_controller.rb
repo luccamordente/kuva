@@ -16,9 +16,9 @@ class Admin::OrdersController < Admin::ApplicationController
     @order = Order.includes(:user).find(params[:id])
     @less_than_a_day = (Time.now - @order.created_at) > 1.day
 
-    @total_count = @order.photos.sum &:count
+    @total_count = @order.photos.not_failed.sum &:count
 
-    @photos = @order.photos.group_by do |photo|
+    @photos = @order.photos.not_failed.group_by do |photo|
       {
         paper:    photo.specification.paper,
         border:   photo.border,

@@ -21,6 +21,7 @@ class Order
   field :ready_at    , type: DateTime
   field :delivered_at, type: DateTime
   field :canceled_at , type: DateTime
+  field :recatch_at  , type: DateTime
   field :observations, type: String
 
   auto_increment :sequence
@@ -40,7 +41,8 @@ class Order
   READY     = :ready     # was excecuted and is ready to deliver to customer
   DELIVERED = :delivered # in its way to customer
   CANCELED  = :canceled  # canceled by the customer
-  STATUSES  = [ EMPTY, PROGRESS, CLOSED, CATCHING, CAUGHT, READY, DELIVERED, CANCELED ]
+  RECATCH   = :recatch   # must be caught again
+  STATUSES  = [ EMPTY, PROGRESS, CLOSED, CATCHING, CAUGHT, READY, DELIVERED, CANCELED, RECATCH ]
 
   # validations
   validates :status, inclusion: { in: STATUSES }, allow_blank: false

@@ -125,7 +125,7 @@ describe Order do
 
 
     describe "executable" do
-      orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING READY DELIVERED CANCELED } do |order, status|
+      orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING READY DELIVERED CANCELED RECATCH } do |order, status|
         it "should not be executable when #{status}" do
           order.should_not be_executable
         end
@@ -140,7 +140,7 @@ describe Order do
 
 
     describe "deliverable" do
-      orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING CAUGHT DELIVERED CANCELED } do |order, status|
+      orders_with_each_status %W{ EMPTY PROGRESS CLOSED CATCHING CAUGHT DELIVERED CANCELED RECATCH } do |order, status|
         it "should not be deliverable when #{status}" do
           order.should_not be_deliverable
         end
@@ -161,7 +161,7 @@ describe Order do
         end
       end
 
-      orders_with_each_status %W{ CLOSED CATCHING CAUGHT READY DELIVERED } do |order, status|
+      orders_with_each_status %W{ CLOSED CATCHING CAUGHT READY DELIVERED RECATCH } do |order, status|
         it "should be downloadable when #{status}" do
           order.should be_downloadable
         end
@@ -170,7 +170,7 @@ describe Order do
 
 
     describe "downloaded" do
-      orders_with_each_status %W{ EMPTY PROGRESS CLOSED } do |order, status|
+      orders_with_each_status %W{ EMPTY PROGRESS CLOSED RECATCH } do |order, status|
         it "should not be downloaded when #{status}" do
           order.should_not be_downloaded
         end

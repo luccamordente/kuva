@@ -22,16 +22,18 @@ class Api::OrdersController < Api::BaseController
 
   def download
     @order = Order.find params[:id]
+    @order.update_status Order::CATCHING
 
     @order.compressed do |file|
-      @order.update_status Order::CATCHING
       send_data file.read, filename: @order.tmp_zip_identifier
       @order.update_status Order::CAUGHT
     end
+  rescue
+    @order.update_status Order::RECATCH
   end
 
   def closed
-    ids = Order.where(status: Order::CLOSED).order_by(:closed_at.asc).only(:_id, :sequence).map{ |order| { id: order.id, name: order.identifier(human: true) } }
+    ids = Order.where(:status.in => [Order::CLOSED, Order::RECATCH]).order_by(:closed_at.asc).only(:_id, :sequence).map{ |order| { id: order.id, name: order.identifier(human: true) } }
     respond_to do |format|
       format.json { render json: ids }
     end

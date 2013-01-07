@@ -715,6 +715,7 @@ pt-BR:
       ready:     Executada
       delivered: Entregue
       canceled:  Cancelada
+      recatch:   Recapturar
 
       humanized:
         empty:     "Pedido vazio"
@@ -730,6 +731,7 @@ pt-BR:
         ready:     "Executado em:"
         delivered: "Entregue em:"
         canceled:  "Cancelado em:"
+        recaught:  "Recapturado em:"
 
 
 

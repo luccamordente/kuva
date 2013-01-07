@@ -249,6 +249,7 @@ selection_control =
         mass.element.find('[rel=tooltip]').tooltip('destroy')
         control.modal.close()
         bus.publish 'files.selection_confirmed'
+        $(document.body).removeClass('selecting')
       amount      : 1
       amount_label: 'foto'
       copies      : '1 cópia'
@@ -313,6 +314,7 @@ selection_control =
 
     event.invalid && alerty.warn "#{event.invalid} das #{event.valid+event.invalid} fotos selecionadas já haviam sido adicionadas e foram ignoradas.<br><small>Caso queira as mesmas fotos em outro tamanho/papel/etc, duplique-as individualmente.</small>"
 
+    $(document.body).addClass('selecting')
     selection_control.modal()
 
     # TODO deferred must be stored to be retrieved later by control.create

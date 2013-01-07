@@ -758,12 +758,24 @@ control-style(color)
 
 
 
+  &.selecting
+    #aside
+      z-index 4
+    #flash
+      z-index 3
+
+  &.sending
+    #flash
+      z-index 3
 
   states = normal, sending
 
   for state in states
     &.{state} #aside .{state}
       display block
+
+
+
 
   #aside
 

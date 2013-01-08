@@ -413,6 +413,50 @@ describe Order do
 
 
 
+
+
+    context "closed order without image and post compress" do
+
+      let!(:product){ Fabricate :product, name: "10x15" }
+      let!(:order  ){ Fabricate :order }
+      let!(:image  ){ order.images.create image: image_fixture('rgb.jpg') }
+
+      let!(:photo_with_image   ){ order.photos.create(count: 1, specification_attributes: { paper: Specification::MATTE_PAPER  },
+                                    product_id: product.id, image_id: image.id) }
+      let!(:photo_without_image){ order.photos.create(count: 1, specification_attributes: { paper: Specification::MATTE_PAPER  },
+                                    product_id: product.id, image_id: nil) }
+
+      specify{ order.reload.photos.failed.count.should == 0 }
+
+      # TODO abstract
+      after :all do
+        system "rm -f #{order.tmp_zip_path}"
+        system "rm -rf /tmp/#{order.tmp_identifier}"
+        Dir.chdir Rails.root # pro rspec não ficar locao
+      end
+
+      context do
+
+        before :each do
+          order.close
+        end
+
+        it "should have 1 invalid photo" do
+          order.reload.photos.failed.count.should == 1
+        end
+
+        it "should have no invalid photos after setting image and compressing" do
+          photo_without_image.update_attribute :image_id, image.id
+          order.reload.compressed
+          order.photos.failed.count.should == 0
+        end
+
+      end
+
+    end
+
+
+
     context "with originals" do
       let!(:product){ Fabricate :product, name: "10x15" }
       let!(:order){ Fabricate :order }

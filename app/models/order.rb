@@ -122,6 +122,13 @@ class Order
 
   def compressed options = {}, &block
     raise "Cannot compress order because it has not been closed" if closed_at.blank?
+
+    # This should not be needed!!!
+    # Photo should be updated and "failed" revalidated.
+    # This can be removed after implementing a requests
+    #  pool for requests comming from JS.
+    update_failed_photos
+
     orderizer = Orderizer.new(self)
     if block_given?
       orderizer.compressed options do |file|
@@ -161,6 +168,10 @@ class Order
 
 
 private
+
+    def update_failed_photos
+      self.photos.failed.with_image.update_all failed: false
+    end
 
     def mark_failed
       self.photos.without_image.mark_failed

@@ -110,6 +110,7 @@ send =
 
     rivets.bind $('#aside .sending'), progress: observable.call progress.status
     progress.status.subscribe 'count', progress.change
+    progress.status.subscribe 'total', progress.change
     progress.status.publish()
 
     $(document.body).addClass('sending').removeClass('normal')

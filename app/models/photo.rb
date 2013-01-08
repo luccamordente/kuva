@@ -23,7 +23,9 @@ class Photo
   validates :product, presence: true
 
   # scopes
+  scope :with_image   , where(:image_id.ne => nil)
   scope :without_image, where(image_id: nil)
+  scope :failed       , where(failed: true)
   scope :not_failed   , where(failed: false)
 
   # callbacks

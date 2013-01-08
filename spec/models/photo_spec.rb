@@ -51,7 +51,7 @@ describe Photo do
     before { photo.update_attribute :failed, true }
 
     it "marks as not failed when an image is assigned" do
-      photo.image = Fabricate :image
+      photo.image_id = Fabricate(:image).id
       photo.save
       photo.should_not be_failed
     end

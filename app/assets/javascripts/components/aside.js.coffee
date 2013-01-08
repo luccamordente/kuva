@@ -23,10 +23,13 @@
       count: 0
       total: 0
       text : "Preparando fotos..."
-    change: (prop, count, old_count) ->
-      $('#send-progress .bar').css width: (count / progress.status.total * 100) + '%'
+    change: (prop, value, old_value) ->
+      count = if prop == 'count' then value else progress.status.count
+      total = if prop == 'total' then value else progress.status.total
 
-      if progress.confirmed and count == progress.status.total
+      $('#send-progress .bar').css width: (count / total * 100) + '%'
+
+      if progress.confirmed and count == total
         bus.publish 'send.completed'
         progress.status.text = "Fechando pedido..."
 
@@ -58,7 +61,7 @@
       @add.apply @, photos
 
       return if @initialized;
-  
+
       # Render element
       aside.element.children('.normal').jqoteapp summary.template, summary
       @element = aside.element.find '#summary'
@@ -67,7 +70,7 @@
       @calculate_total()
       @view = view
       @initialized = true
-      
+
     add: (photos...) ->
        # Group photos by size on @groups
       for photo in photos

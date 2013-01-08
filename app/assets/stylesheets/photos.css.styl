@@ -196,8 +196,14 @@ control-style(color)
         font-weight bold
         text-shadow 0 -1px 0 #000
       .sizes
+        clearfix()
         font-size 1em
         padding 1.5em 0
+        & > div
+          float left
+          width 47%
+          padding 0 0 2% 2%
+
         a.size
           color = #FFF
           border-bottom 1px solid color
@@ -218,6 +224,7 @@ control-style(color)
             color darken(color, 60%)
             font-size 0.8em
       // a.back
+
 
 
 
@@ -663,19 +670,8 @@ control-style(color)
         .original-image
           display none
 
-
-      &.uploading
-        background none !important
-
-        .modal
-          display none
-
-        .canvas
-          .control, .pomp
-            display none
-
-          .upload.bar
-            display block
+        .upload.bar
+          display block
 
 
       &.loaded

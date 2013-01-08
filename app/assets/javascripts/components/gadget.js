@@ -333,8 +333,6 @@ var gadget = (function declare_gadget (sorts) {
     upload: function upload_start (event) {
       // TODO rivetize
       this.uploading = true;
-      // TODO when rivetized, this can be removed
-      this.element.addClass('uploading');
     },
     uploading: function upload_progress (event) {
       var percentage = Math.round(100 - ((event.loaded / event.total) * 100)), now = (new Date()).getTime();
@@ -353,7 +351,7 @@ var gadget = (function declare_gadget (sorts) {
 
       this.upload_bar.animate({width: '0%'}, 1000, 'linear', function () {
         // TODO when rivetized, this can be removed
-        gadget.element.removeClass('uploading').addClass('uploaded');
+        gadget.element.addClass('uploaded');
       });
     },
     reader_errored: function reader_errored(event) {

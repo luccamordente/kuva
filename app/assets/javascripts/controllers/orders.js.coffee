@@ -96,13 +96,13 @@ send =
     progress.confirmed = true
 
     bus
-      .one('upload.start', (event) ->
+      .one('upload.started', (event) ->
         aside.progress.status.text = "Enviando fotos..."
       )
-      .on('upload.start', (event) ->
+      .on('upload.started', (event) ->
         gadgets(event.key).dispatch('upload', event)
       )
-      .on('upload.progress', (event) ->
+      .on('upload.progressed', (event) ->
         gadget = gadgets event.key
         gadget.dispatch('upload', event) unless gadget.uploading
         gadget.dispatch('uploading', event)

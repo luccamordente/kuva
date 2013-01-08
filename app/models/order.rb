@@ -124,7 +124,9 @@ class Order
     raise "Cannot compress order because it has not been closed" if closed_at.blank?
 
     # This should not be needed!!!
-    # Photo should be updated and "failed" revalidated
+    # Photo should be updated and "failed" revalidated.
+    # This can be removed after implementing a requests
+    #  pool for requests comming from JS.
     update_failed_photos
 
     orderizer = Orderizer.new(self)

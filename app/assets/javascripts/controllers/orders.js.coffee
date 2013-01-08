@@ -117,7 +117,9 @@ send =
 
     send.ignored()
   completed: ->
-    order.close()
+    setTimeout ->
+      order.close()
+    , 500 # needed because it was closing before the last upload
 
 
 
@@ -140,7 +142,7 @@ cancel =
       template: templates.modal.cancel_order, minWidth: 500, minHeight: 500
 
   completed: ->
-    document.location = document.location
+    document.location = document.location.pathname
 
 
 
@@ -342,7 +344,7 @@ selection_control =
       defaults = selection_control.defaults.shift()
 
       for photo in selected
-        unless photo.defaulted
+        unless photo.defaulted || photo.dead
           photo.defaulted = true
 
           for name, value of defaults
@@ -496,6 +498,9 @@ control =
       message += "order: #{JSON.stringify(order.json())}"
       throw message
 
+  gadget_imploded: ->
+    aside.progress.status.total--
+
   file_uploaded: (event) ->
     aside.progress.status.count++
 
@@ -505,14 +510,23 @@ control =
     photo.image_id = event.data.id
 
   reader_errored: (event, gadget) ->
-    aside.progress.status.total--
-    alerty.error "Não conseguimos ler a imagem <a href=\"##{gadget.element.attr('id')}\">#{event.file.name}</a>. Este arquivo não será enviado."
+    gadget.implode()
+    alerty.error "Não conseguimos ler a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado."
     message  = "Reader error with order #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
+  reader_unknown_type: (event, gadget) ->
+    gadget.implode()
+    alerty.error "Formato não suportado para <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado."
+    message  = "Reader unknown type with order #{order._id}. \n"
+    message += "Event details: #{JSON.stringify event} \n"
+    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    throw message
+
   thumbnailer_errored: (event, gadget) ->
+    alerty.warn "Não conseguimos gerar a miniatura da imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. No entanto, este arquivo SERÁ enviado."
     message  = "Thumbnailing error with order #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
@@ -525,9 +539,8 @@ control =
     throw message
 
   upload_errored_maximum: (event, gadget) ->
-    alerty.error "Não conseguimos enviar a imagem <a href=\"##{gadget.element.attr('id')}\">#{event.file.name}</a>."
-    aside.progress.status.total--
-    gadget.photo.count = 0
+    gadget.implode()
+    alerty.error "Não conseguimos enviar a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>."
     message  = "Maximum upload errors reached in #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
@@ -547,7 +560,7 @@ control =
     modal
       order: "# #{order.sequence}"
       confirm: ->
-        document.location = document.location
+        document.location = document.location.pathname
       ,
       ['confirm.success => Concluir'],
       template: templates.modal.order_closed, minWidth: 550, minHeight: 500
@@ -606,6 +619,11 @@ initialize = ->
     gadget.dispatch('reader_errored', event)
     control.reader_errored event, gadget
   )
+  .on('reader.unknown_type'       , (event) ->
+    gadget = gadgets(event.key)
+    gadget.dispatch('reader_unknown_type', event)
+    control.reader_unknown_type event, gadget
+  )
   # TODO Replace with a beautiful image
   .on('thumbnailer.corrupted'       , (event) ->
     gadget = gadgets(event.key)
@@ -644,6 +662,7 @@ initialize = ->
   .on('order.closed'                , control.closed                                               )
   .on('order.canceled'              , control.cancel_completed                                     )
   .on('error.uncaughted'            , control.error_uncaughted                                     )
+  .on('gadget.imploded'              , control.gadget_imploded                                     )
 
 
 templates =

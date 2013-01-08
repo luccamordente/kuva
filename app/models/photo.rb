@@ -27,6 +27,7 @@ class Photo
   scope :not_failed   , where(failed: false)
 
   # callbacks
+  before_save   :check_for_image
   before_save   :update_order_price
   after_destroy :update_order_price
 
@@ -38,10 +39,19 @@ class Photo
     @directory ||= Directorizer.new(self)
   end
 
+  def self.mark_failed
+    update_all failed: true
+  end
+
 private
 
   def update_order_price
     order.update_price
+  end
+
+  def check_for_image
+    self.failed = false if self.image.present?
+    true
   end
 
 end

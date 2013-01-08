@@ -46,6 +46,8 @@ model.restfulable = ->
       delete json.nested_attributes
       delete json.on_save
       delete json.element
+      delete json.default
+      delete json.defaulted
 
       json
 

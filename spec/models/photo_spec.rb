@@ -42,4 +42,20 @@ describe Photo do
 
   end
 
+
+  describe "failed" do
+    let!(:product){ Fabricate :product, name: "10x15" }
+    let!(:order  ){ Fabricate :order }
+    let!(:photo  ){ order.photos.create count: 5, specification_attributes: { paper: :glossy }, product_id: product.id, border: true }
+
+    before { photo.update_attribute :failed, true }
+
+    it "marks as not failed when an image is assigned" do
+      photo.image = Fabricate :image
+      photo.save
+      photo.should_not be_failed
+    end
+
+  end
+
 end

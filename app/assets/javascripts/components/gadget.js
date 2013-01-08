@@ -10,20 +10,6 @@ var gadget = (function declare_gadget (sorts) {
   }, id = 0,
   gadget = {
     listeners: {},
-    watchers: {
-      photo: function(prop, dirty){
-        var photo = this;
-        dirty && setTimeout(function(){
-          photo.save()
-        }, 500);
-      },
-      specification: function(prop, dirty){
-        if(dirty){
-          this.photo.dirty = true;
-          this.dirty = false;
-        }
-      }
-    },
     show: function (delay) {
       !this.element && control.create.call(this);
       // this.element.css(configuration.size).fadeIn();
@@ -80,8 +66,17 @@ var gadget = (function declare_gadget (sorts) {
           }
         });
 
-        photo.subscribe(              'dirty', this.watchers.photo);
-        photo.specification.subscribe('dirty', this.watchers.specification);
+        photo.subscribe(              'dirty', function(prop, dirty){
+          dirty && setTimeout(function(){
+            photo.save()
+          }, 500);
+        });
+        photo.specification.subscribe('dirty', function(prop, dirty){
+          if(dirty){
+            photo.dirty = true;
+            this.dirty = false;
+          }
+        });
       }
 
       self.tied = true;
@@ -370,7 +365,7 @@ var gadget = (function declare_gadget (sorts) {
     },
     reader_errored: function reader_errored(event) {
       var element = this.element;
-      element.addClass('errored reader-errored');
+      element.removeClass('reader-errored thumbnailer-errored').addClass('errored reader-errored');
       element.find('.error-message').remove();
       this.elements.image.append($(
         '<div class="error-message">'                                 +
@@ -384,7 +379,7 @@ var gadget = (function declare_gadget (sorts) {
     },
     reader_unknown_type: function reader_errored(event) {
       var element = this.element;
-      element.addClass('errored reader-errored');
+      element.removeClass('reader-errored thumbnailer-errored').addClass('errored reader-errored');
       element.find('.error-message').remove();
       this.elements.image.append($(
         '<div class="error-message">'                                 +
@@ -398,7 +393,7 @@ var gadget = (function declare_gadget (sorts) {
     },
     thumbnailer_errored: function reader_errored(event) {
       var element = this.element;
-      element.addClass('errored thumbnailer-errored');
+      element.removeClass('reader-errored thumbnailer-errored').addClass('errored thumbnailer-errored');
       element.find('.error-message').remove();
       this.elements.image.append($(
         '<div class="error-message">'                                                     +
@@ -412,7 +407,7 @@ var gadget = (function declare_gadget (sorts) {
     },
     upload_errored_maximum: function upload_errored_maximum(event) {
       var element = this.element;
-      element.addClass('errored reader-errored');
+      element.removeClass('reader-errored thumbnailer-errored').addClass('errored reader-errored');
       element.find('.error-message').remove();
       this.elements.image.append($(
         '<div class="error-message">'                                       +

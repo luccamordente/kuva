@@ -343,8 +343,11 @@ selection_control =
       selected = selection_control.photos.shift()
       defaults = selection_control.defaults.shift()
 
+      count = 0
+
       for photo in selected
-        unless photo.defaulted || photo.dead
+        if !photo.defaulted && !photo.dead
+          count++
           photo.defaulted = true
 
           for name, value of defaults
@@ -355,6 +358,8 @@ selection_control =
                 photo[association_name][attribute] = value
             else
               photo[name] = value
+
+      alerty.success "#{count} fotos alteradas."
 
       # TODO See witch photos have aready been selected and only add those to aside
       aside '#aside'
@@ -511,7 +516,7 @@ control =
 
   reader_errored: (event, gadget) ->
     gadget.implode()
-    alerty.error "Não conseguimos ler a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado."
+    alerty.error "Não conseguimos ler a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado.<br><small>Esta foto não será cobrada.<small>"
     message  = "Reader error with order #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
@@ -519,7 +524,7 @@ control =
 
   reader_unknown_type: (event, gadget) ->
     gadget.implode()
-    alerty.error "Formato não suportado para <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado."
+    alerty.error "Formato não suportado para <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado.<br><small>Esta foto não será cobrada.<small>"
     message  = "Reader unknown type with order #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
@@ -540,7 +545,7 @@ control =
 
   upload_errored_maximum: (event, gadget) ->
     gadget.implode()
-    alerty.error "Não conseguimos enviar a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>."
+    alerty.error "Não conseguimos enviar a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>.<br><small>Esta foto não será cobrada.<small>"
     message  = "Maximum upload errors reached in #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
@@ -549,7 +554,9 @@ control =
   error_uncaughted: (event, gadget) ->
     message  = "Error uncaughted. Order ##{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
-    alert "Ops... aconteceu um erro e ainda não sabemos o motivo. Já fomos notificados e vamos resolver logo! Que tal tentar mais uma vez? Se o erro persistir, fale com a gente no chat alí embaixo, por favor!"
+    alerty.error "Ops... aconteceu um erro e ainda não sabemos o motivo.<br><small>Já fomos notificados e vamos resolver logo! Que tal tentar mais uma vez? Se o erro persistir, fale com a gente no chat alí embaixo, por favor!<br><a href=\"javascript: document.location = document.location.pathname\">Clique aqui para recarregar a página e tentar novamente</a>", 0
+    kuva.overlay().dynamic().at(document.body)
+    $zopim.livechat.window.show() if $zopim?
     throw message
 
   closed: ->

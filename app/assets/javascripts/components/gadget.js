@@ -165,6 +165,15 @@ var gadget = (function declare_gadget (sorts) {
       this.dispatch('duplicated', gadget);
 
       return gadget;
+    },
+    implode: function() {
+      if (this.dead) return;
+      this.dead = true;
+
+      var photo = this.photo;
+      photo.implode();
+
+      bus.publish('gadget.imploded');
     }
   },
   control = {
@@ -333,8 +342,6 @@ var gadget = (function declare_gadget (sorts) {
     upload: function upload_start (event) {
       // TODO rivetize
       this.uploading = true;
-      // TODO when rivetized, this can be removed
-      this.element.addClass('uploading');
     },
     uploading: function upload_progress (event) {
       var percentage = Math.round(100 - ((event.loaded / event.total) * 100)), now = (new Date()).getTime();
@@ -353,12 +360,13 @@ var gadget = (function declare_gadget (sorts) {
 
       this.upload_bar.animate({width: '0%'}, 1000, 'linear', function () {
         // TODO when rivetized, this can be removed
-        gadget.element.removeClass('uploading').addClass('uploaded');
+        gadget.element.addClass('uploaded');
       });
     },
     reader_errored: function reader_errored(event) {
       var element = this.element;
-      element.addClass('errored reader-errored');
+      element.removeClass('reader-errored thumbnailer-errored').addClass('errored reader-errored');
+      element.find('.error-message').remove();
       this.elements.image.append($(
         '<div class="error-message">'                                 +
         '  Não conseguimos ler a imagem'                              +
@@ -366,13 +374,27 @@ var gadget = (function declare_gadget (sorts) {
         '  Este arquivo não será enviado.'                            +
         '</div>'
       ));
-
+      // TODO automatically forward thos property to view layer
+      this.element.find('.pomp.info-pomp:first').html('');
+    },
+    reader_unknown_type: function reader_errored(event) {
+      var element = this.element;
+      element.removeClass('reader-errored thumbnailer-errored').addClass('errored reader-errored');
+      element.find('.error-message').remove();
+      this.elements.image.append($(
+        '<div class="error-message">'                                 +
+        '  Formato de imagem não suportado para'                      +
+        '  <div class="file-name">' + this.files[0].name + '</div>'   +
+        '  Este arquivo não será enviado.'                            +
+        '</div>'
+      ));
       // TODO automatically forward thos property to view layer
       this.element.find('.pomp.info-pomp:first').html('');
     },
     thumbnailer_errored: function reader_errored(event) {
       var element = this.element;
-      element.addClass('errored thumbnailer-errored');
+      element.removeClass('reader-errored thumbnailer-errored').addClass('errored thumbnailer-errored');
+      element.find('.error-message').remove();
       this.elements.image.append($(
         '<div class="error-message">'                                                     +
         '  Não conseguimos gerar a miniatura da imagem'                                   +
@@ -380,10 +402,13 @@ var gadget = (function declare_gadget (sorts) {
         '  Este arquivo SERÁ enviado, você ainda pode definir como vai querer revelá-lo.' +
         '</div>'
       ));
+      // TODO automatically forward thos property to view layer
+      this.element.find('.pomp.info-pomp:first').html('');
     },
     upload_errored_maximum: function upload_errored_maximum(event) {
       var element = this.element;
-      element.addClass('errored reader-errored');
+      element.removeClass('reader-errored thumbnailer-errored').addClass('errored reader-errored');
+      element.find('.error-message').remove();
       this.elements.image.append($(
         '<div class="error-message">'                                       +
         '  Não conseguimos enviar esta foto. O arquivo está com problemas.' +
@@ -392,7 +417,6 @@ var gadget = (function declare_gadget (sorts) {
         '  Caso continue com problemas entre em contato conosco.'           +
         '</div>'
       ));
-
       // TODO automatically forward thos property to view layer
       this.element.find('.pomp.info-pomp:first').html('');
     }

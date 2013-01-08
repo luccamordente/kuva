@@ -96,13 +96,13 @@ send =
     progress.confirmed = true
 
     bus
-      .one('upload.start', (event) ->
+      .one('upload.started', (event) ->
         aside.progress.status.text = "Enviando fotos..."
       )
-      .on('upload.start', (event) ->
+      .on('upload.started', (event) ->
         gadgets(event.key).dispatch('upload', event)
       )
-      .on('upload.progress', (event) ->
+      .on('upload.progressed', (event) ->
         gadget = gadgets event.key
         gadget.dispatch('upload', event) unless gadget.uploading
         gadget.dispatch('uploading', event)
@@ -117,7 +117,9 @@ send =
 
     send.ignored()
   completed: ->
-    order.close()
+    setTimeout ->
+      order.close()
+    , 500 # needed because it was closing before the last upload
 
 
 
@@ -140,7 +142,7 @@ cancel =
       template: templates.modal.cancel_order, minWidth: 500, minHeight: 500
 
   completed: ->
-    document.location = document.location
+    document.location = document.location.pathname
 
 
 
@@ -249,6 +251,7 @@ selection_control =
         mass.element.find('[rel=tooltip]').tooltip('destroy')
         control.modal.close()
         bus.publish 'files.selection_confirmed'
+        $(document.body).removeClass('selecting')
       amount      : 1
       amount_label: 'foto'
       copies      : '1 cópia'
@@ -307,8 +310,13 @@ selection_control =
 
 
   files_validated: (event) ->
-    return alert 'Todas fotos selecionadas já foram adicionadas.' unless event.valid
-    
+    unless event.valid
+      alerty.warn 'Todas fotos selecionadas já haviam sido adicionadas e foram ignoradas.<br><small>Caso queira as mesmas fotos em outro tamanho/papel/etc, duplique-as individualmente.</small>'
+      return
+
+    event.invalid && alerty.warn "#{event.invalid} das #{event.valid+event.invalid} fotos selecionadas já haviam sido adicionadas e foram ignoradas.<br><small>Caso queira as mesmas fotos em outro tamanho/papel/etc, duplique-as individualmente.</small>"
+
+    $(document.body).addClass('selecting')
     selection_control.modal()
 
     # TODO deferred must be stored to be retrieved later by control.create
@@ -335,8 +343,11 @@ selection_control =
       selected = selection_control.photos.shift()
       defaults = selection_control.defaults.shift()
 
+      count = 0
+
       for photo in selected
-        unless photo.defaulted
+        if !photo.defaulted && !photo.dead
+          count++
           photo.defaulted = true
 
           for name, value of defaults
@@ -347,6 +358,8 @@ selection_control =
                 photo[association_name][attribute] = value
             else
               photo[name] = value
+
+      alerty.success "#{count} fotos alteradas."
 
       # TODO See witch photos have aready been selected and only add those to aside
       aside '#aside'
@@ -371,8 +384,6 @@ selection_control =
       name       : file.name
       product    : control.defaults.product
       product_id : control.defaults.product._id
-    
-    window.domo = photo;
 
     gadget.files ||= []
     gadget.files.push file
@@ -390,7 +401,7 @@ selection_control =
   files_selected: (event) ->
     # in case of duplicated photos the amount can be 0
     return unless event.amount
-    
+
     aside.progress.status.total += event.amount
 
     control.modal.amount = event.amount
@@ -492,6 +503,9 @@ control =
       message += "order: #{JSON.stringify(order.json())}"
       throw message
 
+  gadget_imploded: ->
+    aside.progress.status.total--
+
   file_uploaded: (event) ->
     aside.progress.status.count++
 
@@ -501,13 +515,23 @@ control =
     photo.image_id = event.data.id
 
   reader_errored: (event, gadget) ->
-    aside.progress.status.total--
+    gadget.implode()
+    alerty.error "Não conseguimos ler a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado.<br><small>Esta foto não será cobrada.<small>"
     message  = "Reader error with order #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
+  reader_unknown_type: (event, gadget) ->
+    gadget.implode()
+    alerty.error "Formato não suportado para <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado.<br><small>Esta foto não será cobrada.<small>"
+    message  = "Reader unknown type with order #{order._id}. \n"
+    message += "Event details: #{JSON.stringify event} \n"
+    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    throw message
+
   thumbnailer_errored: (event, gadget) ->
+    alerty.warn "Não conseguimos gerar a miniatura da imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. No entanto, este arquivo SERÁ enviado."
     message  = "Thumbnailing error with order #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
@@ -520,8 +544,8 @@ control =
     throw message
 
   upload_errored_maximum: (event, gadget) ->
-    aside.progress.status.total--
-    gadget.photo.count = 0
+    gadget.implode()
+    alerty.error "Não conseguimos enviar a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>.<br><small>Esta foto não será cobrada.<small>"
     message  = "Maximum upload errors reached in #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
@@ -530,7 +554,9 @@ control =
   error_uncaughted: (event, gadget) ->
     message  = "Error uncaughted. Order ##{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
-    alert "Ops... aconteceu um erro e ainda não sabemos o motivo. Já fomos notificados e vamos resolver logo! Que tal tentar mais uma vez? Se o erro persistir, fale com a gente no chat alí embaixo, por favor!"
+    alerty.error "Ops... aconteceu um erro e ainda não sabemos o motivo.<br><small>Já fomos notificados e vamos resolver logo! Que tal tentar mais uma vez? Se o erro persistir, fale com a gente no chat alí embaixo, por favor!<br><a href=\"javascript: document.location = document.location.pathname\">Clique aqui para recarregar a página e tentar novamente</a>", 0
+    kuva.overlay().dynamic().at(document.body)
+    $zopim.livechat.window.show() if $zopim?
     throw message
 
   closed: ->
@@ -541,7 +567,7 @@ control =
     modal
       order: "# #{order.sequence}"
       confirm: ->
-        document.location = document.location
+        document.location = document.location.pathname
       ,
       ['confirm.success => Concluir'],
       template: templates.modal.order_closed, minWidth: 550, minHeight: 500
@@ -600,6 +626,11 @@ initialize = ->
     gadget.dispatch('reader_errored', event)
     control.reader_errored event, gadget
   )
+  .on('reader.unknown_type'       , (event) ->
+    gadget = gadgets(event.key)
+    gadget.dispatch('reader_unknown_type', event)
+    control.reader_unknown_type event, gadget
+  )
   # TODO Replace with a beautiful image
   .on('thumbnailer.corrupted'       , (event) ->
     gadget = gadgets(event.key)
@@ -638,6 +669,7 @@ initialize = ->
   .on('order.closed'                , control.closed                                               )
   .on('order.canceled'              , control.cancel_completed                                     )
   .on('error.uncaughted'            , control.error_uncaughted                                     )
+  .on('gadget.imploded'              , control.gadget_imploded                                     )
 
 
 templates =

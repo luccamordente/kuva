@@ -59,7 +59,7 @@ class Order
   # before_save   :user_notify_closed ,     if: lambda{ closed? and not was_closed? }
 
   def close
-    check_failed
+    mark_failed
     update_price
     update_status Order::CLOSED
     self
@@ -162,8 +162,8 @@ class Order
 
 private
 
-    def check_failed
-      self.photos.without_image.update_all failed: true
+    def mark_failed
+      self.photos.without_image.mark_failed
     end
 
     def set_empty_status

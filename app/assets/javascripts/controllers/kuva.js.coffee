@@ -5,6 +5,7 @@
 #= require jqote2
 #= require lodash
 #= require json2
+#= require ui/alert
 #= require library/framework/record/adapters/rivets
 #= require library/framework/record/associations
 #= require library/framework/record/resource

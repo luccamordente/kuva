@@ -1,0 +1,47 @@
+/*
+ *= require alertify/alertify.core
+ *= require alertify/alertify.default
+*/
+
+@import 'helpers/general'
+
+.alertify-logs
+  bottom auto
+  left 10px
+  top 20px
+  right auto
+
+  .alertify-log
+    background-color rgba(0,0,0,.9), #1F1F1F
+    box-shadow 0px 2px 10px rgba(0,0,0,0.15)
+    border-radius 4px
+    color #FFF
+    cursor default
+    left -200px
+    font-size 0.8em
+    margin-top 5px
+    text-shadow -1px -1px 0 rgba(0,0,0,0.1)
+    padding 10px
+    right auto
+
+    &.alertify-log-show
+      right auto
+      left 0
+
+    &.alertify-log-error
+      background-color rgba(#A33, 0.9)
+
+    &.alertify-log-warn
+      background-color rgba(#DA2, 0.9)
+
+    &.alertify-log-success
+      background-color rgba(92, 184, 17, 0.9)
+
+    a
+      color #FFF
+      font-weight bold
+      text-decoration underline
+
+    small
+      font-size 0.8em
+      opacity 0.9

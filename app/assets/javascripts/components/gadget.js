@@ -141,7 +141,8 @@ var gadget = (function declare_gadget (sorts) {
 
       // Create a brand new model
       photo._id      = null;
-      photo.image_id = null;
+      // copy current image_id or prepare to receive one
+      photo.image_id || (photo.image_id = null);
       delete photo._id;
       gadget.photo = window.photo(photo);
 

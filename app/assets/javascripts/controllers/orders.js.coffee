@@ -465,8 +465,8 @@ control =
     $('#initializing').fadeOut 'fast', ->
       $('#main-add').fadeIn 2000
       shelf.overlay 'button'
-    $(document).ajaxSend     -> send.requests++; alerty.success send.requests
-    $(document).ajaxComplete -> send.requests--; alerty.success send.requests
+    $(document).ajaxSend     -> send.requests++
+    $(document).ajaxComplete -> send.requests--
 
 
   order_opened: (event) ->

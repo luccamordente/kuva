@@ -10,20 +10,20 @@ model.restfulable = ->
 
       # Bind one time save callbacks
       promise.done argument for argument in arguments when $.type(argument) is 'function'
-      
+
       @lock = JSON.stringify(@json())
-      
+
       promise
 
     saved: (data) ->
-      
+
       if @lock == JSON.stringify(@json())
         @dirty = false
         delete @lock
-      # Delayed optimistic lock 
+      # Delayed optimistic lock
       else
         @save()
-      
+
       # parsear resposta do servidor e popular dados no modelo atual
       # dispatchar evento de registro salvo, usando o nome do resource
       throw "Not supported after_save callback: " + callback for callback in @after_save if @after_save
@@ -58,7 +58,6 @@ model.restfulable = ->
       delete json.on_save
       delete json.element
       delete json.default
-      delete json.defaulted
       delete json.lock
 
       json

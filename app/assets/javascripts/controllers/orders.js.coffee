@@ -210,9 +210,9 @@ gadgets = do ->
         if !copy.uploaded
           gadget.handlers.uploaded.call copy, event
 
-          unless copy.photo.image_id?
-            photo.image_id = event.data.id
-            photo.save()
+      original.photo.subscribe 'image_id', (prop, image_id) ->
+        unless copy.photo.image_id?
+          photo.image_id = image_id
 
       # Display fotos in summary
       # aside.summary.add photo

@@ -93,9 +93,10 @@ var uploader = (function declare_uploader (reader) {
                                            data.response && (data.response.original_event = event)
                                            settings.success.call(settings.context || window, data.response);
                                            bus.mute(type + '.success');
+                                           completeCallback();
                                        }
                                       );
-					  
+
                         bus.publish(event);
 
                     },

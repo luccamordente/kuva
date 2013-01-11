@@ -79,7 +79,12 @@ private
 
     # download
     puts   "  Fazendo download..."
-    system "curl -o #{tmp_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download"
+    if `curl -v -X HEAD --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download 2>&1` =~ /410 Gone/
+      puts  "Ordem de serviço #{id} já foi capturada e será ignorada...\n\n"
+      return
+    else
+      system "curl -o #{tmp_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download"
+    end
     print  "  Download concluído.\n"
 
     system "mkdir -p #{destination_path}"

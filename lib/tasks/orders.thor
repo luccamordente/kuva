@@ -79,12 +79,18 @@ private
 
     # download
     puts   "  Fazendo download..."
-    # if `curl -v -X HEAD --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download 2>&1` =~ /410 Gone/
-    #   puts  "Ordem de serviço #{id} já foi capturada e será ignorada...\n\n"
-    #   return
-    # else
-    system "curl -o #{tmp_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}/download"
-    # end
+    uri = URI("http://#{domain}/api/orders/#{id}/download")
+    req = Net::HTTP::Get.new(uri.request_uri)
+    req.basic_auth USERNAME, PASSWORD
+    res = Net::HTTP.start(uri.hostname, uri.port) { |http| http.request(req) }
+    if res.is_a? Net::HTTPGone
+      puts  "Ordem de serviço #{id} já foi capturada e será ignorada...\n\n"
+      return
+    else
+      File.open(tmp_path, "w") do |file|
+        file.write res.body
+      end
+    end
     print  "  Download concluído.\n"
 
     system "mkdir -p #{destination_path}"

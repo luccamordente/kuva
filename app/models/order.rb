@@ -49,6 +49,7 @@ class Order
 
   # scopes
   scope :last_updated, order_by(:updated_at.desc)
+  scope :good_to_catch, where(:status.in => [Order::CLOSED, Order::RECATCH])
 
   # filters
   before_validation :set_empty_status, on: :create

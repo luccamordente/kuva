@@ -83,7 +83,7 @@ private
     req = Net::HTTP::Get.new(uri.request_uri)
     req.basic_auth USERNAME, PASSWORD
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-      http.read_timeout = 500
+      http.read_timeout = 99999999
       http.request(req)
     end
     if res.is_a? Net::HTTPGone

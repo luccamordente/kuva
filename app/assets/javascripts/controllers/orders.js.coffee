@@ -85,6 +85,7 @@ dropper =
      ).bind('dragover', @dragover).bind('drop', @droped)
 
 send =
+  requests: 0
   clicked: ->
     kuva.overlay().dynamic().at(document.body)
     $('#end-confirmation').fadeIn()
@@ -118,10 +119,18 @@ send =
 
     send.ignored()
   completed: ->
-    setTimeout ->
-      order.close()
-    , 500 # needed because it was closing before the last upload
-
+    # TODO implement pool !!!!
+    $(document).bind 'ajaxStop', ->
+      clearTimeout send.timeout
+      send.timeout = setTimeout ->
+        $(document).unbind 'ajaxStop'
+        order.close()
+      , 1000
+    send.timeout = setTimeout ->
+      if send.requests == 0
+        $(document).unbind 'ajaxStop'
+        order.close()
+    , 1000
 
 
 cancel =
@@ -201,9 +210,9 @@ gadgets = do ->
         if !copy.uploaded
           gadget.handlers.uploaded.call copy, event
 
-          unless copy.photo.image_id?
-            photo.image_id = event.data.id
-            photo.save()
+      original.photo.subscribe 'image_id', (prop, image_id) ->
+        unless copy.photo.image_id?
+          photo.image_id = image_id
 
       # Display fotos in summary
       # aside.summary.add photo
@@ -456,6 +465,8 @@ control =
     $('#initializing').fadeOut 'fast', ->
       $('#main-add').fadeIn 2000
       shelf.overlay 'button'
+    $(document).ajaxSend     -> send.requests++
+    $(document).ajaxComplete -> send.requests--
 
 
   order_opened: (event) ->
@@ -666,11 +677,11 @@ initialize = ->
     gadget.dispatch 'upload_errored_maximum', event
     control.upload_errored_maximum event, gadget
   )
-  .on('send.completed'              , control.send_completed                                       )
-  .on('order.closed'                , control.closed                                               )
-  .on('order.canceled'              , control.cancel_completed                                     )
-  .on('error.uncaughted'            , control.error_uncaughted                                     )
-  .on('gadget.imploded'              , control.gadget_imploded                                     )
+  .one('send.completed'              , control.send_completed                                       )
+  .on( 'order.closed'                , control.closed                                               )
+  .on( 'order.canceled'              , control.cancel_completed                                     )
+  .on( 'error.uncaughted'            , control.error_uncaughted                                     )
+  .on( 'gadget.imploded'             , control.gadget_imploded                                      )
 
 
 templates =

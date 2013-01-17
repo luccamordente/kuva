@@ -140,7 +140,9 @@ var gadget = (function declare_gadget (sorts) {
         gadget = that(this.element, options), photo = this.photo.json();
 
       // Create a brand new model
-      photo._id = null;
+      photo._id      = null;
+      // copy current image_id or prepare to receive one
+      photo.image_id || (photo.image_id = null);
       delete photo._id;
       gadget.photo = window.photo(photo);
 

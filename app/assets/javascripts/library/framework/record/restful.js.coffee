@@ -19,7 +19,8 @@ model.restfulable = ->
       
       if @lock == JSON.stringify(@json())
         @dirty = false
-        delete @lock
+        
+        @lock && delete @lock
       # Delayed optimistic lock 
       else
         @save()

@@ -4,6 +4,7 @@
   aside = (selector = '#aside', photos) ->
     aside.element = $ selector
     summary.initialize(photos)
+    observations.initialize()
 
   item_prototype =
     add: (photo) ->
@@ -32,6 +33,41 @@
       if progress.confirmed and count == total
         bus.publish 'send.completed'
         progress.status.text = "Fechando pedido..."
+
+
+  observations = observable.call
+    editing: false
+
+    initialize: ->
+      return if @initialized
+
+      @order = kuva.order
+
+      @element = aside.element.find '#observations'
+      @field   = @element.find 'textarea'
+      @view = rivets.bind @element,
+        editor: observations
+        order : kuva.order
+
+      @initialized = true
+
+    check_commit: (event) ->
+      if event.which == 13 # ENTER
+        @field.change()
+        $(document.body).focus()
+
+    formatted_observations: ->
+      @sanitized_observations()
+
+    sanitized_observations: ->
+      (@order.observations || "").trim()
+
+    toggle: ->
+      @editing = !@editing
+      @field.focus() if @editing
+
+    empty : -> !@editing && !@sanitized_observations()
+    filled: -> !@editing &&  @sanitized_observations()
 
 
   summary = observable.call
@@ -63,7 +99,7 @@
       return if @initialized;
 
       # Render element
-      aside.element.children('.normal').jqoteapp summary.template, summary
+      aside.element.children('.summary-placeholder').jqoteapp summary.template, summary
       @element = aside.element.find '#summary'
       view = rivets.bind @element, summary: summary
 

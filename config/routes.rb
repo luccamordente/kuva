@@ -37,7 +37,7 @@ Kuva::Application.routes.draw do
 
 
   scope :path_names => { :new => "novo", :edit => "alterar" } do
-    resources :orders, only: [:index, :new, :create], path: "pedidos" do
+    resources :orders, only: [:index, :new, :create, :update], path: "pedidos" do
       post :close, on: :member
       post :cancel, on: :member
 

@@ -16,6 +16,13 @@ class OrdersController < ApplicationController
     @orders = current_user.orders.without(:photos).order_by(:updated_at.desc).all
   end
 
+  def update
+    @order = current_user.orders.find params[:id]
+    @order.update_attributes filter_order_params_for_update params[:order]
+
+    success id: @order.id.to_s
+  end
+
   def close
     @order = current_user.orders.find params[:id]
     @order.close
@@ -38,6 +45,10 @@ private
 
   def load_products
     @products = Product.only(:_id,:name,:price, :dimensions).asc(:dimensions).all
+  end
+
+  def filter_order_params_for_update params
+    params.keep_if{ |k,v| ['observations'].include? k }
   end
 
 end

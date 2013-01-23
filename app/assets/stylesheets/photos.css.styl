@@ -764,6 +764,10 @@ control-style(color)
     #flash
       z-index 3
 
+    #aside
+      .sending #observations
+        bottom 3.8em
+
   states = normal, sending
 
   for state in states
@@ -872,6 +876,40 @@ control-style(color)
           .count
             font-size 2em
 
+      #observations
+        bottom 12.6em
+        font-size 0.7em
+        position absolute
+        width 12.1em
+
+        a
+          cursor pointer
+          &.empty
+            text_color = #3EAB17
+            color text_color
+            &:hover
+              color lighten(text_color, 20%)
+          &.filled
+            color #FFF
+
+        .editor
+          width 100%
+          label
+            color #FFF
+            font-weight bold
+          textarea
+            border none
+            border-radius 3px
+            height 70px
+            margin 0.3em 0
+            padding 3%
+            width 94%
+          .tip
+            color #999
+            font-size 0.9em
+
+        &.editing
+          opacity 1 !important
 
       #end
         bottom 5em

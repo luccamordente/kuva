@@ -25,13 +25,15 @@ specifications  = null
 
 kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of recordhot
-  order                    ||= window.order(options.order)
+  order                    ||= window.order($.extend options.order, observations: null)
   control.defaults.product ||= window.product(options.default_product)
   specifications           ||= window.specification(options.specifications)
   kuva.orders.products       = products = window.product.cache = options.products
   window.gadgets = gadgets
 
   kuva.order = order
+  order.subscribe 'dirty', (prop, dirty) ->
+    dirty && order.save()
 
 
 # TODO Move droppable to a component

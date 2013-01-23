@@ -94,9 +94,24 @@
           %b Atenção:
           mantenha a página aberta até que o envio seja concluído.
 
-      .normal
+      .normal.summary-placeholder
         .header
           #add-more.add-files Adicionar mais fotos
+
+      .normal.sending
+        #observations.faded{ 'data-class-editing' => 'editor.editing' }
+          %a.empty{ :href => 'javascript:void(0);', 'data-show' => 'editor:empty < .editing order.observations', 'data-on-click' => 'editor.toggle' }
+            ▶ Adicionar observação
+          .editor{ 'data-show' => 'editor.editing' }
+            %label
+              ▶ Observações:
+            %textarea{ 'data-value' => 'order.observations', 'data-on-blur' => 'editor.toggle', 'data-on-keydown' => 'editor.check_commit', placeholder: 'Quer nos dizer algo breve sobre suas fotos? Deixe aqui suas observações...' }
+            .tip Pressione ENTER p/ confirmar
+          %a.filled{ :href => 'javascript:void(0);', 'data-show' => 'editor:filled < .editing order.observations', 'data-on-click' => 'editor.toggle' }
+            ▶
+            %span{ 'data-text' => 'editor:formatted_observations < order.observations' }
+
+      .normal
         #end
           #end-confirmation.tooltip.left.in
             .tooltip-inner

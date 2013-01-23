@@ -69,6 +69,19 @@ describe OrdersController do
       end
     end
 
+    describe "update" do
+      it "updates unprotected attributes" do
+        order = Fabricate :order, user_id: current_user.id, observations: nil
+        put :update, id: order.id, order: { observations: "teste" }
+        order.reload.observations.should_not be_nil
+      end
+
+      it "does not update protected attributes" do
+        order = Fabricate :order, user_id: current_user.id
+        expect { put :update, id: order.id, order: { user_id: Fabricate(:user).id } }.not_to change(order, :user_id)
+      end
+    end
+
 
     describe "close" do
       let!(:order){ Fabricate :order, user_id: current_user.id }

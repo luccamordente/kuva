@@ -18,10 +18,18 @@ do (parent = kuva) ->
       instance.css css $ element
       if instance.dynamic
         instance.css width: '100%', height: '100%'
+      if instance.master
+        instance.addClass 'master'
+        instance.master = false
+      else
+        instance.removeClass 'master'
     close: ->
       instance.css display: 'none'
     dynamic: ->
       instance.dynamic = true
+      @
+    master: ->
+      instance.master = true
       @
 
 

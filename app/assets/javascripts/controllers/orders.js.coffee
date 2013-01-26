@@ -531,39 +531,39 @@ control =
   reader_errored: (event, gadget) ->
     gadget.implode()
     alerty.error "Não conseguimos ler a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado.<br><small>Esta foto não será cobrada.<small>"
-    message  = "Reader error with order #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
-    throw message
+    # message  = "Reader error with order #{order._id}. \n"
+    # message += "Event details: #{JSON.stringify event} \n"
+    # message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    # throw message
 
   reader_unknown_type: (event, gadget) ->
     gadget.implode()
     alerty.error "Formato não suportado para <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado.<br><small>Esta foto não será cobrada.<small>"
-    message  = "Reader unknown type with order #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
-    throw message
+    # message  = "Reader unknown type with order #{order._id}. \n"
+    # message += "Event details: #{JSON.stringify event} \n"
+    # message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    # throw message
 
   thumbnailer_errored: (event, gadget) ->
     alerty.warn "Não conseguimos gerar a miniatura da imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. No entanto, este arquivo SERÁ enviado."
-    message  = "Thumbnailing error with order #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
-    throw message
+    # message  = "Thumbnailing error with order #{order._id}. \n"
+    # message += "Event details: #{JSON.stringify event} \n"
+    # message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    # throw message
 
   upload_errored: (event, gadget) ->
     message  = "Upload error with order #{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     message += "File details: #{JSON.stringify gadget.files[0]} \n"
-    throw message
+    # throw message
 
   upload_errored_maximum: (event, gadget) ->
     gadget.implode()
     alerty.error "Não conseguimos enviar a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>.<br><small>Esta foto não será cobrada.<small>"
-    message  = "Maximum upload errors reached in #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
-    throw message
+    # message  = "Maximum upload errors reached in #{order._id}. \n"
+    # message += "Event details: #{JSON.stringify event} \n"
+    # message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    # throw message
 
   error_uncaughted: (event, gadget) ->
     message  = "Error uncaughted. Order ##{order._id}. \n"

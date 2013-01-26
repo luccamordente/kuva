@@ -2,6 +2,8 @@
 
 class Admin::OrdersController < Admin::ApplicationController
 
+  before_filter :enable_auto_refresh, only: :index
+
   # GET /admin/orders
   # GET /admin/orders.json
   def index

@@ -14,7 +14,7 @@ gem 'json'
 gem "mongoid", "~> 3.0"
 gem "carrierwave"
 gem "carrierwave-mongoid", require: "carrierwave/mongoid"
-gem "devise", "~> 2.0"
+gem "devise", "~> 2.2.3"
 gem "rubyzip"
 gem "roadie"
 gem "active_decorator"

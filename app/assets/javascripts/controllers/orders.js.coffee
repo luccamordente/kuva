@@ -25,13 +25,15 @@ specifications  = null
 
 kuva.orders = (options) ->
   # TODO pass order details from rails, this must be a instance of recordhot
-  order                    ||= window.order(options.order)
+  order                    ||= window.order($.extend options.order, observations: null)
   control.defaults.product ||= window.product(options.default_product)
   specifications           ||= window.specification(options.specifications)
   kuva.orders.products       = products = window.product.cache = options.products
   window.gadgets = gadgets
 
   kuva.order = order
+  order.subscribe 'dirty', (prop, dirty) ->
+    dirty && order.save()
 
 
 # TODO Move droppable to a component
@@ -529,45 +531,45 @@ control =
   reader_errored: (event, gadget) ->
     gadget.implode()
     alerty.error "Não conseguimos ler a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado.<br><small>Esta foto não será cobrada.<small>"
-    message  = "Reader error with order #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    message  = "● Reader error with order #{order._id}. \n"
+    message += "● Event details: #{JSON.stringify event} \n"
+    message += "● File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
   reader_unknown_type: (event, gadget) ->
     gadget.implode()
     alerty.error "Formato não suportado para <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. Este arquivo não será enviado.<br><small>Esta foto não será cobrada.<small>"
-    message  = "Reader unknown type with order #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    message  = "● Reader unknown type with order #{order._id}. \n"
+    message += "● Event details: #{JSON.stringify event} \n"
+    message += "● File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
   thumbnailer_errored: (event, gadget) ->
     alerty.warn "Não conseguimos gerar a miniatura da imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>. No entanto, este arquivo SERÁ enviado."
-    message  = "Thumbnailing error with order #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    message  = "● Thumbnailing error with order #{order._id}. \n"
+    message += "● Event details: #{JSON.stringify event} \n"
+    message += "● File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
   upload_errored: (event, gadget) ->
-    message  = "Upload error with order #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    message  = "● Upload error with order #{order._id}. \n"
+    message += "● Event details: #{JSON.stringify event} \n"
+    message += "● File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
   upload_errored_maximum: (event, gadget) ->
     gadget.implode()
     alerty.error "Não conseguimos enviar a imagem <a href=\"javascript:$('html,body').animate({scrollTop: #{gadget.element.offset().top}},1000);\">#{gadget.files[0].name}</a>.<br><small>Esta foto não será cobrada.<small>"
-    message  = "Maximum upload errors reached in #{order._id}. \n"
-    message += "Event details: #{JSON.stringify event} \n"
-    message += "File details: #{JSON.stringify gadget.files[0]} \n"
+    message  = "● Maximum upload errors reached in #{order._id}. \n"
+    message += "● Event details: #{JSON.stringify event} \n"
+    message += "● File details: #{JSON.stringify gadget.files[0]} \n"
     throw message
 
   error_uncaughted: (event, gadget) ->
     message  = "Error uncaughted. Order ##{order._id}. \n"
     message += "Event details: #{JSON.stringify event} \n"
     alerty.error "Ops... aconteceu um erro e ainda não sabemos o motivo.<br><small>Já fomos notificados e vamos resolver logo! Que tal tentar mais uma vez? Se o erro persistir, fale com a gente no chat alí embaixo, por favor!<br><a href=\"javascript: document.location = document.location.pathname\">Clique aqui para recarregar a página e tentar novamente</a>", 0
-    kuva.overlay().dynamic().at(document.body)
+    kuva.overlay().dynamic().master().at(document.body)
     $zopim.livechat.window.show() if $zopim?
     throw message
 

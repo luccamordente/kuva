@@ -94,6 +94,8 @@ control-style(color)
     display none
     width 100%
     z-index 4
+    &.master
+      z-index 1005
 
 
 
@@ -764,6 +766,10 @@ control-style(color)
     #flash
       z-index 3
 
+    #aside
+      .sending #observations
+        bottom 3.8em
+
   states = normal, sending
 
   for state in states
@@ -825,11 +831,23 @@ control-style(color)
         top 1em
         width 5em
         z-index 1
+        // hiding add-more button #hideaddmore
+        height 1px
+        overflow hidden
+        width 1px
+        // end hiding add-more button
 
         .add-files
           display table-cell
           height 6.9em
           text-transform uppercase
+          // hiding add-more button #hideaddmore
+          display block
+          height 1px
+          width 1px
+          // end hiding add-more button
+
+
 
           &:hover, &.over
             background-color #222
@@ -839,6 +857,7 @@ control-style(color)
 
       #summary
         padding-top 11.5em
+        padding-top 1em // #hideaddmore
 
         .item
           margin-bottom 1.4em
@@ -872,6 +891,40 @@ control-style(color)
           .count
             font-size 2em
 
+      #observations
+        bottom 12.6em
+        font-size 0.7em
+        position absolute
+        width 12.1em
+
+        a
+          cursor pointer
+          &.empty
+            text_color = #3EAB17
+            color text_color
+            &:hover
+              color lighten(text_color, 20%)
+          &.filled
+            color #FFF
+
+        .editor
+          width 100%
+          label
+            color #FFF
+            font-weight bold
+          textarea
+            border none
+            border-radius 3px
+            height 70px
+            margin 0.3em 0
+            padding 3%
+            width 94%
+          .tip
+            color #999
+            font-size 0.9em
+
+        &.editing
+          opacity 1 !important
 
       #end
         bottom 5em

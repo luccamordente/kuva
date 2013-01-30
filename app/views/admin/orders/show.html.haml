@@ -31,7 +31,7 @@
         %b Cliente:
         = @order.user.try :name
 
-      = if @order.observations.present?
+      - if @order.observations.present?
         %p
           %b Observações:
           = @order.observations

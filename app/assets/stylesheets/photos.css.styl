@@ -831,11 +831,23 @@ control-style(color)
         top 1em
         width 5em
         z-index 1
+        // hiding add-more button #hideaddmore
+        height 1px
+        overflow hidden
+        width 1px
+        // end hiding add-more button
 
         .add-files
           display table-cell
           height 6.9em
           text-transform uppercase
+          // hiding add-more button #hideaddmore
+          display block
+          height 1px
+          width 1px
+          // end hiding add-more button
+
+
 
           &:hover, &.over
             background-color #222
@@ -845,6 +857,7 @@ control-style(color)
 
       #summary
         padding-top 11.5em
+        padding-top 1em // #hideaddmore
 
         .item
           margin-bottom 1.4em

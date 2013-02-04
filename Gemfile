@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 gem 'therubyracer'
 gem 'libv8'
 
-gem 'rails', '3.2.2'
+gem 'rails', '3.2.11'
 
 # Bundle edge Rails instead:
 # gem 'rails', git: 'git://github.com/rails/rails.git'
@@ -14,7 +14,7 @@ gem 'json'
 gem "mongoid", "~> 3.0"
 gem "carrierwave"
 gem "carrierwave-mongoid", require: "carrierwave/mongoid"
-gem "devise", "~> 2.0"
+gem "devise", "~> 2.2.3"
 gem "rubyzip"
 gem "roadie"
 gem "active_decorator"

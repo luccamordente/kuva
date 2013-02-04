@@ -82,7 +82,10 @@ private
     uri = URI("http://#{domain}/api/orders/#{id}/download")
     req = Net::HTTP::Get.new(uri.request_uri)
     req.basic_auth USERNAME, PASSWORD
-    res = Net::HTTP.start(uri.hostname, uri.port) { |http| http.request(req) }
+    res = Net::HTTP.start(uri.hostname, uri.port) { |http|
+      http.read_timeout = 99999 # allows compression to complete
+      http.request(req)
+    }
     if res.is_a? Net::HTTPGone
       puts  "Ordem de serviço #{id} já foi capturada e será ignorada...\n\n"
       return

@@ -2,6 +2,9 @@ class Order
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  # include Kuva::Maid
+
+
   EXECUTION_TIME = 1.hour
 
   paginates_per 50

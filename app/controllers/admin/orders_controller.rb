@@ -8,7 +8,7 @@ class Admin::OrdersController < Admin::ApplicationController
   # GET /admin/orders.json
   def index
     @status = params[:status]
-    @orders = Order.last_updated.page params[:page]
+    @orders = Order.last_opened.page params[:page]
     @orders = @orders.where status: @status if @status
   end
 

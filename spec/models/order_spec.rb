@@ -578,4 +578,54 @@ describe Order do
   end
 
 
+
+  describe "Maid" do
+
+    describe "older than" do
+      let!(:order){ Fabricate :order, cleaned_at: nil }
+
+      before do
+        time_now = 6.days.from_now
+        Time.stub!(:now).and_return(time_now)
+      end
+
+      it "should bring orders older than 5 days" do
+        Order.older_than(5.days).all.should include(order)
+      end
+
+      it "should bring orders older than 6 days" do
+        Order.older_than(6.days + 1.minute).all.should_not include(order)
+      end
+
+      it "should bring orders older than 7 days" do
+        Order.older_than(7.days).all.should_not include(order)
+      end
+    end
+
+
+    describe "clean images" do
+      let!(:order){ Fabricate :order, cleaned_at: nil }
+      let!(:image){ order.images.create image: image_fixture }
+
+      before do
+        Order.not_cleaned.clean_images!
+        order.reload
+      end
+
+      it "should be marked as cleaned" do
+        order.cleaned_at.should_not be_nil
+      end
+
+      it "should clean the images" do
+        image.image.should be_blank
+      end
+
+      it "should be cleaned" do
+        Order.cleaned.all.should include order
+      end
+    end
+
+  end
+
+
 end

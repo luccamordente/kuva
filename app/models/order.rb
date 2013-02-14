@@ -2,7 +2,7 @@ class Order
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  # include Kuva::Maid
+  include Kuva::Maid
 
 
   EXECUTION_TIME = 1.hour

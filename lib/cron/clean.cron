@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # crontab:
-# * * * * * /bin/sh -l -c 'cd /home/lucca/www/kuva/current && ./lib/cron/clean.cron >> log/clean.log 2>> log/clean.log'
+# 00 2 * * * /bin/sh -l -c 'cd /home/lucca/www/kuva/current && ./lib/cron/clean.cron >> log/clean.log 2>> log/clean.log'
 
 cd /home/lucca/www/kuva/current
 

@@ -10,6 +10,7 @@ source /usr/local/rvm/environments/ruby-1.9.3-p194
 
 date
 
+export RAILS_ENV=production
 bundle exec thor images:clean -e production
 
 echo "Cleaned!"

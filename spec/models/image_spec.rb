@@ -14,6 +14,14 @@ describe Image do
       image.should_not be_valid
       image.errors[:image].should_not be_nil
     end
+    it "should allow to delete image when already persisted" do
+      image = Fabricate.build :image, image: image_fixture
+      image.save
+      image.remove_image!
+      image.save
+      image.should be_valid
+      image.image.should be_blank
+    end
   end
 
   describe "call to magick" do
@@ -32,6 +40,10 @@ describe Image do
 
     context "deleted" do
       before  { image.destroy }
+
+      it "should clear the image" do
+        image.image.should be_blank
+      end
 
       it "should delete the file" do
         File.exists?(path).should be_false

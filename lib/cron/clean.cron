@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# crontab:
+# 00 2 * * * /bin/sh -l -c 'cd /home/lucca/www/kuva/current && ./lib/cron/clean.cron >> log/clean.log 2>> log/clean.log'
+
+cd /home/lucca/www/kuva/current
+
+# load rvm ruby
+source /usr/local/rvm/environments/ruby-1.9.3-p194
+
+date
+
+export RAILS_ENV=production
+bundle exec thor images:clean -e production
+
+echo "Cleaned!"
+echo

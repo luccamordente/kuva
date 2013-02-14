@@ -2,6 +2,9 @@ class Order
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  include Kuva::Maid
+
+
   EXECUTION_TIME = 1.hour
 
   paginates_per 50
@@ -49,6 +52,7 @@ class Order
 
   # scopes
   scope :last_updated, order_by(:updated_at.desc)
+  scope :last_opened , order_by(:created_at.desc)
   scope :good_to_catch, where(:status.in => [Order::CLOSED, Order::RECATCH])
 
   # filters

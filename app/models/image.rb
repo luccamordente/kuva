@@ -8,22 +8,15 @@ class Image
 
   belongs_to :order
 
-  validates :image, presence: true
+  validates :image, presence: true, on: :create
 
   after_save "self.order.check_and_update_status if self.order.present?"
 
-  before_destroy :delete_images!
+  before_destroy :remove_image!
 
 
   def magick
     Magick::Image.read(self.image.current_path).first
-  end
-
-
-private
-
-  def delete_images!
-    self.remove_image!
   end
 
 end

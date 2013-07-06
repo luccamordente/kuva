@@ -11,4 +11,4 @@ source /usr/local/rvm/environments/ruby-1.9.3-p194
 date
 echo
 
-bundle exec thor orders:search -e indefinido >> log/search.log 2>> log/search.log
+bundle exec thor orders:search -e indefinido >> log/search.indefinido.log 2>> log/search.indefinido.log

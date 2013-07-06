@@ -11,4 +11,4 @@ source /usr/local/rvm/environments/ruby-1.9.3-p194
 date
 echo
 
-bundle exec thor orders:search -e pedrocinefoto >> log/search.log 2>> log/search.log
+bundle exec thor orders:search -e pedrocinefoto >> log/search.pedrocinefoto.log 2>> log/search.pedrocinefoto.log

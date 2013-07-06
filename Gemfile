@@ -47,7 +47,7 @@ gem 'jquery-rails'
 group :development do
   gem 'foreman'
   gem 'letter_opener'
-  gem 'capistrano'
+  gem 'capistrano', '< 2.13.5'
 end
 
 group :test do

@@ -13,7 +13,9 @@ end
 class Orders < Thor
 
   DOMAIN = {
-    production:  '127.0.0.1:9999',
+    pcf:         '127.0.0.1:9999',
+    production:  '127.0.0.1:9999', # DEPRECATED will be removed soon in favor of pcf
+    indefinido:  'kuva.indefini.do',
     development: 'kuva.dev'
   }
 

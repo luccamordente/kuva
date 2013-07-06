@@ -154,15 +154,16 @@ set :keep_releases, 5
 
 set :application, "kuva"
 set :repository,  "ssh://lucca@201.17.161.70/home/lucca/apps/kuva"
-set :branch, "deploy"
 
 set :scm, :git
-set :branch, :master
+set :branch, :deploy
 
 set :user, "root"
 set :use_sudo, false
 set :deploy_to, "~/apps/#{application}"
 set :deploy_via, :remote_cache
+
+set :bundle_flags,    "--deployment"
 
 server "kuva.indefini.do", :app, :web, :db, :primary => true
 

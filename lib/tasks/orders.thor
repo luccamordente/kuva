@@ -13,18 +13,20 @@ end
 class Orders < Thor
 
   DOMAIN = {
-    pcf:         '127.0.0.1:9999',
-    production:  '127.0.0.1:9999', # DEPRECATED will be removed soon in favor of pcf
-    indefinido:  'kuva.indefini.do',
-    development: 'kuva.dev'
+    pedrocinefoto: '127.0.0.1:9999',
+    production:    '127.0.0.1:9999', # DEPRECATED will be removed soon in favor of pcf
+    indefinido:    'kuva.indefini.do',
+    development:   'kuva.dev'
   }
 
   USERNAME = 'pedrocinefoto'
   PASSWORD = 'kuvaapi'
 
   DOWNLOAD_PATH = {
-    production:  '/digital/Kuva',
-    development: 'tmp/downloads'
+    pedrocinefoto: '/digital/Kuva',
+    production:    '/digital/Kuva',
+    indefinido:    '/digital/Kuva',
+    development:   'tmp/downloads'
   }
 
 

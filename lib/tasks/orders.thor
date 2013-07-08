@@ -24,7 +24,7 @@ class Orders < Thor
 
   DOWNLOAD_PATH = {
     pedrocinefoto: '/digital/Kuva',
-    production:    '/digital/Kuva',
+    production:    '/digital/Kuva', # DEPRECATED will be removed soon in favor of pcf
     indefinido:    '/digital/Kuva',
     development:   'tmp/downloads'
   }
@@ -118,7 +118,7 @@ private
       pdf_name = "#{name}.pdf"
       pdf_path = "#{destination_path}/#{name}/#{pdf_name}"
 
-      if environment == :production
+      unless environment == :development
         # download pdf
         system "curl -o #{pdf_path} --user #{USERNAME}:#{PASSWORD} http://#{domain}/api/orders/#{id}.pdf"
         # print pdf
@@ -147,7 +147,7 @@ private
   end
 
   def notify *args
-    Airbrake.notify *args if environment == :production
+    Airbrake.notify *args unless environment == :development
   end
 
   def download_path

@@ -30,8 +30,9 @@ class Api::OrdersController < Api::BaseController
     end
   rescue Mongoid::Errors::DocumentNotFound => exception
     error 410, "Order cannot be downloaded"
-  rescue
+  rescue => e
     @order.update_status Order::RECATCH
+    raise e
   end
 
   def closed

@@ -55,6 +55,11 @@ class Orders < Thor
 
 private
 
+  # # Overriding puts do add some debug information
+  # def puts str
+  #   @id ||= "#{rand(1000)} #{`date`}"
+  #   super "#{@id} => #{str}"
+  # end
 
   def closed_orders_ids
     ids = []
@@ -93,6 +98,9 @@ private
     }
     if res.is_a? Net::HTTPGone
       puts  "Ordem de serviço #{id} já foi capturada e será ignorada...\n\n"
+      return
+    elsif res.is_a? Net::HTTPInternalServerError
+      puts  "Ocorreu um erro no servidor...\n\n"
       return
     else
       File.open(tmp_path, "w") do |file|

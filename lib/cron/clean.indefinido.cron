@@ -7,7 +7,9 @@ cd /root/apps/kuva/current
 
 date
 
+export PATH="$HOME/.rbenv/bin:$PATH"; eval "$(rbenv init -)";
 export RAILS_ENV=production
+
 bundle exec thor images:clean -e production
 
 echo "Cleaned!"

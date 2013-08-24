@@ -117,6 +117,7 @@ private
       # rename to a readable id
       if name != id
         system "mv #{destination_path}/#{id} #{destination_path}/#{name}"
+        system "chmod -R g+w #{destination_path}/#{name}"
         puts "  Alterando nome de #{id} para #{name}"
       end
 

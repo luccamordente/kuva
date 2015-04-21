@@ -20,12 +20,12 @@ describe UserMailer do
     
     #ensure that the receiver is correct
     it 'has the correct reply to address' do
-      mail.reply_to.should == ["ricardo@pedrocinefoto.com.br"]
+      mail.reply_to.should == ["ricardo"+"@"+"pedrocinefoto.com.br"]
     end
  
     #ensure that the sender is correct
     it 'has the correct sender address' do
-      mail.from.should == ["ricardo@pedrocinefoto.com.br"]
+      mail.from.should == ["ricardo"+"@"+"pedrocinefoto.com.br"]
     end
  
     #ensure that the @name variable appears in the email body
@@ -48,10 +48,10 @@ describe UserMailer do
     its(:to){ should == [user.email] }
     
     #ensure that the receiver is correct
-    its(:reply_to){ should == ["ricardo@pedrocinefoto.com.br"] }
+    its(:reply_to){ should == ["ricardo"+"@"+"pedrocinefoto.com.br"] }
     
     #ensure that the sender is correct
-    its(:from){ should == ["ricardo@pedrocinefoto.com.br"] }
+    its(:from){ should == ["ricardo"+"@"+"pedrocinefoto.com.br"] }
     
     #ensure the reset password token in the message
     its(:"body.encoded"){ should match user.reset_password_token.to_s }

@@ -8,7 +8,8 @@ gem 'rails', '3.2.11'
 
 # gem 'mysql2'
 
-gem 'json'
+gem 'json', "~> 1.8.3"
+gem "rmagick", "~> 2.16.0"
 
 gem "mongoid", "~> 3.0"
 gem "carrierwave"
@@ -21,11 +22,10 @@ gem "airbrake"
 gem "simple_form"
 gem "kaminari"
 gem "httparty"
-gem "rmagick"
 gem "thor"
 gem "pdfkit"
 gem "wkhtmltopdf-binary"
-gem 'mongoid_auto_increment'
+gem 'mongoid_auto_increment', '~> 0.1.0'
 
 gem 'haml-rails', '~> 0.3.4'
 
@@ -66,7 +66,7 @@ group :development, :test do
   gem 'fabrication', '~> 1.2.0'
   gem 'rb-fsevent', require: false #if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
-  gem 'guard-livereload'
+  # gem 'guard-livereload'
   # gem 'rails_best_practices'
   gem 'guard-rails_best_practices'
   gem 'mongoid-rspec'
@@ -78,7 +78,7 @@ end
 
 
 group :production do
-  gem 'unicorn'
+  # gem 'unicorn'
 end
 
 # To use ActiveModel has_secure_password

@@ -8,7 +8,7 @@ gem 'rails', '3.2.11'
 
 # gem 'mysql2'
 
-gem 'json', "~> 1.8.3"
+gem 'json', "~> 2.3.1"
 gem "rmagick", "~> 2.16.0"
 
 gem "mongoid", "~> 3.0"

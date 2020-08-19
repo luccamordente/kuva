@@ -165,7 +165,7 @@ GEM
       rspec (>= 2.9)
     mongoid_auto_increment (0.1.5)
       mongoid (>= 2.0)
-    moped (1.5.0)
+    moped (1.5.3)
     multi_json (1.7.7)
     multi_xml (0.5.4)
     net-scp (1.1.1)
